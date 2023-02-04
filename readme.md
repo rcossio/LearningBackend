@@ -10,4 +10,8 @@
 
 
 2. Test the code with:
-`node challenge_ECMAScript.js`
+`node test.js`
+or
+`node run test`
+
+

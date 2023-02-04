@@ -1,0 +1,19 @@
+{
+  "name": "learningbackend",
+  "version": "1.0.0",
+  "description": "This is a project from the course Backend Programming from Coderhouse",
+  "main": "main.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rcossio/LearningBackend.git"
+  },
+  "author": "Rodrigo Cossio-Perez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rcossio/LearningBackend/issues"
+  },
+  "homepage": "https://github.com/rcossio/LearningBackend#readme"
+}
