@@ -13,6 +13,6 @@ in a terminal.
 2. Test the code with:
 `node test.js`
 or
-`node run test`
+`npm run test`
 
 
