@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "This is a project from the course Backend Programming from Coderhouse",
   "main": "main.js",
+  "type": "module",
   "scripts": {
     "test": "node test.js"
   },
