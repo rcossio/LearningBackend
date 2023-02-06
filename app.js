@@ -48,11 +48,7 @@ app.get('/products', (req,res) => {
 
     let products = productManager.getProducts()
     let filteredProducts = filterProducts(products,validatedQuery)
-    res.send(`<h4> Browse products</h4>
-        <p> Browse product by quering properties in the URL. Example: "http://localhost:8080/products?minPrice=2&includesString=steel". Possible params are includesString (in title or description) minPrice, maxPrice, minStock, maxStock and limit </p>
-        ${JSON.stringify(filteredProducts)} 
-        `
-    )
+    res.json(filteredProducts) 
 })
 
 app.get('/products/:productId', (req,res) => {
@@ -61,14 +57,12 @@ app.get('/products/:productId', (req,res) => {
     let validId = products.some((item) => Number(item.id) === Number(productId) )
 
     let content = validId?
-                JSON.stringify( products.find((item) => Number(item.id) === Number(productId) ) )
-                :`<p style="color:red;"> Error: the product with ID ${productId} does not exist</p>`
+                products.find((item) => Number(item.id) === Number(productId) )
+                :{error:`The product with ID ${productId} does not exist`}
 
-    res.send(`<h4> Browse products</h4>
-    <p> Browse product by quering properties in the URL. Example: "/products?minPrice=100&includesString=notebook". Possible params are includesString (in title or description) minPrice, maxPrice, minStock, maxStock and limit </p>
-    ${content} `)
+    res.json(content)
 })
 
 app.listen(PORT, () => {
-    console.log(`App listening to port ${PORT}. Go to http://localhost:3000. Note HTTPS is not supported, only HTTP.`)
+    console.log(`App listening to port ${PORT}. Go to http://localhost:8080. Note HTTPS is not supported, only HTTP.`)
 })
