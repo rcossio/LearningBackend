@@ -73,6 +73,7 @@ class ProductManager {
     getProducts() {
         this.loadProductManager()
         console.log(this.products)
+        return this.products
     }
 
     getProductById(queryId) {
@@ -80,6 +81,7 @@ class ProductManager {
         let product = this.products.find( product => product.id === queryId)
         if (product) {
             console.log(product)
+            return product
         } else {
             console.error('Error: Not found')
         }
@@ -101,7 +103,7 @@ class ProductManager {
 
         let productIndex = this.products.findIndex( product => product.id === queryId)
         if (productIndex != -1) {
-            this.products[productIndex] = new Product({queryId, ...productObject})
+            this.products[productIndex] = new Product({id:queryId, ...productObject})
             this.saveProductManager()
             console.log(`Updated product with id ${queryId}`)
 
