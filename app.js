@@ -1,8 +1,8 @@
 import ProductManager from "./productManagementUtils.js";
 import express from 'express';
 
-const App = express();
-App.use(express.urlencoded({extended:true}))
+const app = express();
+app.use(express.urlencoded({extended:true}))
 const PORT = 8080
 
 const FILENAME='products.json'
@@ -33,14 +33,14 @@ function filterProducts (products,query) {
 }
 
 
-App.get('/', (req,res) => {
+app.get('/', (req,res) => {
     res.send(
         `<h4> The expres server is alive</h4>
         <p> Go to /products route to browse products or to /products/ID if you know the ID of the product </p>`
     )
 })
 
-App.get('/products', (req,res) => {
+app.get('/products', (req,res) => {
     const { includesString, minPrice, maxPrice, minStock, maxStock, limit } = req.query;
 
     //In the future we will make an actual validation of the parameters
@@ -55,7 +55,7 @@ App.get('/products', (req,res) => {
     )
 })
 
-App.get('/products/:productId', (req,res) => {
+app.get('/products/:productId', (req,res) => {
     const { productId } = req.params;
     let products = productManager.getProducts()
     let validId = products.some((item) => Number(item.id) === Number(productId) )
@@ -69,6 +69,6 @@ App.get('/products/:productId', (req,res) => {
     ${content} `)
 })
 
-App.listen(PORT, () => {
+app.listen(PORT, () => {
     console.log(`App listening to port ${PORT}. Go to http://localhost:3000. Note HTTPS is not supported, only HTTP.`)
 })
