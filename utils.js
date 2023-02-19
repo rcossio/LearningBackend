@@ -63,7 +63,8 @@ class ProductManager {
             status = false
         }
 
-        if (!( Array.isArray(thumbnail) )) {
+        //Temporarily we will allow undefined thumbnails until we get multer to work with arrays
+        if (!( Array.isArray(thumbnail) ) && !(thumbnail===undefined)) {
             return {success: false, error: 'invalid thumbnail', product:null}
         }
 
@@ -251,19 +252,30 @@ class CartManager {
         let cartIndex = this.carts.findIndex( cart => cart.id === cartId)
 
         if (cartIndex == -1) {
-            return {success: true, error: 'non-existent id', cart:null}
+            return {success: false, error: 'non-existent id', cart:null}
         }
         let cart = this.carts[cartIndex]
-        let newProductsArray = cart.productsArray.map ( ({product,quantity}) => {
-            if (product === productId) {
-                quantity++
-            }
-            return {product, quantity}
-        } )
+
+        let newProductsArray
+        if (cart.productsArray.some( ({product,quantity}) => product === productId)) {
+            newProductsArray = cart.productsArray.map ( ({product,quantity}) => {
+                if (product === productId) {
+                    quantity++
+                }
+                return {product, quantity}
+            } )
+        } else {
+            newProductsArray = cart.productsArray
+            newProductsArray.push({product:productId , quantity:1})
+        }
+
         let newCart = {id:cartId, productsArray:newProductsArray}
         this.carts[cartIndex] = newCart
         this.saveCartManager()
+
         return {success: true, error: null, cart:newCart}
+
+
     }
 
 }

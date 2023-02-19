@@ -20,6 +20,10 @@ in a terminal.
 
 `npm install multer`
 
+`npm install express-handlebars`
+
+`npm install socket.io`
+
 or simply
 
 `npm install`.
@@ -51,3 +55,9 @@ This script also loads 10 products inspired by [IKEA](https://www.ikea.com/ie/en
 The validity of query params while searching for products is not being validated. Therefore, strange behaviour is expected when params are not used correctly, such as http://localhost:8080/products?limit=-1.
 
 Products have validation type (string, integer, number, etc), but there is no validation on their values. You could have a product with stock = -27 since it is an integer number, even if it isn't realistic.
+
+The validity of productId is not cheked when adding it to the cart.
+
+### Tasklist
+
+- Use multer to upload many thumbnail files

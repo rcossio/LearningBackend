@@ -64,6 +64,7 @@ router.get('/:productId', (req,res) => {
 
 
 router.post('/', (req,res) => {
+    const files = req.files
     const { success, error, product } = productManager.addProduct(req.body)   
 
     res.json({success,

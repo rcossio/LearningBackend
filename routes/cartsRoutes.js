@@ -1,5 +1,7 @@
 import { CartManager } from "../utils.js";
 import { Router } from "express";
+import { uploader } from "../multerConfig.js";
+//We didn't configure multer yet
 
 const router = Router()
 
