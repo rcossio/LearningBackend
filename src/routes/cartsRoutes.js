@@ -1,11 +1,13 @@
 import { CartManager } from "../utils.js";
 import { Router } from "express";
 import { uploader } from "../multerConfig.js";
+import {__dirname} from '../abs_path.js';
+
 //We didn't configure multer yet
 
 const router = Router()
 
-const CARTFILENAME='carts.json';
+const CARTFILENAME=__dirname+'/carts.json';
 let cartManager = new CartManager(CARTFILENAME);
 
 router.get('/', (req,res) => {

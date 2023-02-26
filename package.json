@@ -5,8 +5,7 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "loadProducts": "node loadProducts.js",
-    "start:nodemon": "npx nodemon app.js --delay 10"
+    "loadProducts": "node src/loadProducts.js"
   },
   "repository": {
     "type": "git",

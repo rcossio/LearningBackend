@@ -47,8 +47,9 @@ This script also loads 10 products inspired by [IKEA](https://www.ikea.com/ie/en
 
 7. Go to [http://localhost:8080/products/2](http://localhost:8080/products/2) to see product with ID 2. Or choose other IDs
 
-8. Regarding the managemente of the products: You can use GET methods in /products, /products/:productId. POST method in /products. PUT and DELETE method in  /products/:productId/
+8. Regarding the management of the products: You can use GET methods in /products, /products/:productId. POST method in /products. PUT and DELETE method in  /products/:productId/
 
+9. You can go to http://localhost:8080/realproducts to enable socket.io connection. In parallel you can use postman to erase o create a new product. To update click on the Update button provided. Note that even if the connection is instantaneous, the app does not update the products loaded in memory. The update button forces the app to re-read the product files. This is not the ideal behaviour for the app, it must be improved.
 
 ### Known issues
 

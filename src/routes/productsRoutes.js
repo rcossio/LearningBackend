@@ -1,9 +1,10 @@
 import { ProductManager } from "../utils.js";
 import { Router } from "express";
+import {__dirname} from '../abs_path.js';
 
 const router = Router()
 
-const FILENAME='products.json';
+const FILENAME=__dirname+'/products.json';
 let productManager = new ProductManager(FILENAME);
 
 // This function should probably be imported from a module but I am not sure if 

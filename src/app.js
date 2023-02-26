@@ -5,12 +5,11 @@ import { router as viewsRoutes } from './routes/viewsRoutes.js';
 import cookieParser from 'cookie-parser';
 import handlebars from 'express-handlebars';
 import { Server } from 'socket.io';
-
 import {ProductManager} from "./utils.js";
+import {__dirname} from './abs_path.js';
 
-const FILENAME='products.json'
+const FILENAME=__dirname+'/products.json'
 let productManager = new ProductManager(FILENAME)
-let {success, error, products} = productManager.getProducts()
 
 const PORT = 8080;
 const BASENAME = '/api'
@@ -18,14 +17,14 @@ const BASENAME = '/api'
 const app = express();
 
 app.engine('handlebars',handlebars.engine())
-app.set('views','./views')
+app.set('views',__dirname+'/views')
 app.set('view engine','handlebars')
 
 app.use(express.urlencoded({extended:true}))
 app.use(express.json());
 app.use(cookieParser());
 
-app.use(express.static('./public'))
+app.use(express.static(__dirname+'/public'))
 
 let welcomeHTML = `<h4> The API is alive</h4>
                 <p> Go to ${BASENAME}/products route to browse products or to ${BASENAME}/products/ID if you know the ID of the product </p>` 

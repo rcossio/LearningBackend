@@ -1,9 +1,10 @@
 import {ProductManager,CartManager} from "./utils.js";
 import * as fs from 'fs';
+import * as path from 'path';
 
-
-const FILENAME='products.json'
-const CARTFILENAME='carts.json'
+const __dirname = path.dirname(__filename);
+const FILENAME=__dirname+'products.json'
+const CARTFILENAME=__dirname+'carts.json'
 
 fs.existsSync(FILENAME) && fs.unlinkSync(FILENAME)
 fs.existsSync(CARTFILENAME) && fs.unlinkSync(CARTFILENAME)
