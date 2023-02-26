@@ -6,6 +6,12 @@ import cookieParser from 'cookie-parser';
 import handlebars from 'express-handlebars';
 import { Server } from 'socket.io';
 
+import {ProductManager} from "./utils.js";
+
+const FILENAME='products.json'
+let productManager = new ProductManager(FILENAME)
+let {success, error, products} = productManager.getProducts()
+
 const PORT = 8080;
 const BASENAME = '/api'
 
@@ -43,5 +49,11 @@ const server = app.listen(PORT, () => {
 
 const io = new Server(server)
 io.on('connection', (socket)=> {
-    console.log("Websocket connectet")
+    console.log("A user has connected")
+
+    socket.emit('realTimeProducts', productManager.getProducts().products)
+
+    socket.on("update",(data) => {
+        socket.emit('realTimeProducts', productManager.getProducts().products)
+    })
 })

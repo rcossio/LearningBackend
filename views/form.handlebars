@@ -1,0 +1,33 @@
+<h1>This is provided by handlebars</h1>
+<p> This is a welcoming page</p>
+<p> You CAN leave thumbnails empty</p>
+
+<form action="/api/products" method="post">
+    <label>Title:</label>
+    <input name="title"/>
+    <br/>
+    <label>Description:</label>
+    <input name="description"/>
+    <br/>
+    <label>Price:</label>
+    <input name="price"/>
+    <br/>
+    <label>Code:</label>
+    <input name="code"/>
+    <br/>
+    <label>Stock:</label>
+    <input name="stock"/>
+    <br/>
+    <label>Category:</label>
+    <input name="category"/>
+    <br/>
+    <label>Status:</label>
+    <input name="status"/>
+    <br/>
+    <label>Thumbnail:</label>
+    <input type="file" name="thumbnails"/>
+    <br/>
+    <input type="submit"/>
+</form>   
+<script src="./socket.io/socket.io.js"></script>
+<script src="./js/index.js"></script>
