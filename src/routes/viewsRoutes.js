@@ -1,19 +1,25 @@
 import { Router } from "express";
-import {ProductManager} from "../utils.js";
-import {__dirname} from '../abs_path.js';
-
-const FILENAME=__dirname+'/products.json'
-let productManager = new ProductManager(FILENAME)
-let {success, error, products} = productManager.getProducts()
+import {__dirname} from '../path_utils.js';
+import { productManager } from "../app.js";
 
 const router = Router()
 
 router.get('/', (req,res) => {
-    res.render('index',{layout: 'main',products})
+    try {
+        let products = productManager.getProducts()
+        res.render('index',{layout: 'main',products})
+    } catch (error) {
+        res.json({status: 'error', payload: error})
+    }
 })
 
 router.get('/realtimeproducts', (req,res) => {
-    res.render('realTimeProducts',{layout: 'main'})
+    try {
+        let products = productManager.getProducts()
+        res.render('realTimeProducts',{layout: 'main'})
+    } catch (error) {
+        res.json({status: 'error', payload: error})
+    }
 })
 
 

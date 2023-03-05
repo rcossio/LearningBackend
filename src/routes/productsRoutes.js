@@ -1,100 +1,67 @@
-import { ProductManager } from "../utils.js";
 import { Router } from "express";
-import {__dirname} from '../abs_path.js';
+import { productManager } from "../app.js";
 
 const router = Router()
 
-const FILENAME=__dirname+'/products.json';
-let productManager = new ProductManager(FILENAME);
-
-// This function should probably be imported from a module but I am not sure if 
-// it is intended to be the producManagemente module, so I am not integrating it yet
-function typifyFilterParams ({ includesString, minPrice, maxPrice, minStock, maxStock, limit }) {
-    
-    includesString  = (typeof includesString === 'undefined') ? null: String(includesString)
-    minPrice        = Number(minPrice)
-    maxPrice        = Number(maxPrice)
-    minStock        = parseInt(minStock)
-    maxStock        = parseInt(maxStock)
-    limit           = parseInt(limit)
-
-    return { includesString, minPrice, maxPrice, minStock, maxStock, limit }
-}
-
 function filterProducts (products,{ includesString, minPrice, maxPrice, minStock, maxStock, limit }) {
-
-    if (!isNaN(minPrice)) {
-        products = products.filter((item) => item.price >= minPrice  ) }
-    if (!isNaN(maxPrice)) {
-        products = products.filter((item) => item.price <= maxPrice  ) }
-    if (!isNaN(minStock)) {
-        products = products.filter((item) => item.stock >= minStock  ) }
-    if (!isNaN(maxStock)) {
-        products = products.filter((item) => item.stock <= maxStock  ) }
-    if (!isNaN(limit)) {
-        products = products.slice(0,limit) }
-    if (includesString !== null) {
-        products = products.filter((item) => (item.title.includes(includesString) || item.description.includes(includesString)) )  }
+    minPrice && (products = products.filter((item) => item.price >= minPrice) )
+    maxPrice && (products = products.filter((item) => item.price <= maxPrice) )
+    minStock && (products = products.filter((item) => item.stock >= minStock) )
+    maxStock && (products = products.filter((item) => item.stock <= maxStock) )
+    limit && (products = products.slice(0,limit) )
+    includesString && (products = products.filter((item) => (item.title.includes(includesString) || item.description.includes(includesString)) ) )
 
     return products
 }
 
-
 router.get('/', (req,res) => {
-    let filterParams = typifyFilterParams(req.query)
-    const { success, error, products } = productManager.getProducts()
-    let filteredProducts = filterProducts(products,filterParams)
-
-    res.json({success,
-            request: filterParams,
-            error,
-            data: filteredProducts
-        }) 
+    try {
+        let { includesString, minPrice, maxPrice, minStock, maxStock, limit } = req.query
+        const products = productManager.getProducts()
+        let filteredProducts = filterProducts(products, {includesString, minPrice, maxPrice, minStock, maxStock, limit} )
+        res.json({status: 'success', payload: filteredProducts})
+    } catch (error) {
+        res.json({status: 'error', payload: error})
+    }
 })
 
 
 router.get('/:productId', (req,res) => {
-    const { success, error, product } = productManager.getProductById(req.params.productId)
-
-    res.json({success,
-            request: {id: req.params.productId},
-            error,
-            data: product
-    }) 
+    try {
+        const product = productManager.getProductById(req.params.productId)
+        res.json({status: 'success', payload: product}) 
+    } catch (error) {
+        res.json({status: 'error', payload: error})
+    }
 })
 
 
 router.post('/', (req,res) => {
-    const files = req.files
-    const { success, error, product } = productManager.addProduct(req.body)   
-
-    res.json({success,
-            request: { ...req.body },
-            error,
-            data: product
-    }) 
+    try {
+        const product = productManager.addProduct(req.body)   
+        res.json({status: 'success', payload: product})
+    } catch (error) {
+        res.json({status: 'error', payload: error})
+    }
 })
 
+
 router.put('/:productId', (req,res)=>{
-    const { success, error, product } = productManager.updateProduct({ id: req.params.productId, ...req.body })
-
-    res.json({ success,
-            request: { id: req.params.productId, ...req.body },
-            error,
-            data: product
-    }) 
-
+    try{
+        const product = productManager.updateProduct({ id: req.params.productId, ...req.body })
+        res.json({status: 'success', payload: product})
+    } catch (error) {
+        res.json({status: 'error', payload: error})
+    }
 })
 
 router.delete('/:productId', (req,res)=>{
-    let { success, error } = productManager.deleteProduct(req.params.productId)
-
-    res.json({ success,
-            request: {id: req.params.productId},
-            error,
-            data: null,
-    }) 
-    
+    try {
+        let message = productManager.deleteProduct(req.params.productId)
+        res.json({status: 'success', payload: message})
+    } catch (error) {
+        res.json({status: 'error', payload: error})
+    }    
 })
 
 export {router};

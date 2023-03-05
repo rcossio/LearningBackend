@@ -1,58 +1,53 @@
 import { CartManager } from "../utils.js";
 import { Router } from "express";
-import { uploader } from "../multerConfig.js";
-import {__dirname} from '../abs_path.js';
-
-//We didn't configure multer yet
+import {__dirname} from '../path_utils.js';
 
 const router = Router()
 
 const CARTFILENAME=__dirname+'/carts.json';
 let cartManager = new CartManager(CARTFILENAME);
 
-router.get('/', (req,res) => {
-    const {success, error, carts} = cartManager.getCarts()
 
-    res.json({ success,
-            request: null,
-            error,
-            data: carts
-    }) 
+router.get('/', (req,res) => {
+    try {
+        const carts = cartManager.getCarts()
+        res.json({status: 'success', payload: carts})
+    } catch (error) {
+        res.json({status: 'error', payload: error})
+    } 
 })
+
 
 router.post('/', (req,res) => {
-    const {productsArray} = req.body
-    let {success, error, cart} = cartManager.addCart({productsArray}) 
-
-    res.json({ success,
-            request: {productsArray},
-            error,
-            data: cart
-    }) 
+    try{
+        const {productsArray} = req.body
+        let cart = cartManager.addCart({productsArray}) 
+        res.json({status: 'success', payload: cart})
+    } catch (error) {
+        res.json({status: 'error', payload: error})
+    }
 })
+
 
 router.get('/:cartId', (req,res) => {
-    const { success, error, cart } = cartManager.getCartById(req.params.cartId)
-
-    res.json({
-        success,
-        request: {id:req.params.cartId},
-        error,
-        data: cart
-    }) 
+    try {
+        const cart = cartManager.getCartById(req.params.cartId)
+        res.json({status: 'success', payload: cart}) 
+    } catch (error) {
+        res.json({status: 'error', payload: error})
+    }
 })
 
-router.post('/:cartId/product/:productId', (req,res) => {
-    let cartId = req.params.cartId;
-    let productId = req.params.productId;
-    const { success, error, cart } = cartManager.addProductToCartByIds(cartId,productId)
 
-    res.json({
-        success,
-        request: {cartId,productId},
-        error,
-        data: cart
-    }) 
+router.post('/:cartId/product/:productId', (req,res) => {
+    try {
+        let cartId = req.params.cartId;
+        let productId = req.params.productId;
+        const cart = cartManager.addProductToCartByIds(cartId,productId)
+        res.json({status: 'success', payload: cart})
+    } catch (error) {
+        res.json({status: 'error', payload: error})
+    }
 })
 
 export {router};

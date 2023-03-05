@@ -24,6 +24,8 @@ in a terminal.
 
 `npm install socket.io`
 
+`npm install mongoose`
+
 or simply
 
 `npm install`.
