@@ -6,13 +6,10 @@ import { router as apiRoutes } from './routes/apiRoutes.js';
 import cookieParser from 'cookie-parser';
 import handlebars from 'express-handlebars';
 import { Server } from 'socket.io';
-import {ProductManager} from "./utils.js";
 import {__dirname} from './path_utils.js';
 import * as mongoose from 'mongoose';
+import displayRoutes from 'express-routemap';
 
-// Product manager
-const FILENAME=__dirname+'/products.json'
-let productManager = new ProductManager(FILENAME)
 
 // Express server
 const PORT = 8080;
@@ -35,6 +32,7 @@ app.engine('handlebars',handlebars.engine())
 app.set('views',__dirname+'/views')
 app.set('view engine','handlebars')
 
+
 // Express middlewares
 app.use(express.urlencoded({extended:true}))
 app.use(express.json());
@@ -51,11 +49,13 @@ app.use(`${BASENAME}/carts`, cartsRoutes);
 
 // Mounting the server
 const server = app.listen(PORT, () => {
+    displayRoutes(app);
     console.log(`App listening to port ${PORT}. Go to http://localhost:8080. Note HTTPS is not supported, only HTTP.`)
 })
 
 // Socket.io
 // TODO: Put this block in a separate file
+// FIX: This will raise an error since productManager is not defined
 const io = new Server(server)
 io.on('connection', (socket)=> {
     console.log("A user has connected")
@@ -65,4 +65,3 @@ io.on('connection', (socket)=> {
     })
 })
 
-export { productManager }

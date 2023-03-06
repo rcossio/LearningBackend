@@ -9,7 +9,9 @@ const productSchema = new mongoose.Schema({
     thumbnail: {type : Array, required: true},
     code: {type : String, required: true, unique: true},
     stock: {type : Number, required: true},
-    category: {type : String, required: true},
+    category: {type : String, required: true, 
+            enum: ['Kitchen', 'Living room', 'Bedroom', 'Bathroom', 'Office', 'Garden', 'Other'] 
+        },
     status: {type : Boolean, required: true},
 })
 

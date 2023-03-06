@@ -1,34 +1,30 @@
 import { Router } from "express";
-import { productManager } from "../app.js";
+import productModel from "../model/products.model.js";
 
 const router = Router()
 
-function filterProducts (products,{ includesString, minPrice, maxPrice, minStock, maxStock, limit }) {
-    minPrice && (products = products.filter((item) => item.price >= minPrice) )
-    maxPrice && (products = products.filter((item) => item.price <= maxPrice) )
-    minStock && (products = products.filter((item) => item.stock >= minStock) )
-    maxStock && (products = products.filter((item) => item.stock <= maxStock) )
-    limit && (products = products.slice(0,limit) )
-    includesString && (products = products.filter((item) => (item.title.includes(includesString) || item.description.includes(includesString)) ) )
-
-    return products
-}
-
-router.get('/', (req,res) => {
+router.get('/', async (req,res) => {
     try {
-        let { includesString, minPrice, maxPrice, minStock, maxStock, limit } = req.query
-        const products = productManager.getProducts()
-        let filteredProducts = filterProducts(products, {includesString, minPrice, maxPrice, minStock, maxStock, limit} )
-        res.json({status: 'success', payload: filteredProducts})
+        let { minPrice, maxPrice, minStock, maxStock, limit } = req.query
+        
+        const defaultLimit = 10
+        const filters = {}
+        minPrice && (filters.price = { $gte: minPrice })
+        maxPrice && (filters.price = { $lte: maxPrice, ...filters.price })
+        minStock && (filters.stock = { $gte: minStock })
+        maxStock && (filters.stock = { $lte: maxStock, ...filters.stock })
+
+        const products = await productModel.find(filters).limit(limit? limit: defaultLimit);
+        res.json({status: 'success', payload: products})
     } catch (error) {
         res.json({status: 'error', payload: error})
     }
 })
 
 
-router.get('/:productId', (req,res) => {
+router.get('/:productId', async (req,res) => {
     try {
-        const product = productManager.getProductById(req.params.productId)
+        const product = await productModel.findById(req.params.productId)
         res.json({status: 'success', payload: product}) 
     } catch (error) {
         res.json({status: 'error', payload: error})
@@ -36,29 +32,30 @@ router.get('/:productId', (req,res) => {
 })
 
 
-router.post('/', (req,res) => {
+router.post('/',async (req,res) => {
     try {
-        const product = productManager.addProduct(req.body)   
-        res.json({status: 'success', payload: product})
+        const result = await productModel.create(req.body)  
+        res.json({status: 'success', payload: result})
     } catch (error) {
         res.json({status: 'error', payload: error})
     }
 })
 
 
-router.put('/:productId', (req,res)=>{
+router.put('/:productId', async (req,res)=>{
     try{
-        const product = productManager.updateProduct({ id: req.params.productId, ...req.body })
+        const product = await productModel.updateOne({ _id: req.params.productId }, { $set: req.body } )
         res.json({status: 'success', payload: product})
     } catch (error) {
         res.json({status: 'error', payload: error})
     }
 })
 
-router.delete('/:productId', (req,res)=>{
+
+router.delete('/:productId', async (req,res)=>{
     try {
-        let message = productManager.deleteProduct(req.params.productId)
-        res.json({status: 'success', payload: message})
+        const result = await productModel.deleteOne({ _id: req.params.productId })
+        res.json({status: 'success', payload: result})
     } catch (error) {
         res.json({status: 'error', payload: error})
     }    

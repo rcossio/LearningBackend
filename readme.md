@@ -26,6 +26,8 @@ in a terminal.
 
 `npm install mongoose`
 
+`npm install express-routemap`
+
 or simply
 
 `npm install`.
