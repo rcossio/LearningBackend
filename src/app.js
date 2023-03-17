@@ -9,17 +9,11 @@ import { Server } from 'socket.io';
 import {__dirname} from './path_utils.js';
 import * as mongoose from 'mongoose';
 import displayRoutes from 'express-routemap';
-
+import {PORT, DB_HOST, DB_NAME, DB_PORT} from './config/config.js';
 
 // Express server
-const PORT = 8080;
 const BASENAME = '/api'
 const app = express();
-
-// MongoDB connection
-const DB_HOST = 'localhost'
-const DB_PORT = 27017
-const DB_NAME = 'ecommerce'
 
 mongoose.set('strictQuery', false);
 const connection = mongoose
@@ -65,3 +59,12 @@ io.on('connection', (socket)=> {
     })
 })
 
+// THIS IS TO CONNECT TO MONGODB ATLAS
+/* const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = "mongodb+srv://radossio:<password>@cluster0.hgqsmv1.mongodb.net/?retryWrites=true&w=majority";
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+client.connect(err => {
+  const collection = client.db("test").collection("devices");
+  // perform actions on the collection object
+  client.close();
+}); */

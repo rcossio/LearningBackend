@@ -28,6 +28,8 @@ in a terminal.
 
 `npm install express-routemap`
 
+`npm install dotenv`
+
 or simply
 
 `npm install`.
