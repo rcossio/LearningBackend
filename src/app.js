@@ -3,7 +3,7 @@ import { router as productsRoutes } from './routes/productsRoutes.js';
 import { router as cartsRoutes } from './routes/cartsRoutes.js';
 import { router as viewsRoutes } from './routes/viewsRoutes.js';
 import { router as apiRoutes } from './routes/apiRoutes.js';
-import configureSocket from './webSocket.js';
+import configureSocket from './websocket/webSocket.js';
 import cookieParser from 'cookie-parser';
 import handlebars from 'express-handlebars';
 import {__dirname} from './path_utils.js';
