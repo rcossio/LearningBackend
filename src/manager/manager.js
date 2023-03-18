@@ -1,5 +1,7 @@
 import * as fs from 'fs';
 
+//THIS IS AN OLD VERSION OF THE MANAGER, IT IS NOT USED ANYMORE
+//IT IS KEPT HERE FOR FUTURE EVALUATION
 
 class Product {
     constructor({id,title, description, price, thumbnail, code, stock, category,status}) {
