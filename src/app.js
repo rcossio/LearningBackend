@@ -3,9 +3,9 @@ import { router as productsRoutes } from './routes/productsRoutes.js';
 import { router as cartsRoutes } from './routes/cartsRoutes.js';
 import { router as viewsRoutes } from './routes/viewsRoutes.js';
 import { router as apiRoutes } from './routes/apiRoutes.js';
+import configureSocket from './webSocket.js';
 import cookieParser from 'cookie-parser';
 import handlebars from 'express-handlebars';
-import { Server } from 'socket.io';
 import {__dirname} from './path_utils.js';
 import * as mongoose from 'mongoose';
 import displayRoutes from 'express-routemap';
@@ -48,18 +48,12 @@ const server = app.listen(PORT, () => {
 })
 
 // Socket.io
-// TODO: Put this block in a separate file
-// FIX: This will raise an error since productManager is not defined
-const io = new Server(server)
-io.on('connection', (socket)=> {
-    console.log("A user has connected")
-    socket.emit('realTimeProducts', productManager.getProducts().products)
-    socket.on("update",(data) => {
-        socket.emit('realTimeProducts', productManager.getProducts().products)
-    })
-})
+configureSocket(server)
 
-// THIS IS TO CONNECT TO MONGODB ATLAS
+
+// THIS IS TO CONNECT TO MONGODB ATLAS 
+// ACCORDING TO ATLAS DOCUMENTATION
+// I HAVE NEVER TESTED IT
 /* const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://radossio:<password>@cluster0.hgqsmv1.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });

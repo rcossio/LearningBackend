@@ -5,7 +5,8 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "loadProducts": "node src/loadProducts.js"
+    "loadProducts": "node tests/loadProducts.js",
+    "startServer": "node src/app.js"
   },
   "repository": {
     "type": "git",

@@ -1,10 +1,7 @@
 import * as mongoose from 'mongoose';
 import productModel from "../src/model/products.model.js";
+import { DB_HOST,DB_PORT,DB_NAME } from "../src/config/config.js";
 
-
-const DB_HOST = 'localhost'
-const DB_PORT = 27017
-const DB_NAME = 'ecommerce'
 
 let productsData = [
     {

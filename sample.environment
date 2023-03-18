@@ -6,9 +6,4 @@ API_VERSION=v1.0.0
 #BD
 DB_HOST=localhost
 DB_PORT=27017
-DB_NAME=Cluster0
-DB_PASSWORD=SECRET
-DB_USER=radossio
-
-#CORS
-ORIGIN = *
+DB_NAME=ecommerce

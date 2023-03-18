@@ -12,7 +12,7 @@ socket.on('realTimeProducts', (products)=>{
     for (let i = 0; i < products.length; i++) {
         let {title, id, description,stock,code,category,price,status} = products[i]
         content += `<li>
-                    <h6>${title}</h6>
+                    <h6>Title: ${title}</h6>
                     <p>ID: ${id}</p>
                     <p>Description: ${description}</p>
                     <p>Stock: ${stock}</p>
