@@ -1,20 +1,21 @@
+import {__dirname} from './utils.js';
 import express from 'express';
+import * as mongoose from 'mongoose';
 import { router as productsRoutes } from './routes/productsRoutes.js';
 import { router as cartsRoutes } from './routes/cartsRoutes.js';
 import { router as viewsRoutes } from './routes/viewsRoutes.js';
 import { router as apiRoutes } from './routes/apiRoutes.js';
 import configureSocket from './websocket/webSocket.js';
-import cookieParser from 'cookie-parser';
 import handlebars from 'express-handlebars';
-import {__dirname} from './path_utils.js';
-import * as mongoose from 'mongoose';
 import displayRoutes from 'express-routemap';
 import {PORT, DB_HOST, DB_NAME, DB_PORT} from './config/config.js';
+import cookieParser from 'cookie-parser';
 
 // Express server
 const BASENAME = '/api'
 const app = express();
 
+// Mongoose
 mongoose.set('strictQuery', false);
 const connection = mongoose
     .connect(`mongodb://${DB_HOST}:${DB_PORT}/${DB_NAME}`)
@@ -49,16 +50,3 @@ const server = app.listen(PORT, () => {
 
 // Socket.io
 configureSocket(server)
-
-
-// THIS IS TO CONNECT TO MONGODB ATLAS 
-// ACCORDING TO ATLAS DOCUMENTATION
-// I HAVE NEVER TESTED IT
-/* const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://radossio:<password>@cluster0.hgqsmv1.mongodb.net/?retryWrites=true&w=majority";
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-client.connect(err => {
-  const collection = client.db("test").collection("devices");
-  // perform actions on the collection object
-  client.close();
-}); */

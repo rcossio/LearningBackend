@@ -1,6 +1,6 @@
 import * as mongoose from 'mongoose';
-import productModel from "../src/model/products.model.js";
-import { DB_HOST,DB_PORT,DB_NAME } from "../src/config/config.js";
+import productModel from "../model/products.model.js";
+import { DB_HOST,DB_PORT,DB_NAME } from "../config/config.js";
 
 
 let productsData = [
@@ -22,7 +22,7 @@ let productsData = [
         code:       'UUU875',
         stock:      '30',
         category:   'Kitchen',
-        status: true
+        status: false
     },
     {
         title:      'HEAT', 
@@ -42,7 +42,7 @@ let productsData = [
         code:       '205.293.97',
         stock:      '90',
         category:   'Kitchen',
-        status: true
+        status: false
     },     
     {
         title:      'IDEALISK', 
@@ -52,7 +52,7 @@ let productsData = [
         code:       '501.037.55',
         stock:      '20',
         category:   'Kitchen',
-        status: true
+        status: false
     }, 
     {
         title:      'GUBBRORA', 
@@ -122,7 +122,7 @@ let productsData = [
         code:       '102.570.33',
         stock:      '3',
         category:   'Kitchen',
-        status: true
+        status: false
     }
 ]   
 

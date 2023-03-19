@@ -1,0 +1,5 @@
+Leer las diapositivas y corregir esta lista:
+
+Implementar paginación en handlebars
+Implementar sorting en handlebars
+Implementar delete en carritos

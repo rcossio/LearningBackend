@@ -30,6 +30,8 @@ in a terminal.
 
 `npm install dotenv`
 
+`npm install mongoose-paginate-v2`
+
 or simply
 
 `npm install`.
