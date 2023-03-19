@@ -38,7 +38,7 @@ or simply
 
 4. For testing, first load some products withLoad Test the code with:
 
-`node loadProducts.js`
+`node src/data/loadProducts.js`
 
 or
 
@@ -48,7 +48,11 @@ This script also loads 10 products inspired by [IKEA](https://www.ikea.com/ie/en
 
 
 5. Enable the server with
-`node app.js`
+`node src/app.js`
+
+or 
+
+`npm init startServer`
 
 
 6. Go to [http://localhost:8080/products](http://localhost:8080/products) and make a query. Example: [http://localhost:8080/products?maxPrice=10&minStock=20](http://localhost:8080/products?maxPrice=10&minStock=20)
@@ -59,14 +63,9 @@ This script also loads 10 products inspired by [IKEA](https://www.ikea.com/ie/en
 
 9. You can go to http://localhost:8080/realproducts to enable socket.io connection. In parallel you can use postman to erase o create a new product. To update click on the Update button provided. Note that even if the connection is instantaneous, the app does not update the products loaded in memory. The update button forces the app to re-read the product files. This is not the ideal behaviour for the app, it must be improved.
 
-### Known issues
-
-The validity of query params while searching for products is not being validated. Therefore, strange behaviour is expected when params are not used correctly, such as http://localhost:8080/products?limit=-1.
-
-Products have validation type (string, integer, number, etc), but there is no validation on their values. You could have a product with stock = -27 since it is an integer number, even if it isn't realistic.
-
-The validity of productId is not cheked when adding it to the cart.
+10. There are many other features added for the Second presentation of the course, but I had no time to document this. Sorry
 
 ### Tasklist
 
 - Use multer to upload many thumbnail files
+- Make a class base cart/product manager
