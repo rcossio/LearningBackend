@@ -1,6 +1,6 @@
 import * as mongoose from 'mongoose';
-import productModel from "../model/products.model.js";
-import { DB_HOST,DB_PORT,DB_NAME } from "../config/config.js";
+import productModel from "../models/products.model.js";
+import { PORT, DB_ATLAS_USER, DB_ATLAS_NAME, DB_ATLAS_PASSWD, DB_ATLAS_DOMAIN } from '../config/config.js';
 
 
 let productsData = [
@@ -128,7 +128,7 @@ let productsData = [
 
 mongoose.set('strictQuery', false);
 
-const connection = mongoose.connect(`mongodb://${DB_HOST}:${DB_PORT}/${DB_NAME}`)
+const connection = mongoose.connect(`mongodb+srv://${DB_ATLAS_USER}:${DB_ATLAS_PASSWD}@${DB_ATLAS_DOMAIN}/${DB_ATLAS_NAME}?retryWrites=true&w=majority`)
                         .then( async () => {
                             try {
                                 console.log('Connected to MongoDB');

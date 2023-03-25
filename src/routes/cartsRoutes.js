@@ -1,5 +1,5 @@
 import { Router } from "express";
-import cartModel from "../model/carts.model.js";
+import cartModel from "../models/carts.model.js";
 
 
 const router = Router()
@@ -54,13 +54,14 @@ router.delete('/:cartId', async (req,res) => {
 })
 
 
-//TO DO: This should be handles by a cartManager class or similar
 router.put('/:cartId/product/:productId', async (req,res) => {
     try {
         let cartId = req.params.cartId;
         let productId = req.params.productId;
         const {quantity} = req.body
-        
+
+        // Perharps this is a better implementation
+        // const newCart = await cartManager.updateProductQuantity(cartId, productId, quantity)
         const cart = await cartModel.findById(req.params.cartId)
         let newProductsArray = cart.products.map( item => { 
             if (item.product._id.toString() === productId) { 
@@ -75,12 +76,14 @@ router.put('/:cartId/product/:productId', async (req,res) => {
     }
 })
 
-//TO DO: This should be handles by a cartManager class or similar
+
 router.post('/:cartId/product/:productId', async (req,res) => {
     try {
         let cartId = req.params.cartId;
         let productId = req.params.productId;
         
+        // Perharps this is a better implementation
+        // const newCart = await cartManager.addProductToCart(cartId, productId)
         const cart = await cartModel.findById(req.params.cartId)
         let newProductsArray = cart.products.map( item => { 
             if (item.product._id.toString() === productId) { 
@@ -96,16 +99,16 @@ router.post('/:cartId/product/:productId', async (req,res) => {
 })
 
 
-//TO DO: This should be handles by a cartManager class or similar
+
 router.delete('/:cartId/product/:productId', async (req,res) => {
     try {
         let cartId = req.params.cartId;
         let productId = req.params.productId;
         
+        // Perharps this is a better implementation
+        // const newCart = await cartManager.deleteProductFromCart(cartId, productId)
         const cart = await cartModel.findById(req.params.cartId)
-
         let newProductsArray = cart.products.filter( (item) => item.product._id.toString() !== String(productId))
-
         const result = await cartModel.updateOne({ _id: req.params.cartId }, { $set: { products: newProductsArray } } )
         res.json({status: 'success', payload: result})
     } catch (error) {

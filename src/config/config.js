@@ -8,7 +8,8 @@ export const {
     NODE_ENV,
     PORT,
     API_VERSION,
-    DB_HOST,
-    DB_PORT,
-    DB_NAME,
+    DB_ATLAS_USER,
+    DB_ATLAS_PASSWD,
+    DB_ATLAS_DOMAIN,
+    DB_ATLAS_NAME,
 } = process.env;

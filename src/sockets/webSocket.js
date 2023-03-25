@@ -1,5 +1,5 @@
 import { Server } from 'socket.io';
-import productModel from "../model/products.model.js";
+import productModel from "../models/products.model.js";
 
 
 function configureSocket(server) {

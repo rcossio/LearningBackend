@@ -1,3 +1,6 @@
+// This route is not very important
+// I just leave it to have a custom middleware implemented
+
 import { Router } from "express";
 
 const router = Router()

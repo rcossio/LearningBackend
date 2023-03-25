@@ -1,26 +1,26 @@
-import {__dirname} from './utils.js';
+import {__dirname} from './utils/dirname.js';
 import express from 'express';
 import * as mongoose from 'mongoose';
 import { router as productsRoutes } from './routes/productsRoutes.js';
 import { router as cartsRoutes } from './routes/cartsRoutes.js';
 import { router as viewsRoutes } from './routes/viewsRoutes.js';
-import { router as apiRoutes } from './routes/apiRoutes.js';
-import configureSocket from './websocket/webSocket.js';
+import { router as basenameRoutes } from './routes/basenameRoutes.js';
+import configureSocket from './sockets/webSocket.js';
 import handlebars from 'express-handlebars';
 import displayRoutes from 'express-routemap';
-import {PORT, DB_HOST, DB_NAME, DB_PORT} from './config/config.js';
+import { PORT, DB_ATLAS_USER, DB_ATLAS_NAME, DB_ATLAS_PASSWD, DB_ATLAS_DOMAIN } from './config/config.js';
 import cookieParser from 'cookie-parser';
 
 // Express server
-const BASENAME = '/api'
 const app = express();
 
 // Mongoose
 mongoose.set('strictQuery', false);
 const connection = mongoose
-    .connect(`mongodb://${DB_HOST}:${DB_PORT}/${DB_NAME}`)
+    .connect(`mongodb+srv://${DB_ATLAS_USER}:${DB_ATLAS_PASSWD}@${DB_ATLAS_DOMAIN}/${DB_ATLAS_NAME}?retryWrites=true&w=majority`)
     .then(() => console.log('Connected to MongoDB'))
     .catch((err) => console.log(err))
+
 
 // Handlebars
 app.engine('handlebars',handlebars.engine())
@@ -38,7 +38,8 @@ app.use(cookieParser());
 
 // Routes
 app.use('/',viewsRoutes);
-app.use(BASENAME, apiRoutes);
+const BASENAME = '/api'
+app.use(BASENAME, basenameRoutes);
 app.use(`${BASENAME}/products`, productsRoutes);
 app.use(`${BASENAME}/carts`, cartsRoutes);
 
