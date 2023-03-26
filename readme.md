@@ -12,29 +12,7 @@ This package has a module to manage products. It can store a list of products in
 	`npm -v`
 in a terminal.
 
-3. Install the dependencies:
-
-`npm install express`
-
-`npm install cookie-parser`
-
-`npm install multer`
-
-`npm install express-handlebars`
-
-`npm install socket.io`
-
-`npm install mongoose`
-
-`npm install express-routemap`
-
-`npm install dotenv`
-
-`npm install mongoose-paginate-v2`
-
-or simply
-
-`npm install`.
+3. Install the dependencies with `npm install`.
 
 4. For testing, first load some products withLoad Test the code with:
 

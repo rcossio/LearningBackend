@@ -4,12 +4,16 @@ import * as mongoose from 'mongoose';
 import { router as productsRoutes } from './routes/productsRoutes.js';
 import { router as cartsRoutes } from './routes/cartsRoutes.js';
 import { router as viewsRoutes } from './routes/viewsRoutes.js';
+import { router as sessionRoutes } from './routes/sessionsRoutes.js';
 import { router as basenameRoutes } from './routes/basenameRoutes.js';
 import configureSocket from './sockets/webSocket.js';
 import handlebars from 'express-handlebars';
 import displayRoutes from 'express-routemap';
-import { PORT, DB_ATLAS_USER, DB_ATLAS_NAME, DB_ATLAS_PASSWD, DB_ATLAS_DOMAIN } from './config/config.js';
+import { PORT, DB_ATLAS_USER, DB_ATLAS_NAME, DB_ATLAS_PASSWD, DB_ATLAS_DOMAIN, SESSION_SECRET } from './config/config.js';
 import cookieParser from 'cookie-parser';
+import MongoStore from 'connect-mongo';
+import session from 'express-session';
+
 
 // Express server
 const app = express();
@@ -36,10 +40,25 @@ app.use(express.static(__dirname+'/public'))
 // Cookie parser
 app.use(cookieParser());
 
+// Session
+app.use(
+    session({
+        store: MongoStore.create({
+            mongoUrl: `mongodb+srv://${DB_ATLAS_USER}:${DB_ATLAS_PASSWD}@${DB_ATLAS_DOMAIN}/${DB_ATLAS_NAME}?retryWrites=true&w=majority`,
+            mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
+            ttl: 60 // 1 min for testing
+            }),
+        secret: SESSION_SECRET,
+        resave: false,
+        saveUninitialized: false
+    })
+)
+
 // Routes
 app.use('/',viewsRoutes);
 const BASENAME = '/api'
 app.use(BASENAME, basenameRoutes);
+app.use(`${BASENAME}/sessions`, sessionRoutes);
 app.use(`${BASENAME}/products`, productsRoutes);
 app.use(`${BASENAME}/carts`, cartsRoutes);
 

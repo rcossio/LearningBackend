@@ -12,4 +12,5 @@ export const {
     DB_ATLAS_PASSWD,
     DB_ATLAS_DOMAIN,
     DB_ATLAS_NAME,
+    SESSION_SECRET,
 } = process.env;

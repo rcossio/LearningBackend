@@ -31,9 +31,40 @@ router.get('/realtimeproducts', async (req,res) => {
         const products = await productModel.find().lean()
         res.render('realTimeProducts',{layout: 'main'})
     } catch (error) {
-        res.json({status: 'error', payload: error})
+        res.json({status: 'error', payload: error.toString()})
     }
 })
 
+
+router.get('/login', async (req,res) => {
+    try {
+        const {emailError, passwordError} = req.query
+        res.render('login',{layout: 'main',emailError, passwordError})
+    } catch (error) {
+        res.json({status: 'error', payload: error.toString()})
+    }
+})
+
+router.get('/register', async (req,res) => {
+    try {
+        res.render('register',{layout: 'main'})
+    } catch (error) {
+        res.json({status: 'error', payload: error.toString()})
+    }
+})
+
+router.get('/profile', async (req,res) => {
+    try {
+        if (req.session.user === undefined) {
+            res.json({status: 'error', payload: 'You are not logged in'})
+        }
+        
+        const {firstName, lastName, email, age} = req.session.user
+
+        res.render('profile',{firstName, lastName, email, age})
+    } catch (error) {
+        res.json({status: 'error', payload: error.toString()})
+    }
+})
 
 export {router};
