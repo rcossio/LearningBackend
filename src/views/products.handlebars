@@ -1,6 +1,9 @@
 <div>
-    <h4>This is Products View</h4>
-    <h6>with the list of Products</h6>
+    <h4>Products</h4>
+    {{#if firstName}}
+        <h6 style="color:blue">Bienvenido {{firstName}} {{lastName}} -{{role}}-</h6>
+        <a href="/api/sessions/logout"> Log Out </a>
+    {{/if}}
     <ul>
         {{#each products}}
         <li>

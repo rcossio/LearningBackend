@@ -13,4 +13,6 @@ export const {
     DB_ATLAS_DOMAIN,
     DB_ATLAS_NAME,
     SESSION_SECRET,
+    ADMIN_EMAIL,
+    ADMIN_PASSWORD
 } = process.env;

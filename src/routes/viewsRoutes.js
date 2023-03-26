@@ -10,7 +10,10 @@ router.get('/products', async (req,res) => {
         const {limit=10, page=1} = req.query
         const { docs, prevPage, nextPage, hasPrevPage, hasNextPage}  = await productModel.paginate({}, { lean:true, limit, page})
 
-        res.render('products',{layout: 'main',products:docs, prevPage, nextPage, hasPrevPage, hasNextPage, page, limit})
+        const {firstName, lastName, email, age, role} = req.session.user
+
+
+        res.render('products',{layout: 'main',products:docs, prevPage, nextPage, hasPrevPage, hasNextPage, page, limit, firstName, lastName, email, age, role})
     } catch (error) {
         res.json({status: 'error', payload: error.toString()})
     }
@@ -59,9 +62,9 @@ router.get('/profile', async (req,res) => {
             res.json({status: 'error', payload: 'You are not logged in'})
         }
         
-        const {firstName, lastName, email, age} = req.session.user
+        const {firstName, lastName, email, age, role} = req.session.user
 
-        res.render('profile',{firstName, lastName, email, age})
+        res.render('profile',{firstName, lastName, email, age, role})
     } catch (error) {
         res.json({status: 'error', payload: error.toString()})
     }
