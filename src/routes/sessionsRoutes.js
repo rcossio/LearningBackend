@@ -74,8 +74,8 @@ router.get('/auth/github',
 router.get('/auth/github/callback', 
   passport.authenticate('github', { failureRedirect: '/login' }),
   function(req, res) {
-    req.session.user = req.user; //Is this necessary?
-    res.redirect('/products');
+    req.session.user = req.user;
+    return res.redirect('/products');
   });
 
 export {router};
