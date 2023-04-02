@@ -5,6 +5,9 @@
 {{#if passwordError}}
     <p style="color:red">Incorrect password</p>
 {{/if}}
+{{#if loginError}}
+    <p style="color:blue">You are not logged in</p>
+{{/if}}
 <form action="/api/sessions/login" method="post">
     <label>e-mail</label>
     <input type="email" name="email"/>

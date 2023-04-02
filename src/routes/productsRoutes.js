@@ -28,20 +28,20 @@ router.get('/', async (req,res) => {
         let prevLink= prevPage ? `http://localhost:8080/api/products?limit=${limit}&page=${prevPage}` : null;
         let nextLink= nextPage ? `http://localhost:8080/api/products?limit=${limit}&page=${nextPage}` : null;
 
-        res.json({
-            status: 'success',
-            payload: docs,
-            totalPages,
-            prevPage,
-            nextPage,
-            page,
-            hasPrevPage,
-            hasNextPage,
-            prevLink,
-            nextLink,
-        })
+        return res.json({
+                status: 'success',
+                payload: docs,
+                totalPages,
+                prevPage,
+                nextPage,
+                page,
+                hasPrevPage,
+                hasNextPage,
+                prevLink,
+                nextLink,
+            })
     } catch (error) {
-        res.json({status: 'error', payload: error.toString()})
+        return res.json({status: 'error', payload: error.toString()})
     }
 })
 
@@ -49,9 +49,9 @@ router.get('/', async (req,res) => {
 router.get('/:productId', async (req,res) => {
     try {
         const product = await productModel.findById(req.params.productId)
-        res.json({status: 'success', payload: product}) 
+        return res.json({status: 'success', payload: product}) 
     } catch (error) {
-        res.json({status: 'error', payload: error.toString()})
+        return res.json({status: 'error', payload: error.toString()})
     }
 })
 
@@ -59,9 +59,9 @@ router.get('/:productId', async (req,res) => {
 router.post('/',async (req,res) => {
     try {
         const result = await productModel.create(req.body)  
-        res.json({status: 'success', payload: result})
+        return res.json({status: 'success', payload: result})
     } catch (error) {
-        res.json({status: 'error', payload: error.toString()})
+        return res.json({status: 'error', payload: error.toString()})
     }
 })
 
@@ -69,9 +69,9 @@ router.post('/',async (req,res) => {
 router.put('/:productId', async (req,res)=>{
     try{
         const product = await productModel.updateOne({ _id: req.params.productId }, { $set: req.body } )
-        res.json({status: 'success', payload: product})
+        return res.json({status: 'success', payload: product})
     } catch (error) {
-        res.json({status: 'error', payload: error.toString()})
+        return res.json({status: 'error', payload: error.toString()})
     }
 })
 
@@ -79,9 +79,9 @@ router.put('/:productId', async (req,res)=>{
 router.delete('/:productId', async (req,res)=>{
     try {
         const result = await productModel.deleteOne({ _id: req.params.productId })
-        res.json({status: 'success', payload: result})
+        return res.json({status: 'success', payload: result})
     } catch (error) {
-        res.json({status: 'error', payload: error.toString()})
+        return res.json({status: 'error', payload: error.toString()})
     }    
 })
 

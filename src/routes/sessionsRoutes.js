@@ -2,6 +2,7 @@ import { Router } from "express";
 import userModel from "../models/users.model.js";
 import {__dirname} from '../utils/dirname.js';
 import { ADMIN_EMAIL, ADMIN_PASSWORD } from '../config/config.js';
+import * as bcrypt from 'bcrypt';
 
 const router = Router()
 
@@ -20,17 +21,18 @@ router.post('/login', async (req,res) => {
 
         if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
             req.session.user = {firstName: 'admin', lastName: 'admin', email, age: 'N/A', role: 'admin'}
-            res.redirect('/products')
+            return res.redirect('/products')
         }
 
         const user = await userModel.findOne({email})
 
         if (!user) {
-            res.redirect('/login?emailError=true') 
+            return res.redirect('/login?emailError=true') 
         }
 
-        if (user.password !== password) {
-            res.redirect('/login?passwordError=true') 
+        const passwordMatch = bcrypt.compareSync(password, user.password)
+        if (!passwordMatch) {
+            return res.redirect('/login?passwordError=true') 
         }
 
         if (req.session.user === undefined) {
@@ -41,21 +43,26 @@ router.post('/login', async (req,res) => {
         }
 
         // I am not sure if this is better
-        res.redirect('/products')
+        return res.redirect('/products')
 
 
     } catch (error) {
-        res.json({status: 'error', payload: error.toString()})
+        return res.json({status: 'error', payload: error.toString()})
     }
 })
 
 router.post('/register', async (req,res) => {
     try {
+
         const { firstName, lastName, email, age, password } = req.body
-        const newUser = await userModel.create({firstName, lastName, email, age, password, role:'user'})
-        res.redirect('/login')
+
+        const saltRounds = 10;
+        const hashed_password = bcrypt.hashSync(password, saltRounds);
+
+        const newUser = await userModel.create({firstName, lastName, email, age, password:hashed_password, role:'user'})
+        return res.redirect('/login')
     } catch (error) {
-        res.json({status: 'error', payload: error.toString()})
+        return res.json({status: 'error', payload: error.toString()})
     }
 })
 

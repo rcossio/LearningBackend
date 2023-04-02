@@ -7,15 +7,19 @@ const router = Router()
 
 router.get('/products', async (req,res) => {
     try {
+        if (req.session.user === undefined) {
+            return res.redirect('/login?loginError=true')
+        }
+
         const {limit=10, page=1} = req.query
         const { docs, prevPage, nextPage, hasPrevPage, hasNextPage}  = await productModel.paginate({}, { lean:true, limit, page})
 
         const {firstName, lastName, email, age, role} = req.session.user
 
 
-        res.render('products',{layout: 'main',products:docs, prevPage, nextPage, hasPrevPage, hasNextPage, page, limit, firstName, lastName, email, age, role})
+        return res.render('products',{layout: 'main',products:docs, prevPage, nextPage, hasPrevPage, hasNextPage, page, limit, firstName, lastName, email, age, role})
     } catch (error) {
-        res.json({status: 'error', payload: error.toString()})
+        return res.json({status: 'error', payload: error.toString()})
     }
 })
 
@@ -23,50 +27,53 @@ router.get('/carts/:cartId', async (req,res) => {
     try {
         const cart = await cartModel.findById(req.params.cartId).lean()
         console.log(cart)
-        res.render('cart',{layout: 'main',products:cart.products})
+        return res.render('cart',{layout: 'main',products:cart.products})
     } catch (error) {
-        res.json({status: 'error', payload: error.toString()})
+        return res.json({status: 'error', payload: error.toString()})
     }
 })
 
 router.get('/realtimeproducts', async (req,res) => {
     try {
+        if (req.session.user === undefined) {
+            return res.redirect('/login?loginError=true')
+        }
         const products = await productModel.find().lean()
-        res.render('realTimeProducts',{layout: 'main'})
+        return res.render('realTimeProducts',{layout: 'main'})
     } catch (error) {
-        res.json({status: 'error', payload: error.toString()})
+        return res.json({status: 'error', payload: error.toString()})
     }
 })
 
 
 router.get('/login', async (req,res) => {
     try {
-        const {emailError, passwordError} = req.query
-        res.render('login',{layout: 'main',emailError, passwordError})
+        const {emailError, passwordError, loginError} = req.query
+        return res.render('login',{emailError, passwordError, loginError})
     } catch (error) {
-        res.json({status: 'error', payload: error.toString()})
+        return res.json({status: 'error', payload: error.toString()})
     }
 })
 
 router.get('/register', async (req,res) => {
     try {
-        res.render('register',{layout: 'main'})
+        return res.render('register',{layout: 'main'})
     } catch (error) {
-        res.json({status: 'error', payload: error.toString()})
+        return res.json({status: 'error', payload: error.toString()})
     }
 })
 
 router.get('/profile', async (req,res) => {
     try {
         if (req.session.user === undefined) {
-            res.json({status: 'error', payload: 'You are not logged in'})
+            return res.redirect('/login?loginError=true')
         }
         
         const {firstName, lastName, email, age, role} = req.session.user
 
-        res.render('profile',{firstName, lastName, email, age, role})
+        return res.render('profile',{firstName, lastName, email, age, role})
     } catch (error) {
-        res.json({status: 'error', payload: error.toString()})
+        return res.json({status: 'error', payload: error.toString()})
     }
 })
 

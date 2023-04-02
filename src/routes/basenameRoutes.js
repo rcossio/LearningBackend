@@ -14,7 +14,7 @@ function mid1(req,res,next){
 }
 
 router.get('/', mid1, (req,res) => { 
-    res.send(welcomeHTML) 
+    return res.send(welcomeHTML) 
 })
 
 export {router};

@@ -8,9 +8,9 @@ const router = Router()
 router.get('/', async (req,res) => {
     try {
         const carts = await cartModel.find();
-        res.json({status: 'success', payload: carts})
+        return res.json({status: 'success', payload: carts})
     } catch (error) {
-        res.json({status: 'error', payload: error.toString()})
+        return res.json({status: 'error', payload: error.toString()})
     } 
 })
 
@@ -18,9 +18,9 @@ router.get('/', async (req,res) => {
 router.post('/', async (req,res) => {
     try{
         const cart = await cartModel.create(req.body)
-        res.json({status: 'success', payload: cart})
+        return res.json({status: 'success', payload: cart})
     } catch (error) {
-        res.json({status: 'error', payload: error.toString()})
+        return res.json({status: 'error', payload: error.toString()})
     }
 })
 
@@ -28,9 +28,9 @@ router.post('/', async (req,res) => {
 router.get('/:cartId', async (req,res) => {
     try {
         const cart = await cartModel.findById(req.params.cartId)
-        res.json({status: 'success', payload: cart}) 
+        return res.json({status: 'success', payload: cart}) 
     } catch (error) {
-        res.json({status: 'error', payload: error.toString()})
+        return res.json({status: 'error', payload: error.toString()})
     }
 })
 
@@ -38,18 +38,18 @@ router.put('/:cartId', async (req,res) => {
     try {
         const {newProductsArray} = req.body
         const result = await cartModel.updateOne({ _id: req.params.cartId }, { $set: { products: newProductsArray } } )
-        res.json({status: 'success', payload: result}) 
+        return res.json({status: 'success', payload: result}) 
     } catch (error) {
-        res.json({status: 'error', payload: error.toString()})
+        return res.json({status: 'error', payload: error.toString()})
     }
 })
 
 router.delete('/:cartId', async (req,res) => {
     try {
         const result = await cartModel.deleteOne({ _id: req.params.cartId })
-        res.json({status: 'success', payload: result}) 
+        return res.json({status: 'success', payload: result}) 
     } catch (error) {
-        res.json({status: 'error', payload: error.toString()})
+        return res.json({status: 'error', payload: error.toString()})
     }
 })
 
@@ -70,9 +70,9 @@ router.put('/:cartId/product/:productId', async (req,res) => {
             return item 
         })
         const newCart = await cartModel.updateOne({ _id: req.params.cartId }, { $set: { products: newProductsArray } } )
-        res.json({status: 'success', payload: newCart})
+        return res.json({status: 'success', payload: newCart})
     } catch (error) {
-        res.json({status: 'error', payload: error.toString()})
+        return res.json({status: 'error', payload: error.toString()})
     }
 })
 
@@ -92,9 +92,9 @@ router.post('/:cartId/product/:productId', async (req,res) => {
             return item 
         })
         const newCart = await cartModel.updateOne({ _id: req.params.cartId }, { $set: { products: newProductsArray } } )
-        res.json({status: 'success', payload: newCart})
+        return res.json({status: 'success', payload: newCart})
     } catch (error) {
-        res.json({status: 'error', payload: error.toString()})
+        return res.json({status: 'error', payload: error.toString()})
     }
 })
 
@@ -110,10 +110,10 @@ router.delete('/:cartId/product/:productId', async (req,res) => {
         const cart = await cartModel.findById(req.params.cartId)
         let newProductsArray = cart.products.filter( (item) => item.product._id.toString() !== String(productId))
         const result = await cartModel.updateOne({ _id: req.params.cartId }, { $set: { products: newProductsArray } } )
-        res.json({status: 'success', payload: result})
+        return res.json({status: 'success', payload: result})
     } catch (error) {
         console.log(error)
-        res.json({status: 'error', payload: error.toString()})
+        return res.json({status: 'error', payload: error.toString()})
     }
 })
 
