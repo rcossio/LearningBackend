@@ -3,7 +3,7 @@ import userModel from "../models/users.model.js";
 import {__dirname} from '../utils/dirname.js';
 import { ADMIN_EMAIL, ADMIN_PASSWORD } from '../config/config.js';
 import * as bcrypt from 'bcrypt';
-import * as passport from "passport";
+import passport from "passport";
 
 
 const router = Router()
@@ -68,5 +68,14 @@ router.post('/register', async (req,res) => {
     }
 })
 
+router.get('/auth/github',
+  passport.authenticate('github', { scope: [ 'user:email' ] }));
+ 
+router.get('/auth/github/callback', 
+  passport.authenticate('github', { failureRedirect: '/login' }),
+  function(req, res) {
+    req.session.user = req.user; //Is this necessary?
+    res.redirect('/products');
+  });
 
 export {router};
