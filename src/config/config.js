@@ -14,5 +14,7 @@ export const {
     DB_ATLAS_NAME,
     SESSION_SECRET,
     ADMIN_EMAIL,
-    ADMIN_PASSWORD
+    ADMIN_PASSWORD,
+    GITHUB_CLIENT_ID,
+    GITHUB_CLIENT_SECRET
 } = process.env;

@@ -13,7 +13,8 @@ import { PORT, DB_ATLAS_USER, DB_ATLAS_NAME, DB_ATLAS_PASSWD, DB_ATLAS_DOMAIN, S
 import cookieParser from 'cookie-parser';
 import MongoStore from 'connect-mongo';
 import session from 'express-session';
-
+import configurePassport from './config/passport.js';
+import passport from 'passport';
 
 // Express server
 const app = express();
@@ -70,3 +71,16 @@ const server = app.listen(PORT, () => {
 
 // Socket.io
 configureSocket(server)
+
+// Passport
+configurePassport();
+app.use(passport.initialize())
+app.get('/auth/github',
+  passport.authenticate('github', { scope: [ 'user:email' ] }));
+ 
+app.get('/auth/github/callback', 
+  passport.authenticate('github', { failureRedirect: '/login' }),
+  function(req, res) {
+    req.session.user = req.user; //Is this necessary?
+    res.redirect('/products');
+  });

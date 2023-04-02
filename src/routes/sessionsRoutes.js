@@ -3,6 +3,8 @@ import userModel from "../models/users.model.js";
 import {__dirname} from '../utils/dirname.js';
 import { ADMIN_EMAIL, ADMIN_PASSWORD } from '../config/config.js';
 import * as bcrypt from 'bcrypt';
+import * as passport from "passport";
+
 
 const router = Router()
 

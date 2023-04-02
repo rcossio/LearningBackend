@@ -1,9 +1,7 @@
 <div>
     <h4>Products</h4>
-    {{#if firstName}}
         <h6 style="color:blue">Bienvenido {{firstName}} {{lastName}} -{{role}}-</h6>
         <a href="/api/sessions/logout"> Log Out </a>
-    {{/if}}
     <ul>
         {{#each products}}
         <li>
