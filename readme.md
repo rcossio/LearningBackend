@@ -4,18 +4,36 @@
 
 1. Clone the repository (to learn how check [this link](https://docs.github.com/en/desktop/contributing-and-collaborating-using-github-desktop/adding-and-cloning-repositories/cloning-and-forking-repositories-from-github-desktop))
 
-2. Be sure to have NodeJS and NPM installed. Test this with the commands
-	`node -v`
-	`npm -v`
-in a terminal.
+2. Be sure to have NodeJS (>=18.x) and NPM installed. Test this with the commands `node -v` or `npm -v` in a terminal.
 
 3. Install the dependencies with `npm install`.
 
-4. For testing, first load some products withLoad Test the code with:
-`npm run loadProducts`
+4. For testing, you can use the command `npm run testEntrega1`.
 
-5. Enable the server with
-`npm init startServer`
+## Dependencies
 
-6. Server is mounted in [http://localhost:8080/](http://localhost:8080/) 
+The ones marked are the ones currently used
+
+- [ ]  **express** : web framework.
+- [ ]  **express-session** : session middleware.
+- [ ]  **cookie-parser** : cookie parsing middleware.
+- [ ]  **dotenv** : loads environment variables from a .env file.
+- [ ]  **morgan** : HTTP request logger middleware.
+- [ ]  **multer** : middleware for handling multipart/form-data.
+- [ ]  **bcrypt** : library to help you hash passwords.
+- [ ]  **connect-flash** : special area of the session used for storing messages.
+- [ ]  **express-validator** : middleware for validating data.
+- [ ]  **handlebars** : template engine.
+- [ ]  **mysql2** : MySQL client.
+- [ ]  **sequelize** : promise-based Node.js ORM for Postgres, MySQL, MariaDB, SQLite and Microsoft SQL Server.
+- [ ]  **dotenv** : loads environment variables from a .env file.
+- [ ]  **faker** : generate massive amounts of fake data in the browser and node.js.
+- [ ]  **colors** : get colors in your node.js console.
+- [ ]  **cors** : CORS is a node.js package for providing a Connect/Express middleware that can be used to enable CORS with various options.
+
+## Dev Dependencies
+
+The ones marked are the ones currently used
+
+- [ ]  **nodemon** : tool that helps develop node.js based applications by automatically restarting the node application when file changes in the directory are detected.
 

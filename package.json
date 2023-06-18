@@ -5,9 +5,7 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "loadProducts": "node src/data/loadProducts.js",
-    "startServer": "node src/app.js",
-    "startDevServer": "nodemon src/app.js"
+    "testEntrega1": "node test/testProductManager.js"
   },
   "repository": {
     "type": "git",
