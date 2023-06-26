@@ -1,5 +1,6 @@
 class ProductManager {
   #products = [];
+  #lastId = 0;
 
   constructor() {
     // Not really used but just to show that we can have a constructor as it is asked in the exercise
@@ -26,12 +27,7 @@ class ProductManager {
   }
 
   #generateProductId() {
-    if (this.#products.length === 0) {
-      return 1;
-    }
-
-    const maxId = Math.max(...this.#products.map((product) => product.id)); // Don't erase the spread operator, Math.max() exprects comma separated values
-    return maxId + 1;
+    return ++this.#lastId;
   }
 
   addProduct(product) {
