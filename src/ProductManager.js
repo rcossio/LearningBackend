@@ -12,16 +12,16 @@ class ProductManager {
 
   #setPath(path) {
     this.#path = path;
-    if (fs.existsSync(this.#path)) {
-      this.#loadProducts();
-    } else {
+    if ( fs.existsSync(this.#path) ) {
+      this.#loadProducts()
+    } else{
       this.#saveFile();
     }
   }
 
   #loadProducts() {
     try {
-      const content = fs.readFileSync(this.#path, 'utf-8');
+      const content = fs.readFileSync(this.path,'utf-8')
       const { products, lastId } = JSON.parse(content);
       this.#products = products;
       this.#lastId = lastId;
@@ -33,9 +33,9 @@ class ProductManager {
   #saveFile() {
     const content = JSON.stringify({ products: this.#products, lastId: this.#lastId });
     try {
-      fs.writeFileSync(this.#path, content);
-    } catch (error) {
-      console.error('Error saving file:', error);
+        fs.writeFileSync(this.#path, content)
+    } catch (error){
+        console.error('Error saving file:', error)
     }
   }
 
@@ -106,7 +106,7 @@ class ProductManager {
       throw new Error('Product not found');
     }
 
-    this.#products.splice(productIndex, 1);
+    this.#products.splice(productIndex, 1); //Alt: this.#products = this.#products.filter((p) => p.id !== id);
 
     this.#saveFile();
   }
