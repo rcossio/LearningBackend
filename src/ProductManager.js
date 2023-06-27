@@ -1,3 +1,5 @@
+import fs from 'fs';
+
 class ProductManager {
   #products = [];
   #lastId = 0;
@@ -36,13 +38,13 @@ class ProductManager {
     }
 
     if (this.#isProductCodeDuplicate(product.code)) {
-      throw new Error('Product with the same code already exists'); // Could be console.error() but throw is catchable by try/catch
+      throw new Error('Product with the same code already exists'); 
     }
 
     const id = this.#generateProductId();
     const newProduct = { id, ...product };
     this.#products.push(newProduct);
-    console.info(`Product with id ${id} has been added`) // Maybe return id for future implementation
+    console.info(`Product with id ${id} has been added`) 
   }
 
   getProducts() {
@@ -57,6 +59,36 @@ class ProductManager {
     }
 
     return product;
+  }
+
+  deleteProduct(id) {
+    const productIndex = this.#products.findIndex((p) => p.id === id);
+
+    if (productIndex === -1) {
+      throw new Error('Product not found');
+    }
+
+    this.#products.splice(productIndex, 1); //Alt: this.#products = this.#products.filter((p) => p.id !== id);
+    console.info(`Product with id ${id} has been deleted`) 
+
+  }
+
+  updateProduct(id, product) {
+    if (!this.#isProductValid(product)) {
+      throw new Error('Invalid product');
+    }
+
+    const productIndex = this.#products.findIndex((p) => p.id === id);
+
+    if (productIndex === -1) {
+      throw new Error('Product not found');
+    }
+
+    const updatedProduct = { id, ...product };
+    this.#products[productIndex] = updatedProduct;
+
+    console.info(`Product with id ${id} has been updated`) 
+
   }
 }
 

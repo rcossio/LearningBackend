@@ -48,3 +48,28 @@ try {
 } catch (error) {
   console.error(error);
 }
+
+// Calls the method updateProduct and changes the product, and then displays it
+productManager.updateProduct(1, {
+  title: 'titulo cambiado',
+  description: 'Descripción cambiada',
+  price: 999,
+  thumbnails: [],
+  code: 'cba321',
+  stock: 10,
+});
+console.log(productManager.getProducts());
+
+// Evaluate the deleteProduct with a valid product ID
+try {
+  productManager.deleteProduct(1);
+} catch (error) {
+  console.error(error);
+}
+
+// Evaluate the deleteProduct with an invalid product ID
+try {
+  productManager.deleteProduct(100);
+} catch (error) {
+  console.error(error);
+}
