@@ -3,10 +3,40 @@ import fs from 'fs';
 class ProductManager {
   #products = [];
   #lastId = 0;
+  #path = '';
 
-  constructor() {
-    // Not really used but just to show that we can have a constructor as it is asked in the exercise
+  constructor(path) {
+    this.#setPath(path);
     console.info('ProductManager instance created');
+  }
+
+  #setPath(path) {
+    this.#path = path;
+    if (fs.existsSync(this.#path)) {
+      this.#loadProducts();
+    } else {
+      this.#saveFile();
+    }
+  }
+
+  #loadProducts() {
+    try {
+      const content = fs.readFileSync(this.#path, 'utf-8');
+      const { products, lastId } = JSON.parse(content);
+      this.#products = products;
+      this.#lastId = lastId;
+    } catch (error) {
+      console.error('Error loading file:', error);
+    }
+  }
+
+  #saveFile() {
+    const content = JSON.stringify({ products: this.#products, lastId: this.#lastId });
+    try {
+      fs.writeFileSync(this.#path, content);
+    } catch (error) {
+      console.error('Error saving file:', error);
+    }
   }
 
   #isProductValid(product) {
@@ -37,21 +67,27 @@ class ProductManager {
       throw new Error('Invalid product');
     }
 
+    this.#loadProducts();
+
     if (this.#isProductCodeDuplicate(product.code)) {
-      throw new Error('Product with the same code already exists'); 
+      throw new Error('Product with the same code already exists');
     }
 
     const id = this.#generateProductId();
     const newProduct = { id, ...product };
     this.#products.push(newProduct);
-    console.info(`Product with id ${id} has been added`) 
+
+    this.#saveFile();
   }
 
   getProducts() {
+    this.#loadProducts();
     return this.#products;
   }
 
   getProductById(id) {
+    this.#loadProducts();
+
     const product = this.#products.find((p) => p.id === id);
 
     if (!product) {
@@ -62,21 +98,25 @@ class ProductManager {
   }
 
   deleteProduct(id) {
+    this.#loadProducts();
+
     const productIndex = this.#products.findIndex((p) => p.id === id);
 
     if (productIndex === -1) {
       throw new Error('Product not found');
     }
 
-    this.#products.splice(productIndex, 1); //Alt: this.#products = this.#products.filter((p) => p.id !== id);
-    console.info(`Product with id ${id} has been deleted`) 
+    this.#products.splice(productIndex, 1);
 
+    this.#saveFile();
   }
 
   updateProduct(id, product) {
     if (!this.#isProductValid(product)) {
       throw new Error('Invalid product');
     }
+
+    this.#loadProducts();
 
     const productIndex = this.#products.findIndex((p) => p.id === id);
 
@@ -87,8 +127,7 @@ class ProductManager {
     const updatedProduct = { id, ...product };
     this.#products[productIndex] = updatedProduct;
 
-    console.info(`Product with id ${id} has been updated`) 
-
+    this.#saveFile();
   }
 }
 
