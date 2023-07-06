@@ -8,13 +8,13 @@
 
 3. Install the dependencies with `npm install`.
 
-4. For testing, you can use the command `npm run testEntrega1`.
+4. For testing, start the server with `npm run start` and go to [http://localhost:8080/](http://localhost:8080/)
 
 ## Dependencies
 
 The ones marked are the ones currently used
 
-- [ ]  **express** : web framework.
+- [x]  **express** : web framework.
 - [ ]  **express-session** : session middleware.
 - [ ]  **cookie-parser** : cookie parsing middleware.
 - [ ]  **dotenv** : loads environment variables from a .env file.
@@ -35,5 +35,5 @@ The ones marked are the ones currently used
 
 The ones marked are the ones currently used
 
-- [ ]  **nodemon** : tool that helps develop node.js based applications by automatically restarting the node application when file changes in the directory are detected.
+- [x]  **nodemon** : tool that helps develop node.js based applications by automatically restarting the node application when file changes in the directory are detected.
 

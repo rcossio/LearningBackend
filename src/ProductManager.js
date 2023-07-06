@@ -6,8 +6,11 @@ class ProductManager {
   #path = '';
 
   constructor(path) {
-    this.#setPath(path);
-    console.info('ProductManager instance created');
+    try {
+      this.#setPath(path);
+    } catch {
+      console.error('Error setting path:', error);
+    }
   }
 
   #setPath(path) {
@@ -91,7 +94,7 @@ class ProductManager {
     const product = this.#products.find((p) => p.id === id);
 
     if (!product) {
-      throw new Error('Product not found');
+      throw new Error(`Product not found. Requested ID:${id}`);
     }
 
     return product;
