@@ -12,9 +12,11 @@ try {
 const productManager = new ProductManager('./test/productManager.json');
 
 // Call getProducts (should return an empty array)
+console.log('------- Call getProducts (should return an empty array) -----------------')
 console.log(productManager.getProducts());
 
 // Call addProduct with the given fields
+console.log('------- Call addProduct -----------------')
 productManager.addProduct({
 	title: 'producto prueba',
 	description: 'Este es un producto prueba',
@@ -25,9 +27,11 @@ productManager.addProduct({
 });
 
 // Call getProducts again, the added product should be displayed
+console.log('------- Call getProducts again, the added product should be displayed -----------------')
 console.log(productManager.getProducts());
 
 // Call addProduct with the same fields, should raise an error due to duplicate product code
+console.log('------- Call addProduct with the same fields, should raise an error due to duplicate product code -----------------')
 try {
   productManager.addProduct({
     title: 'producto prueba',
@@ -42,6 +46,7 @@ try {
 }
 
 // Evaluate the getProductById method with an existing ID
+console.log('------- Evaluate the getProductById method with an existing ID -----------------')
 try {
   const product = productManager.getProductById(1);
   console.log(product);
@@ -50,6 +55,7 @@ try {
 }
 
 // Evaluate the getProductById method with a non-existing ID
+console.log('------- Evaluate the getProductById method with a non-existing ID -----------------')
 try {
   const product = productManager.getProductById(100);
   console.log(product);
@@ -58,6 +64,7 @@ try {
 }
 
 // Calls the method updateProduct and changes the product, and then displays it
+console.log('------- Calls the method updateProduct and changes the product, and then displays it -----------------')
 productManager.updateProduct(1, {
   title: 'titulo cambiado',
   description: 'Descripción cambiada',
@@ -69,6 +76,7 @@ productManager.updateProduct(1, {
 console.log(productManager.getProducts());
 
 // Evaluate the deleteProduct with a valid product ID
+console.log('------- Evaluate the deleteProduct with a valid product ID -----------------')
 try {
   productManager.deleteProduct(1);
 } catch (error) {
@@ -76,14 +84,15 @@ try {
 }
 
 // Evaluate the deleteProduct with an invalid product ID
+console.log('------- Evaluate the deleteProduct with an invalid product ID -----------------')
 try {
   productManager.deleteProduct(100);
 } catch (error) {
   console.error(error);
 }
 
-//Finally, add some products to check the file persistence
-console.log('------- Starting to add files -----------------')
+//Add some products to check the file persistence
+console.log('------- Add some products to check the file persistence -----------------')
 productManager.addProduct(
   {
     title: 'Product A',
@@ -174,4 +183,5 @@ productManager.addProduct(
     code: 'BCD890',
     stock: 18
   })
-console.log('------- End of adding files -------------------')
+
+console.log('------- END -------------------')

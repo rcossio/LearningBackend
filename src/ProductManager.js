@@ -21,7 +21,7 @@ class ProductManager {
 
   #loadProducts() {
     try {
-      const content = fs.readFileSync(this.path,'utf-8')
+      const content = fs.readFileSync(this.#path,'utf-8')
       const { products, lastId } = JSON.parse(content);
       this.#products = products;
       this.#lastId = lastId;
