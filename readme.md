@@ -15,6 +15,7 @@
 The ones marked are the ones currently used
 
 - [x]  **express** : web framework.
+- [x]  **express-routemap** : express middleware to print all registered routes in a tree structure.
 - [ ]  **express-session** : session middleware.
 - [ ]  **cookie-parser** : cookie parsing middleware.
 - [ ]  **dotenv** : loads environment variables from a .env file.
@@ -26,8 +27,6 @@ The ones marked are the ones currently used
 - [ ]  **handlebars** : template engine.
 - [ ]  **mysql2** : MySQL client.
 - [ ]  **sequelize** : promise-based Node.js ORM for Postgres, MySQL, MariaDB, SQLite and Microsoft SQL Server.
-- [ ]  **dotenv** : loads environment variables from a .env file.
-- [ ]  **faker** : generate massive amounts of fake data in the browser and node.js.
 - [ ]  **colors** : get colors in your node.js console.
 - [ ]  **cors** : CORS is a node.js package for providing a Connect/Express middleware that can be used to enable CORS with various options.
 

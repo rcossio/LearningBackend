@@ -6,8 +6,8 @@
   "type": "module",
   "scripts": {
     "testEntrega2": "node test/testProductManager.js",
-    "start":"node src/app.js",
-    "startDev":"npx nodemon src/app.js"
+    "start": "node src/app.js",
+    "startDev": "npx nodemon src/app.js"
   },
   "repository": {
     "type": "git",
@@ -20,9 +20,10 @@
   },
   "homepage": "https://github.com/rcossio/LearningBackend#readme",
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "express-routemap": "^1.6.0"
   },
   "devDependencies": {
-    "nodemon": "^2.0.22"
+    "nodemon": "^3.0.1"
   }
 }
