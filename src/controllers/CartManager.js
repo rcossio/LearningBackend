@@ -22,9 +22,9 @@ class CartManager {
     }
   }
 
-  #loadCarts() {
+  async #loadCarts() {
     try {
-      const content = fs.readFileSync(this.#path, 'utf-8');
+      const content = await fs.promises.readFile(this.#path, 'utf-8');
       const { carts, lastId } = JSON.parse(content);
       this.#carts = carts;
       this.#lastId = lastId;
@@ -33,10 +33,10 @@ class CartManager {
     }
   }
 
-  #saveFile() {
+  async #saveFile() {
     const content = JSON.stringify({ carts: this.#carts, lastId: this.#lastId });
     try {
-      fs.writeFileSync(this.#path, content);
+      await fs.promises.writeFile(this.#path, content);
     } catch (error) {
       console.error('Error saving file:', error);
     }
@@ -46,17 +46,17 @@ class CartManager {
     return ++this.#lastId;
   }
 
-  createCart() {
+  async createCart() {
     const id = this.#generateCartId();
     const newCart = { id, products: [] };
     this.#carts.push(newCart);
 
-    this.#saveFile();
+    await this.#saveFile();
     return newCart;
   }
 
-  addProductToCart(cartId, productId, quantity) {
-    this.#loadCarts();
+  async addProductToCart(cartId, productId, quantity) {
+    await this.#loadCarts();
   
     const cartIndex = this.#carts.findIndex((cart) => cart.id === cartId);
   
@@ -73,11 +73,11 @@ class CartManager {
       cart.products.push({ productId, quantity });
     }
   
-    this.#saveFile();
+    await this.#saveFile();
   }
 
-  getCartById(cartId) {
-    this.#loadCarts();
+  async getCartById(cartId) {
+    await this.#loadCarts();
 
     const cart = this.#carts.find((cart) => cart.id === cartId);
 
@@ -88,8 +88,8 @@ class CartManager {
     return cart;
   }
 
-  deleteCart(cartId) {
-    this.#loadCarts();
+  async deleteCart(cartId) {
+    await this.#loadCarts();
 
     const cartIndex = this.#carts.findIndex((cart) => cart.id === cartId);
 
@@ -99,7 +99,7 @@ class CartManager {
 
     this.#carts.splice(cartIndex, 1);
 
-    this.#saveFile();
+    await this.#saveFile();
   }
 }
 

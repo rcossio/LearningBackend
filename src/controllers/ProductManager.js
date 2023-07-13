@@ -8,23 +8,23 @@ class ProductManager {
   constructor(path) {
     try {
       this.#setPath(path);
-    } catch {
+    } catch (error) {
       console.error('Error setting path:', error);
     }
   }
 
   #setPath(path) {
     this.#path = path;
-    if ( fs.existsSync(this.#path) ) {
-      this.#loadProducts()
-    } else{
+    if (fs.existsSync(this.#path)) {
+      this.#loadProducts();
+    } else {
       this.#saveFile();
     }
   }
 
-  #loadProducts() {
+  async #loadProducts() {
     try {
-      const content = fs.readFileSync(this.#path,'utf-8')
+      const content = await fs.promises.readFile(this.#path, 'utf-8');
       const { products, lastId } = JSON.parse(content);
       this.#products = products;
       this.#lastId = lastId;
@@ -33,12 +33,12 @@ class ProductManager {
     }
   }
 
-  #saveFile() {
+  async #saveFile() {
     const content = JSON.stringify({ products: this.#products, lastId: this.#lastId });
     try {
-        fs.writeFileSync(this.#path, content)
-    } catch (error){
-        console.error('Error saving file:', error)
+      await fs.promises.writeFile(this.#path, content);
+    } catch (error) {
+      console.error('Error saving file:', error);
     }
   }
 
@@ -65,12 +65,12 @@ class ProductManager {
     return ++this.#lastId;
   }
 
-  addProduct(product) {
+  async addProduct(product) {
     if (!this.#isProductValid(product)) {
       throw new Error('Invalid product');
     }
 
-    this.#loadProducts();
+    await this.#loadProducts();
 
     if (this.#isProductCodeDuplicate(product.code)) {
       throw new Error('Product with the same code already exists');
@@ -80,16 +80,16 @@ class ProductManager {
     const newProduct = { id, ...product };
     this.#products.push(newProduct);
 
-    this.#saveFile();
+    await this.#saveFile();
   }
 
-  getProducts() {
-    this.#loadProducts();
+  async getProducts() {
+    await this.#loadProducts();
     return this.#products;
   }
 
-  getProductById(id) {
-    this.#loadProducts();
+  async getProductById(id) {
+    await this.#loadProducts();
 
     const product = this.#products.find((p) => p.id === id);
 
@@ -100,8 +100,8 @@ class ProductManager {
     return product;
   }
 
-  deleteProduct(id) {
-    this.#loadProducts();
+  async deleteProduct(id) {
+    await this.#loadProducts();
 
     const productIndex = this.#products.findIndex((p) => p.id === id);
 
@@ -109,17 +109,17 @@ class ProductManager {
       throw new Error('Product not found');
     }
 
-    this.#products.splice(productIndex, 1); //Alt: this.#products = this.#products.filter((p) => p.id !== id);
+    this.#products.splice(productIndex, 1);
 
-    this.#saveFile();
+    await this.#saveFile();
   }
 
-  updateProduct(id, product) {
+  async updateProduct(id, product) {
     if (!this.#isProductValid(product)) {
       throw new Error('Invalid product');
     }
 
-    this.#loadProducts();
+    await this.#loadProducts();
 
     const productIndex = this.#products.findIndex((p) => p.id === id);
 
@@ -130,7 +130,7 @@ class ProductManager {
     const updatedProduct = { id, ...product };
     this.#products[productIndex] = updatedProduct;
 
-    this.#saveFile();
+    await this.#saveFile();
   }
 }
 
