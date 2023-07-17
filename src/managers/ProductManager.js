@@ -9,7 +9,7 @@ class ProductManager {
     try {
       this.#setPath(path);
     } catch (error) {
-      console.error('Error setting path:', error);
+      throw error;
     }
   }
 
@@ -29,7 +29,7 @@ class ProductManager {
       this.#products = products;
       this.#lastId = lastId;
     } catch (error) {
-      console.error('Error loading file:', error);
+      throw error;
     }
   }
 
@@ -38,7 +38,7 @@ class ProductManager {
     try {
       await fs.promises.writeFile(this.#path, content);
     } catch (error) {
-      console.error('Error saving file:', error);
+      throw error;
     }
   }
 
