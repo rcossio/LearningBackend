@@ -1,10 +1,14 @@
 import {Router} from 'express';
 import CartManager from '../managers/CartManager.js';
+import ProductManager from '../managers/ProductManager.js';
 
 const router = Router();
 
+const PRODUCT_DATA_FILE = './src/data/products.json';
 const CART_DATA_FILE = './src/data/carts.json';
+
 const cartManager = new CartManager(CART_DATA_FILE);
+const productManager = new ProductManager(PRODUCT_DATA_FILE);
 
 router.get('/:cartId', async (req, res) => {
   const { cartId } = req.params;
@@ -26,9 +30,10 @@ router.post('/', async (req, res) => {
 });
 
 router.post('/:cartId/product/:productId', async (req, res) => {
+  
   const { cartId, productId } = req.params;
   try {
-    await cartManager.addProductToCart(Number(cartId), productId, 1);
+    await cartManager.addProductToCart(Number(cartId), productId, 1, productManager);
     res.json({ status: 'success', payload: 'Product added to cart successfully' });
   } catch (error) {
     res.status(500).json({ status: 'error', payload: error.message });
