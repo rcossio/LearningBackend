@@ -16,6 +16,7 @@ The ones marked are the ones currently used
 
 - [x]  **express** : web framework.
 - [x]  **express-routemap** : express middleware to print all registered routes in a tree structure.
+- [x]  **express-handlebars** : handlebars view engine for express.
 - [ ]  **express-session** : session middleware.
 - [ ]  **cookie-parser** : cookie parsing middleware.
 - [ ]  **dotenv** : loads environment variables from a .env file.
@@ -24,7 +25,6 @@ The ones marked are the ones currently used
 - [ ]  **bcrypt** : library to help you hash passwords.
 - [ ]  **connect-flash** : special area of the session used for storing messages.
 - [ ]  **express-validator** : middleware for validating data.
-- [ ]  **handlebars** : template engine.
 - [ ]  **mysql2** : MySQL client.
 - [ ]  **sequelize** : promise-based Node.js ORM for Postgres, MySQL, MariaDB, SQLite and Microsoft SQL Server.
 - [ ]  **colors** : get colors in your node.js console.
