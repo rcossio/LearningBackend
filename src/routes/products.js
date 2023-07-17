@@ -1,10 +1,7 @@
 import {Router} from 'express';
-import ProductManager from '../managers/ProductManager.js';
+import {productManager} from '../utils/contextVars.js';
 
 const router = Router();
-
-const PRODUCT_DATA_FILE = './src/data/products.json';
-const productManager = new ProductManager(PRODUCT_DATA_FILE);
 
 router.get('/', async (req, res) => {
   const {limit} = req.query;

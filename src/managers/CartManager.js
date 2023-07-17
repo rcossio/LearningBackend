@@ -66,19 +66,22 @@ class CartManager {
     const cartIndex = this.#carts.findIndex((cart) => cart.id === cartId);
   
     if (cartIndex === -1) {
-      throw new Error('Cart not found');
+      throw new Error(`Cart not found. Requested ID: ${cartId}`);
     }
   
     const cart = this.#carts[cartIndex];
     const existingProductIndex = cart.products.findIndex((product) => product.productId === productId);
   
     if (existingProductIndex !== -1) {
+
       const stockAvailable = product.stock > cart.products[existingProductIndex].quantity;
+
       if (stockAvailable) {
         cart.products[existingProductIndex].quantity += 1;  
       } else {
         throw new Error(`Product is out of stock. Requested ID: ${productId}`);
       }
+
     } else {
       cart.products.push({ productId, quantity });
     }
@@ -104,7 +107,7 @@ class CartManager {
     const cartIndex = this.#carts.findIndex((cart) => cart.id === cartId);
 
     if (cartIndex === -1) {
-      throw new Error('Cart not found');
+      throw new Error(`Cart not found. Requested ID: ${cartId}`);
     }
 
     this.#carts.splice(cartIndex, 1);

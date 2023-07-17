@@ -106,7 +106,7 @@ class ProductManager {
     const productIndex = this.#products.findIndex((p) => p.id === id);
 
     if (productIndex === -1) {
-      throw new Error('Product not found');
+      throw new Error(`Product not found. Requested ID:${id}`);
     }
 
     this.#products.splice(productIndex, 1);
@@ -124,7 +124,7 @@ class ProductManager {
     const productIndex = this.#products.findIndex((p) => p.id === id);
 
     if (productIndex === -1) {
-      throw new Error('Product not found');
+      throw new Error(`Product not found. Requested ID:${id}`);
     }
 
     const updatedProduct = { id, ...product };

@@ -1,14 +1,8 @@
 import {Router} from 'express';
-import CartManager from '../managers/CartManager.js';
-import ProductManager from '../managers/ProductManager.js';
+import {productManager} from '../utils/contextVars.js';
+import {cartManager} from '../utils/contextVars.js';
 
 const router = Router();
-
-const PRODUCT_DATA_FILE = './src/data/products.json';
-const CART_DATA_FILE = './src/data/carts.json';
-
-const cartManager = new CartManager(CART_DATA_FILE);
-const productManager = new ProductManager(PRODUCT_DATA_FILE);
 
 router.get('/:cartId', async (req, res) => {
   const { cartId } = req.params;
