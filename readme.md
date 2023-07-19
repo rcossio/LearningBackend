@@ -17,6 +17,7 @@ The ones marked are the ones currently used
 - [x]  **express** : web framework.
 - [x]  **express-routemap** : express middleware to print all registered routes in a tree structure.
 - [x]  **express-handlebars** : handlebars view engine for express.
+- [x]  **socket.io** : enables real-time bidirectional event-based communication.
 - [ ]  **express-session** : session middleware.
 - [ ]  **cookie-parser** : cookie parsing middleware.
 - [ ]  **dotenv** : loads environment variables from a .env file.
@@ -35,4 +36,3 @@ The ones marked are the ones currently used
 The ones marked are the ones currently used
 
 - [x]  **nodemon** : tool that helps develop node.js based applications by automatically restarting the node application when file changes in the directory are detected.
-
