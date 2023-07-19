@@ -10,7 +10,7 @@ router.get('/:cartId', async (req, res) => {
     const cart = await cartManager.getCartById(Number(cartId));
     res.json({ status: 'success', payload: cart });
   } catch (error) {
-    res.status(404).send(error.message);
+    res.status(400).send({ status: 'error', payload: error.message });
   }
 });
 
@@ -19,7 +19,7 @@ router.post('/', async (req, res) => {
     const cart = await cartManager.createCart();
     res.json({ status: 'success', payload: cart });
   } catch (error) {
-    res.status(500).json({ status: 'error', payload: error.message });
+    res.status(400).json({ status: 'error', payload: error.message });
   }
 });
 
@@ -30,7 +30,7 @@ router.post('/:cartId/product/:productId', async (req, res) => {
     await cartManager.addProductToCart(Number(cartId), productId, 1, productManager);
     res.json({ status: 'success', payload: 'Product added to cart successfully' });
   } catch (error) {
-    res.status(500).json({ status: 'error', payload: error.message });
+    res.status(400).json({ status: 'error', payload: error.message });
   }
 });
 
@@ -40,7 +40,7 @@ router.delete('/:cartId', async (req, res) => {
     await cartManager.deleteCart(Number(cartId));
     res.json({ status: 'success', payload: 'Cart deleted successfully' });
   } catch (error) {
-    res.status(500).json({ status: 'error', payload: error.message });
+    res.status(400).json({ status: 'error', payload: error.message });
   }
 });
 
