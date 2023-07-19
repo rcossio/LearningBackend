@@ -1,10 +1,13 @@
 import express from 'express';
+
 import displayRoutes from 'express-routemap';
 import {router as productRouter} from './routes/products.js';
 import {router as cartRouter} from './routes/carts.js';
 import {router as viewsRouter} from './routes/views.js';
+
 import path from 'path';
 import handlebars from 'express-handlebars';
+
 import {Server} from 'socket.io';
 import http from 'http';
 import { productManager } from './utils/contextVars.js';
@@ -29,7 +32,7 @@ app.use('/api/carts', cartRouter);
 
 app.set('io', io);
 io.on('connection', async (socket) => {
-  console.log('A user connected');
+  console.log(`A user connected from socket: ${socket.id}`);
   const products = await productManager.getProducts();
   socket.emit('initialProducts', products);
 });
