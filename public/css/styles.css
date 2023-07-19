@@ -1,3 +1,9 @@
-text {
-  color: #211b7e;
+.card {
+  margin: 20px auto;
+  max-width: 400px;
+  transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
