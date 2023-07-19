@@ -1,1 +1,1 @@
-console.info("Simple message from index.js")
+console.log("just a simple and dummy log")

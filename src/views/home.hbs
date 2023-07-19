@@ -1,25 +1,18 @@
 <div class="container">
-  <div class="row">
     <div class="col">
       {{#each products}}
         {{#if this.status}}
           <div class="card">
             <div class="card-body">
                 <h5 class="card-title">{{this.title}}</h5>
-                <p class="card-text">{{this.description}}</p>
+                <p class="card-text card-description">{{this.description}}</p>
                 <div class="row">
                   <div class="col">
                       <p class="card-text">Price: ${{this.price}}</p>
-                  </div>
-                  <div class="col">
                       <p class="card-text">Code: {{this.code}}</p>
                   </div>
-                </div>
-                <div class="row">
                   <div class="col">
                       <p class="card-text">Stock: {{this.stock}}</p>
-                  </div>
-                  <div class="col">
                       <p class="card-text">Category: {{this.category}}</p>
                   </div>
                 </div>
@@ -28,5 +21,4 @@
         {{/if}}
       {{/each}}
     </div>
-  </div>
 </div>
