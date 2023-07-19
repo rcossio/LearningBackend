@@ -27,6 +27,10 @@ router.delete('/:productId', async (req, res) => {
   const { productId } = req.params;
   try {
       await productManager.deleteProduct(Number(productId));
+
+      const updatedProducts = await productManager.getProducts();
+      req.app.get('io').emit('updatedProducts', updatedProducts);
+
       res.json({ status: 'success', payload: 'Product deleted successfully' });
   } catch (error) {
       res.status(500).json({ status: 'error', payload: error.message });
@@ -37,7 +41,12 @@ router.post('/', async (req, res) => {
   const product = req.body;
   try {
       await productManager.addProduct(product);
+
+      const updatedProducts = await productManager.getProducts();
+      req.app.get('io').emit('updatedProducts', updatedProducts);
+
       res.json({ status: 'success', payload: 'Product added successfully' });
+
   } catch (error) {
       res.status(500).json({ status: 'error', payload: error.message });
   }
@@ -48,6 +57,10 @@ router.put('/:productId', async (req, res) => {
   const product = req.body;
   try {
       await productManager.updateProduct(Number(productId), product);
+
+      const updatedProducts = await productManager.getProducts();
+      req.app.get('io').emit('updatedProducts', updatedProducts);
+
       res.json({ status: 'success', payload: 'Product updated successfully' });
   } catch (error) {
       res.status(500).json({ status: 'error', payload: error.message });

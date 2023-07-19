@@ -65,3 +65,7 @@ const updateProducts = (products) => {
 socket.on('initialProducts', (products) => {
   updateProducts(products);
 });
+
+socket.on('updatedProducts', (products) => {
+  updateProducts(products);
+});

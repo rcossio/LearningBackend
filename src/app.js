@@ -27,12 +27,13 @@ app.use('/', viewsRouter);
 app.use('/api/products', productRouter);
 app.use('/api/carts', cartRouter);
 
-
+app.set('io', io);
 io.on('connection', async (socket) => {
   console.log('A user connected');
   const products = await productManager.getProducts();
   socket.emit('initialProducts', products);
 });
+
 
 server.listen(PORT, () => {
   displayRoutes(app);

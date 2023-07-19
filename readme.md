@@ -18,6 +18,7 @@ The ones marked are the ones currently used
 - [x]  **express-routemap** : express middleware to print all registered routes in a tree structure.
 - [x]  **express-handlebars** : handlebars view engine for express.
 - [x]  **socket.io** : enables real-time bidirectional event-based communication.
+- [x]  **http** : http server.
 - [ ]  **express-session** : session middleware.
 - [ ]  **cookie-parser** : cookie parsing middleware.
 - [ ]  **dotenv** : loads environment variables from a .env file.
