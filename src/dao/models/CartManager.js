@@ -3,7 +3,7 @@ import {MONGO_ATLAS_CONNECTION_STRING} from '../../utils/contextVars.js'
 
 const cartSchema = new mongoose.Schema({
   products: [{
-    productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+    productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' }, // Check why this is important
     quantity: { type: Number, required: true }
   }]
 });
@@ -46,7 +46,7 @@ class CartManager {
         cart.products.push({ productId, quantity });
       }
 
-      await cart.save();
+      await cart.save(); // check how this works
     } catch (error) {
       throw error;
     }
@@ -54,7 +54,7 @@ class CartManager {
 
   async getCartById(cartId) {
     try {
-      const cart = await Cart.findById(cartId).populate('products.productId');
+      const cart = await Cart.findById(cartId).populate('products.productId'); // check how this works
       if (!cart) {
         throw new Error(`Cart not found. Requested ID: ${cartId}`);
       }

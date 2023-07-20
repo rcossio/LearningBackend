@@ -22,7 +22,6 @@ The ones marked are the ones currently used
 - [ ]  **express-session** : session middleware.
 - [ ]  **cookie-parser** : cookie parsing middleware.
 - [ ]  **morgan** : HTTP request logger middleware.
-- [ ]  **multer** : middleware for handling multipart/form-data.
 - [ ]  **bcrypt** : library to help you hash passwords.
 - [ ]  **connect-flash** : special area of the session used for storing messages.
 - [ ]  **express-validator** : middleware for validating data.
