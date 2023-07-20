@@ -20,9 +20,11 @@
   },
   "homepage": "https://github.com/rcossio/LearningBackend#readme",
   "dependencies": {
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-handlebars": "^7.0.7",
-    "express-routemap": "^1.6.0"
+    "express-routemap": "^1.6.0",
+    "mongoose": "^7.4.0"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

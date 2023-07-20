@@ -1,6 +1,6 @@
 import {Router} from 'express';
-import {productManager} from '../utils/contextVars.js';
-import {cartManager} from '../utils/contextVars.js';
+import {productManager} from '../utils/contextClasses.js';
+import {cartManager} from '../utils/contextClasses.js';
 
 const router = Router();
 

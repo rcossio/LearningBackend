@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { productManager } from "../utils/contextVars.js";
+import { productManager } from "../utils/contextClasses.js";
 
 const router = Router();
 

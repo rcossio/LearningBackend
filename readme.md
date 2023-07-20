@@ -17,9 +17,10 @@ The ones marked are the ones currently used
 - [x]  **express** : web framework.
 - [x]  **express-routemap** : express middleware to print all registered routes in a tree structure.
 - [x]  **express-handlebars** : handlebars view engine for express.
+- [x]  **mongoose** : MongoDB object modeling tool.
+- [x]  **dotenv** : loads environment variables from a .env file.
 - [ ]  **express-session** : session middleware.
 - [ ]  **cookie-parser** : cookie parsing middleware.
-- [ ]  **dotenv** : loads environment variables from a .env file.
 - [ ]  **morgan** : HTTP request logger middleware.
 - [ ]  **multer** : middleware for handling multipart/form-data.
 - [ ]  **bcrypt** : library to help you hash passwords.

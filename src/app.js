@@ -28,3 +28,6 @@ app.listen(PORT, () => {
   displayRoutes(app);
   console.log(`Server is running at PORT ${PORT}`);
 });
+
+import { MONGO_ATLAS_CONNECTION_STRING } from './utils/contextVars.js';
+console.log(MONGO_ATLAS_CONNECTION_STRING)

@@ -1,14 +1,5 @@
+import 'dotenv/config';
 
-import path from 'path';
-import ProductManager from '../managers/ProductManager.js';
-import CartManager from '../managers/CartManager.js';
+const MONGO_ATLAS_CONNECTION_STRING = `mongodb+srv://${process.env.ATLAS_USER}:${process.env.ATLAS_PASS}@${process.env.ATLAS_URL}/`;
 
-const __dirname = path.resolve();
-
-const PRODUCT_DATA_FILE = path.join(__dirname,'src/data/products.json');
-const productManager = new ProductManager(PRODUCT_DATA_FILE);
-
-const CART_DATA_FILE = path.join(__dirname,'src/data/carts.json');
-const cartManager = new CartManager(CART_DATA_FILE);
-
-export {productManager, cartManager};
+export {MONGO_ATLAS_CONNECTION_STRING};
