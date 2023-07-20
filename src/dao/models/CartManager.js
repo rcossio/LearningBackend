@@ -43,14 +43,8 @@ class CartManager {
   async addProductToCart(cartId, productId, quantity, productManager) {
     try {
       const cart = await CartModel.findById(cartId);
-      if (!cart) {
-        throw new Error(`Cart not found. Requested ID: ${cartId}`);
-      }
 
       const product = await productManager.getProductById(productId);
-      if (!product) {
-        throw new Error(`Product not found. Requested ID: ${productId}`);
-      }
 
       const existingProductIndex = cart.products.findIndex((item) => item.productId.toString() === productId);
       if (existingProductIndex !== -1) {
@@ -68,9 +62,6 @@ class CartManager {
   async getCartById(cartId) {
     try {
       const cart = await CartModel.findById(cartId) //.populate('products.productId')
-      if (!cart) {
-        throw new Error(`Cart not found. Requested ID: ${cartId}`);
-      }
       return cart;
     } catch (error) {
       throw error;
