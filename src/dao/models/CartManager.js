@@ -2,13 +2,26 @@ import mongoose from 'mongoose';
 import {MONGO_ATLAS_CONNECTION_STRING} from '../../utils/contextVars.js' 
 
 const cartSchema = new mongoose.Schema({
-  products: [{
-    productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' }, // Check why this is important
-    quantity: { type: Number, required: true }
-  }]
+  products: {
+    type: [{
+      productId: { 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'products',
+        required: true
+      },
+      quantity: { 
+        type: Number, 
+        required: true,
+        min: 1,
+        default: 1
+      }
+    }],
+    required: true,
+    default: []
+  }
 });
 
-const Cart = mongoose.model('Cart', cartSchema);
+const CartModel = mongoose.model('carts', cartSchema);
 
 class CartManager {
   constructor() {
@@ -20,7 +33,7 @@ class CartManager {
 
   async createCart() {
     try {
-      const newCart = await Cart.create({ products: [] });
+      const newCart = await CartModel.create({ products: [] });
       return newCart;
     } catch (error) {
       throw error;
@@ -29,7 +42,7 @@ class CartManager {
 
   async addProductToCart(cartId, productId, quantity, productManager) {
     try {
-      const cart = await Cart.findById(cartId);
+      const cart = await CartModel.findById(cartId);
       if (!cart) {
         throw new Error(`Cart not found. Requested ID: ${cartId}`);
       }
@@ -46,7 +59,7 @@ class CartManager {
         cart.products.push({ productId, quantity });
       }
 
-      await cart.save(); // check how this works
+      await cart.save();
     } catch (error) {
       throw error;
     }
@@ -54,7 +67,7 @@ class CartManager {
 
   async getCartById(cartId) {
     try {
-      const cart = await Cart.findById(cartId).populate('products.productId'); // check how this works
+      const cart = await CartModel.findById(cartId) //.populate('products.productId')
       if (!cart) {
         throw new Error(`Cart not found. Requested ID: ${cartId}`);
       }
@@ -66,7 +79,7 @@ class CartManager {
 
   async deleteCart(cartId) {
     try {
-      await Cart.findByIdAndDelete(cartId);
+      await CartModel.findByIdAndDelete(cartId);
     } catch (error) {
       throw error;
     }

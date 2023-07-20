@@ -2,16 +2,42 @@ import mongoose from 'mongoose';
 import {MONGO_ATLAS_CONNECTION_STRING} from '../../utils/contextVars.js' 
 
 const productSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  description: { type: String, required: true },
-  price: { type: Number, required: true },
-  code: { type: String, required: true, unique: true },
-  stock: { type: Number, default: true },
-  category: { type: String, required: true },
-  thumbnails: { type: Array, default: [] }
+  title: { 
+    type: String, 
+    required: true 
+  },
+  description: { 
+    type: String, 
+    required: true 
+  },
+  price: { 
+    type: Number, 
+    required: true 
+  },
+  code: { 
+    type: String, 
+    required: true, 
+    unique: true 
+  },
+  stock: { 
+    type: Number, 
+    default: true 
+  },
+  category: { 
+    type: String, 
+    required: true 
+  },
+  status: {
+    type: Boolean,
+    default: true
+  },
+  thumbnails: { 
+    type: Array, 
+    default: [] 
+  }
 });
 
-const Product = mongoose.model('Product', productSchema);
+const ProductModel = mongoose.model('products', productSchema);
 
 class ProductManager {
   constructor() {
@@ -23,7 +49,7 @@ class ProductManager {
 
   async addProduct(product) {
     try {
-      await Product.create(product);
+      await ProductModel.create(product);
     } catch (error) {
       throw error;
     }
@@ -31,7 +57,7 @@ class ProductManager {
 
   async getProducts() {
     try {
-      const products = await Product.find({});
+      const products = await ProductModel.find({}).lean();
       return products;
     } catch (error) {
       throw error;
@@ -40,7 +66,7 @@ class ProductManager {
 
   async getProductById(id) {
     try {
-      const product = await Product.findById(id);
+      const product = await ProductModel.findById(id).lean();
       if (!product) {
         throw new Error(`Product not found. Requested ID:${id}`);
       }
@@ -52,7 +78,7 @@ class ProductManager {
 
   async deleteProduct(id) {
     try {
-      await Product.findByIdAndDelete(id);
+      await ProductModel.findByIdAndDelete(id);
     } catch (error) {
       throw error;
     }
@@ -60,7 +86,7 @@ class ProductManager {
 
   async updateProduct(id, product) {
     try {
-      await Product.findByIdAndUpdate(id, product);
+      await ProductModel.findByIdAndUpdate(id, product);
     } catch (error) {
       throw error;
     }
