@@ -1,3 +1,8 @@
+* {
+  box-sizing: border-box; 
+}
+
+/* This is for products display */
 .card {
   margin: 20px auto;
   max-width: 400px;
@@ -6,4 +11,33 @@
 
 .card:hover {
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* This is for the chat */
+.chat-heading {
+  font-size: 16px;
+  margin: 20px auto;
+  text-align: center;
+  line-height: 1.5; 
+}
+
+#chatForm {
+  margin: 20px auto;
+  max-width: 320px;
+}
+
+#chatHistory {
+  max-width: 500px;
+  background-color: rgb(226, 255, 245);
+  margin: 0 auto;
+  padding: 10px;
+  border-radius: 2px;
+}
+
+#chatHistory > p {
+  margin: 5px;
+  background-color: rgb(240, 240, 240);
+  border-radius: 4px;
+  padding: 5px;
+  text-align: left;
 }

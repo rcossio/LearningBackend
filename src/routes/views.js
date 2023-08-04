@@ -8,4 +8,8 @@ router.get("/", async (req, res) => {
   res.render('home',{products});
 }); 
 
+router.get("/chat", async (req, res) => {
+  res.render('chat');
+}); 
+
 export {router};
