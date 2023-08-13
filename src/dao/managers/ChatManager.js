@@ -1,27 +1,7 @@
-import mongoose from 'mongoose';
-import {MONGO_ATLAS_CONNECTION_STRING} from '../../utils/contextVars.js' 
+import ChatModel from '../models/ChatModel.js';
 import { getQuote } from 'inspirational-quotes';
 
-const chatSchema = new mongoose.Schema({
-  user: { 
-    type: String, 
-    required: true
-  },
-  messages: { 
-    type: [String],
-    required: true 
-  },
-});
-
-const ChatModel = mongoose.model('messages', chatSchema);
-
 class ChatManager {
-  constructor() {
-    mongoose.connect(MONGO_ATLAS_CONNECTION_STRING, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
-  }
 
   async addMessage(activeUser, newMessage) {
     try {
