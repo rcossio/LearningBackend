@@ -3,45 +3,42 @@ import ProductModel from '../models/ProductModel.js';
 class ProductManager {
 
   async addProduct(product) {
-    try {
-      await ProductModel.create(product);
-    } catch (error) {
-      throw error;
-    }
+    return await ProductModel.create(product);
   }
 
   async getProducts(filter = {}, options = {}) {
-    try {
-      const result = await ProductModel.paginate(filter, options);
-      return result;
+    const result = await ProductModel.paginate(filter, options);
 
-      } catch (error) {
-      throw error;
+    if (result.docs.length === 0) {
+      throw new Error('No products found.');
     }
+
+    return result;
   }
 
   async getProductById(id) {
-    try {
-      const product = await ProductModel.findById(id).lean();
-      return product;
-    } catch (error) {
-      throw error;
+    const product = await ProductModel.findById(id).lean();
+
+    if (!product) {
+      throw new Error('Product not found.');
     }
+
+    return product;
   }
 
   async deleteProduct(id) {
-    try {
-      await ProductModel.findByIdAndDelete(id);
-    } catch (error) {
-      throw error;
+    const result = await ProductModel.findByIdAndDelete(id);
+
+    if (!result) {
+      throw new Error('Product not found. Unable to delete.');
     }
   }
 
   async updateProduct(id, product) {
-    try {
-      await ProductModel.findByIdAndUpdate(id, product);
-    } catch (error) {
-      throw error;
+    const updatedProduct = await ProductModel.findByIdAndUpdate(id, product, { new: true });
+
+    if (!updatedProduct) {
+      throw new Error('Product not found. Unable to update.');
     }
   }
 }

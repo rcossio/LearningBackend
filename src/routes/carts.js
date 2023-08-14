@@ -1,82 +1,42 @@
-import {Router} from 'express';
-import {productManager} from '../config/config.js';
-import {cartManager} from '../config/config.js';
+import { Router } from 'express';
+import { productManager, cartManager } from '../config/config.js';
+import asyncHandler from '../utils/asyncHandler.js';
 
 const router = Router();
 
-router.post('/', async (req, res) => {
-  try {
+router.post('/', asyncHandler(async (req, res) => {
     const cart = await cartManager.createCart();
     res.status(200).json({ status: 'success', payload: cart });
-  } catch (error) {
-    res.status(400).json({ status: 'error', payload: error.message });
-  }
-});
+}));
 
-
-router.get('/:cartId', async (req, res) => {
-  const { cartId } = req.params;
-  try {
-    const cart = await cartManager.getCartById(cartId);
+router.get('/:cartId', asyncHandler(async (req, res) => {
+    const cart = await cartManager.getCartById(req.params.cartId);
     res.status(200).json({ status: 'success', payload: cart });
-  } catch (error) {
-    res.status(400).send({ status: 'error', payload: error.message });
-  }
-});
+}));
 
-router.put('/:cartId', async (req, res) => {
-  const { cartId } = req.params;
-  const { products } = req.body;
-  try {
-    await cartManager.updateCart(cartId, products);
+router.put('/:cartId', asyncHandler(async (req, res) => {
+    await cartManager.updateCart(req.params.cartId, req.body.products);
     res.status(200).json({ status: 'success', payload: 'Cart updated successfully' });
-  } catch (error) {
-    res.status(400).json({ status: 'error', payload: error.message });
-  }
-});
+}));
 
-router.delete('/:cartId', async (req, res) => {
-  const { cartId } = req.params;
-  try {
-    await cartManager.deleteCart(cartId);
+router.delete('/:cartId', asyncHandler(async (req, res) => {
+    await cartManager.deleteCart(req.params.cartId);
     res.status(200).json({ status: 'success', payload: 'Products emptied from cart successfully' });
-  } catch (error) {
-    res.status(400).json({ status: 'error', payload: error.message });
-  }
-});
+}));
 
-
-
-router.post('/:cartId/product/:productId', async (req, res) => {
-  
-  const { cartId, productId } = req.params;
-  try {
-    await cartManager.addProductToCart(cartId, productId, 1, productManager);
+router.post('/:cartId/product/:productId', asyncHandler(async (req, res) => {
+    await cartManager.addProductToCart(req.params.cartId, req.params.productId, 1, productManager);
     res.status(200).json({ status: 'success', payload: 'Product added to cart successfully' });
-  } catch (error) {
-    res.status(400).json({ status: 'error', payload: error.message });
-  }
-});
+}));
 
-router.put('/:cartId/product/:productId', async (req, res) => {
-  const { cartId, productId } = req.params;
-  const { quantity } = req.body;
-  try {
-    await cartManager.updateProductInCart(cartId, productId, quantity);
+router.put('/:cartId/product/:productId', asyncHandler(async (req, res) => {
+    await cartManager.updateProductInCart(req.params.cartId, req.params.productId, req.body.quantity);
     res.status(200).json({ status: 'success', payload: 'Product quantity updated successfully' });
-  } catch (error) {
-    res.status(400).json({ status: 'error', payload: error.message });
-  }
-});
+}));
 
-router.delete('/:cartId/product/:productId', async (req, res) => {
-  const { cartId, productId } = req.params;
-  try {
-    await cartManager.deleteProductFromCart(cartId, productId);
+router.delete('/:cartId/product/:productId', asyncHandler(async (req, res) => {
+    await cartManager.deleteProductFromCart(req.params.cartId, req.params.productId);
     res.status(200).json({ status: 'success', payload: 'Product deleted from cart successfully' });
-  } catch (error) {
-    res.status(400).json({ status: 'error', payload: error.message });
-  }
-});
+}));
 
-export {router};
+export { router };

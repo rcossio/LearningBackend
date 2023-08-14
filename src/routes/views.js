@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { productManager, cartManager } from "../config/config.js";
+import asyncHandler from '../utils/asyncHandler.js';
 
 const router = Router();
 
-router.get("/", async (req, res) => {
+router.get("/", asyncHandler(async (req, res) => {
   const { limit = 3, page = 1, sort = 'asc', query = '' } = req.query;
   const sortOrder = sort === 'desc' ? -1 : 1;
   
@@ -22,31 +23,23 @@ router.get("/", async (req, res) => {
     lean: true
   };
 
-  try {
-    const result = await productManager.getProducts(filter, options);
+  const result = await productManager.getProducts(filter, options);
 
-    if (result.docs.length === 0) { 
-      return res.status(404).render('error', { message: 'Page does not exist' });
-    }
-
-    res.status(200).render('home', { ...result, sort, query });
-  } catch (error) {
-    res.status(400).render('error', { message: error.message });
+  if (result.docs.length === 0) { 
+    return res.status(404).render('error', { message: 'Page does not exist' });
   }
-}); 
 
-router.get('/carts/:cartId', async (req, res) => {
+  res.status(200).render('home', { ...result, sort, query });
+}));
+
+router.get('/carts/:cartId', asyncHandler(async (req, res) => {
   const { cartId } = req.params;
-  try {
-    const cart = await cartManager.getCartById(cartId);
-    res.status(200).render('cart', cart);
-  } catch (error) {
-    res.status(400).send({ status: 'error', payload: error.message });
-  }
-});
+  const cart = await cartManager.getCartById(cartId);
+  res.status(200).render('cart', cart);
+}));
 
-router.get("/chat", async (req, res) => {
+router.get("/chat", (req, res) => {
   res.render('chat');
 }); 
 
-export {router};
+export { router };

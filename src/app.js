@@ -31,6 +31,11 @@ app.use('/', viewsRouter);
 app.use('/api/products', productRouter);
 app.use('/api/carts', cartRouter);
 
+//error handling
+app.use((err, req, res, next) => { 
+  res.status(500).json({ status: 'error', payload: err.message });
+});
+
 app.get('*', (req, res) => {
   res.status(404).render('error', { message: 'Page does not exist' });
 });  
