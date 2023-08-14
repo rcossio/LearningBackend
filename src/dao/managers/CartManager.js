@@ -62,6 +62,15 @@ class CartManager {
     }
   }
 
+  async getCartById(cartId) {
+    try {
+      const cart = await CartModel.findById(cartId).populate('products.productId').lean();
+      return cart;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async updateCart(cartId, products) {
     try {
         const cart = await CartModel.findById(cartId);
@@ -69,15 +78,6 @@ class CartManager {
         await cart.save();
     } catch (error) {
         throw error;
-    }
-  }
-
-  async getCartById(cartId) {
-    try {
-      const cart = await CartModel.findById(cartId).populate('products.productId')
-      return cart;
-    } catch (error) {
-      throw error;
     }
   }
 

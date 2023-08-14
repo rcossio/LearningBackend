@@ -5,7 +5,7 @@
 /* This is for products display */
 .card {
   margin: 20px auto;
-  max-width: 400px;
+  max-width: 550px;
   transition: box-shadow 0.3s ease;
 }
 

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { productManager } from "../config/config.js";
+import { productManager, cartManager } from "../config/config.js";
 
 const router = Router();
 
@@ -34,6 +34,16 @@ router.get("/", async (req, res) => {
     res.status(400).render('error', { message: error.message });
   }
 }); 
+
+router.get('/carts/:cartId', async (req, res) => {
+  const { cartId } = req.params;
+  try {
+    const cart = await cartManager.getCartById(cartId);
+    res.status(200).render('cart', cart);
+  } catch (error) {
+    res.status(400).send({ status: 'error', payload: error.message });
+  }
+});
 
 router.get("/chat", async (req, res) => {
   res.render('chat');
