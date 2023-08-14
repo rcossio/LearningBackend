@@ -7,8 +7,13 @@ router.get('/', async (req, res) => {
   const { limit = 3, page = 1, sort = 'asc', query = '' } = req.query;
   const sortOrder = sort === 'desc'? -1 : 1; 
 
-  const filter = query ? { title: new RegExp(query, 'i') } : {};  
-
+  const filter = {};
+  if (query) {
+    filter.$or = [
+        { title: new RegExp(query, 'i') },
+        { category: new RegExp(query, 'i') }
+    ];
+  }
   const options = {
     page: parseInt(page, 10),
     limit: parseInt(limit, 10),

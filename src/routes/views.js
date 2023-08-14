@@ -9,8 +9,11 @@ router.get("/", async (req, res) => {
   
   const filter = { status: true };
   if (query) {
-    filter.title = new RegExp(query, 'i');
-  }  
+    filter.$or = [
+        { title: new RegExp(query, 'i') },
+        { category: new RegExp(query, 'i') }
+    ];
+  }
 
   const options = {
     page: parseInt(page, 10),
@@ -21,8 +24,12 @@ router.get("/", async (req, res) => {
 
   try {
     const result = await productManager.getProducts(filter, options);
-    console.log(result.docs)
-    res.status(200).render('home', result);
+
+    if (result.docs.length === 0) { 
+      return res.status(404).render('error', { message: 'Page does not exist' });
+    }
+
+    res.status(200).render('home', { ...result, sort, query });
   } catch (error) {
     res.status(400).render('error', { message: error.message });
   }
