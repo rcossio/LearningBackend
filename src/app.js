@@ -10,9 +10,7 @@ import path from 'path';
 import handlebars from 'express-handlebars';
 
 import connectDB from './config/dbConnection.js';
-
-import { Server } from 'socket.io';
-import { chatManager } from './config/config.js';
+import configureSocketIO from './config/socketIO.js';
 
 const PORT = process.env.PORT || 8080; 
 const app = express();
@@ -33,6 +31,10 @@ app.use('/', viewsRouter);
 app.use('/api/products', productRouter);
 app.use('/api/carts', cartRouter);
 
+app.get('*', (req, res) => {
+  res.status(404).render('error', { message: 'Page does not exist' });
+});  
+
 //db connection
 connectDB();
 
@@ -43,19 +45,4 @@ const httpServer = app.listen(PORT, () => {
 });
 
 //socket.io configuration
-const io = new Server(httpServer);
-io.on('connection', async (socket) => {
-  console.log(`A user connected from socket: ${socket.id}`);
-
-  socket.on('userIdentified', async (username) => {
-    console.log(`User identified: ${username}`);
-    let messagesWithUser = await chatManager.getMessages(username);
-    socket.emit('chatHistory', messagesWithUser);
-  });
-
-  socket.on('newMessage', async (username, newMessage) => {
-    await chatManager.addMessage(username, newMessage);
-    let messagesWithUser = await chatManager.getMessages(username);
-    socket.emit('chatHistory', messagesWithUser);
-  });
-});
+configureSocketIO(httpServer);
