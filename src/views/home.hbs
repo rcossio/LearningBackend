@@ -1,8 +1,7 @@
 <div class="container">
   <div class="row">
     <div class="col">
-      {{#each products}}
-        {{#if this.status}}
+      {{#each docs}}
           <div class="card">
             <div class="card-body">
                 <h5 class="card-title">{{this.title}}</h5>
@@ -25,14 +24,21 @@
                 </div>
             </div>
           </div>
-        {{/if}}
       {{/each}}
     </div>
   </div>
+
+  <div class="row mt-4">
+    <div class="col text-center">
+      {{#if hasPrevPage}}
+        <a href="/?page={{prevPage}}&limit={{limit}}" class="btn btn-primary">Prev Page</a>
+      {{/if}}
+      
+      <span class="mx-4">{{page}}/{{totalPages}}</span>
+      
+      {{#if hasNextPage}}
+        <a href="/?page={{nextPage}}&limit={{limit}}" class="btn btn-primary">Next Page</a>
+      {{/if}}
+    </div>
+  </div>
 </div>
-
-
-
-
-
-

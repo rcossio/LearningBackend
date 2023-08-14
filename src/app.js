@@ -9,7 +9,7 @@ import 'dotenv/config';
 import path from 'path';
 import handlebars from 'express-handlebars';
 
-import connectToDB from './config/dbConnection.js';
+import connectDB from './config/dbConnection.js';
 
 import { Server } from 'socket.io';
 import { chatManager } from './config/config.js';
@@ -34,7 +34,7 @@ app.use('/api/products', productRouter);
 app.use('/api/carts', cartRouter);
 
 //db connection
-connectToDB();
+connectDB();
 
 //server initialization
 const httpServer = app.listen(PORT, () => {

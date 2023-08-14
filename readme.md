@@ -19,6 +19,7 @@ The ones marked are the ones currently used
 - [x]  **express-handlebars** : handlebars view engine for express.
 - [x]  **socket.io** : enables real-time bidirectional event-based communication.
 - [x]  **mongoose** : MongoDB object modeling tool.
+- [x] **mongoose-paginate-v2** : mongoose plugin to paginate mongoose queries.
 - [x]  **dotenv** : loads environment variables from a .env file.
 - [x]  **inspirational-quotes** : get inspirational quotes.
 - [ ]  **express-session** : session middleware.

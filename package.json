@@ -5,7 +5,6 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "testEntrega2": "node test/testProductManager.js",
     "start": "node src/app.js",
     "startDev": "npx nodemon src/app.js"
   },
@@ -26,6 +25,7 @@
     "express-routemap": "^1.6.0",
     "inspirational-quotes": "^2.0.1",
     "mongoose": "^7.4.0",
+    "mongoose-paginate-v2": "^1.7.31",
     "socket.io": "^4.7.2"
   },
   "devDependencies": {

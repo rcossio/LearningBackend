@@ -4,10 +4,33 @@ import {productManager} from '../config/config.js';
 const router = Router();
 
 router.get('/', async (req, res) => {
-  const {limit} = req.query;
+  const { limit = 3, page = 1, sort = 'asc', query = '' } = req.query;
+  const sortOrder = sort === 'desc'? -1 : 1; 
+
+  const filter = query ? { title: new RegExp(query, 'i') } : {};  
+
+  const options = {
+    page: parseInt(page, 10),
+    limit: parseInt(limit, 10),
+    sort: { price: sortOrder, _id: 1 },
+    lean: true
+  };
+
   try {
-    const products = await productManager.getProducts();
-    res.status(200).json({ status: 'success', payload: products.slice(0, limit?? 10) });
+    const result = await productManager.getProducts(filter, options);
+    const response = {
+      status: 'success',
+      payload: result.docs,
+      totalPages: result.totalPages,
+      page: result.page,
+      hasPrevPage: result.hasPrevPage,
+      hasNextPage: result.hasNextPage,
+      prevPage: result.prevPage,
+      nextPage: result.nextPage,
+      prevLink: result.hasPrevPage ? `/api/products?page=${result.prevPage}&limit=${limit}` : null,
+      nextLink: result.hasNextPage ? `/api/products?page=${result.nextPage}&limit=${limit}` : null
+    };
+    res.status(200).json(response);
   } catch (error) {
     res.status(400).json({ status: 'error', payload: error.message });
   }

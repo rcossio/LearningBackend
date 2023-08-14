@@ -10,11 +10,12 @@ class ProductManager {
     }
   }
 
-  async getProducts() {
+  async getProducts(filter = {}, options = {}) {
     try {
-      const products = await ProductModel.find({}).lean();
-      return products;
-    } catch (error) {
+      const result = await ProductModel.paginate(filter, options);
+      return result;
+
+      } catch (error) {
       throw error;
     }
   }
