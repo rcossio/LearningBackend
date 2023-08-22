@@ -1,0 +1,25 @@
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="text-center mb-4">Welcome, {{user.firstName}} {{user.lastName}}!</h2>
+
+                    <ul class="list-group list-group-flush mb-4">
+                        <li class="list-group-item">
+                            <strong>Email:</strong> {{user.email}}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Age:</strong> {{user.age}}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Role:</strong> {{user.role}}
+                        </li>
+                    </ul>
+
+                    <a href="/logout" id="logout-button" class="btn btn-danger btn-block">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

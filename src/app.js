@@ -12,6 +12,8 @@ import handlebars from 'express-handlebars';
 import connectDB from './config/dbConnection.js';
 import configureSocketIO from './config/socketIO.js';
 
+import sessionMiddleware from './config/sessionsConfig.js';
+
 const PORT = process.env.PORT || 8080; 
 const app = express();
 const __dirname = path.resolve();
@@ -20,6 +22,12 @@ const __dirname = path.resolve();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+//session configuration
+
+
+app.use(sessionMiddleware);
+
 
 //handlebars configuration
 app.engine('hbs', handlebars.engine({ extname: '.hbs' })); 

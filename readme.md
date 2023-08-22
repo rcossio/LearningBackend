@@ -22,10 +22,10 @@ The ones marked are the ones currently used
 - [x] **mongoose-paginate-v2** : mongoose plugin to paginate mongoose queries.
 - [x]  **dotenv** : loads environment variables from a .env file.
 - [x]  **inspirational-quotes** : get inspirational quotes.
-- [ ]  **express-session** : session middleware.
+- [x]  **express-session** : session middleware.
 - [ ]  **cookie-parser** : cookie parsing middleware.
 - [ ]  **morgan** : HTTP request logger middleware.
-- [ ]  **bcrypt** : library to help you hash passwords.
+- [x]  **bcrypt** : library to help you hash passwords.
 - [ ]  **connect-flash** : special area of the session used for storing messages.
 - [ ]  **express-validator** : middleware for validating data.
 - [ ]  **mysql2** : MySQL client.
