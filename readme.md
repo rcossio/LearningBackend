@@ -23,9 +23,10 @@ The ones marked are the ones currently used
 - [x]  **dotenv** : loads environment variables from a .env file.
 - [x]  **inspirational-quotes** : get inspirational quotes.
 - [x]  **express-session** : session middleware.
+- [x]  **connect-mongo** : MongoDB session store for Connect and Express.
+- [x]  **bcrypt** : library to help you hash passwords.
 - [ ]  **cookie-parser** : cookie parsing middleware.
 - [ ]  **morgan** : HTTP request logger middleware.
-- [x]  **bcrypt** : library to help you hash passwords.
 - [ ]  **connect-flash** : special area of the session used for storing messages.
 - [ ]  **express-validator** : middleware for validating data.
 - [ ]  **mysql2** : MySQL client.
