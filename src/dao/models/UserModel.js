@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
     required: true,
     unique: true,
     lowercase: true,
-    match: [/.+\@.+\..+/, 'Inavlid email'] 
+    match: [/.+\@.+\..+/, 'Invalid email'] 
   },
   age: {
     type: Number,

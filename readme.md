@@ -25,6 +25,8 @@ The ones marked are the ones currently used
 - [x]  **express-session** : session middleware.
 - [x]  **connect-mongo** : MongoDB session store for Connect and Express.
 - [x]  **bcrypt** : library to help you hash passwords.
+- [x]  **passport** : authentication middleware for Node.js.
+- [x]  **passport-local** : passport strategy for authenticating with a username and password.
 - [ ]  **cookie-parser** : cookie parsing middleware.
 - [ ]  **morgan** : HTTP request logger middleware.
 - [ ]  **connect-flash** : special area of the session used for storing messages.

@@ -3,6 +3,15 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-body">
+                    
+                    {{#if error}}
+                    <div class="alert alert-danger">{{error}}</div>
+                    {{/if}}
+                    
+                    {{#if message}}
+                    <div class="alert alert-info">{{message}}</div>
+                    {{/if}}
+
                     <h2 class="text-center mb-4">Welcome, {{user.firstName}} {{user.lastName}}!</h2>
 
                     <ul class="list-group list-group-flush mb-4">

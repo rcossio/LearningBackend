@@ -14,6 +14,9 @@ import configureSocketIO from './config/socketIO.js';
 
 import sessionMiddleware from './config/sessionsConfig.js';
 
+import passport from './config/passportConfig.js';
+
+
 const PORT = process.env.PORT || 8080; 
 const app = express();
 const __dirname = path.resolve();
@@ -24,10 +27,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 //session configuration
-
-
 app.use(sessionMiddleware);
 
+//passport initialization
+app.use(passport.initialize());
+app.use(passport.session());
 
 //handlebars configuration
 app.engine('hbs', handlebars.engine({ extname: '.hbs' })); 

@@ -3,6 +3,14 @@
     <div class="col">
       <h2 class="text-center mb-4">Products in cart</h2>
 
+      {{#if error}}
+      <div class="alert alert-danger">{{error}}</div>
+      {{/if}}
+      
+      {{#if message}}
+      <div class="alert alert-info">{{message}}</div>
+      {{/if}}
+
       {{#each products}}
         <div class="card mb-4">
           <div class="row no-gutters">
