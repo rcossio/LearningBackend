@@ -87,6 +87,14 @@ router.get("/auth/github/callback", passport.authenticate('githubStrategy', {
   failureRedirect: '/login-failed',
 }));
 
+//Google auth
+router.get("/auth-google", passport.authenticate('googleStrategy',{ scope: ['profile','email'] }));
+
+router.get("/auth/google/callback", passport.authenticate('googleStrategy', {
+  successRedirect: '/',
+  failureRedirect: '/login-failed',
+}));
+
 
 // Login
 router.get("/login", async (req, res) => {

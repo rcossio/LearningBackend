@@ -3,7 +3,8 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import bcrypt from 'bcrypt';
 import { userManager } from './config.js';
 import 'dotenv/config';
-import githubStrategy from 'passport-github2';
+import {Strategy as GitHubStrategy} from 'passport-github2';
+import {Strategy as GoogleStrategy} from 'passport-google-oauth20';
 
 passport.use('signupStrategy', new LocalStrategy(
     {
@@ -69,7 +70,7 @@ passport.use('loginStrategy', new LocalStrategy(
     }
 ));
 
-passport.use('githubStrategy', new githubStrategy(
+passport.use('githubStrategy', new GitHubStrategy(
     {
         clientID: process.env.AUTH_GITHUB_CLIENT_ID,
         clientSecret: process.env.AUTH_GITHUB_SECRET_KEY,
@@ -86,7 +87,6 @@ passport.use('githubStrategy', new githubStrategy(
                     email: profile.username
                 }
                 const user = await userManager.addNewUser(newUser);
-                return done(null, user);
             } 
             return done(null, user);
         } catch (err) {
@@ -94,6 +94,33 @@ passport.use('githubStrategy', new githubStrategy(
         }
     }
 ));
+
+
+passport.use('googleStrategy', new GoogleStrategy(
+    {
+        clientID: process.env.AUTH_GOOGLE_CLIENT_ID,
+        clientSecret: process.env.AUTH_GOOGLE_SECRET_KEY,
+        callbackURL: process.env.AUTH_GOOGLE_CALLBACK_URL
+    }, 
+    async (accessToken, refreshToken, profile, done) => {
+        try {
+            //console.log(profile)
+            const user = await userManager.getUserByEmail(profile.emails[0].value);
+            if (!user) {
+                const newUser = {
+                    firstName: profile.name.givenName,
+                    lastName: profile.name.familyName,
+                    email: profile.emails[0].value
+                }
+                const user = await userManager.addNewUser(newUser);
+            } 
+            return done(null, user);
+        } catch (err) {
+            return done(err);
+        }
+    }
+));
+
 
 passport.serializeUser((user, done) => {
     // Admin serialization
