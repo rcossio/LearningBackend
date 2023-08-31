@@ -5,13 +5,15 @@ const MONGO_ATLAS_CONNECTION_STRING = `mongodb+srv://${process.env.ATLAS_USER}:$
 
 const connectDB = async () => {
   try {
+    mongoose.set('bufferTimeoutMS', 5000) //5 seconds
     mongoose.connect(MONGO_ATLAS_CONNECTION_STRING, {
       useNewUrlParser: true,
-      useUnifiedTopology: true
+      useUnifiedTopology: true,
+      connectTimeoutMS: 5000   //5 seconds
     });
     console.log('Database connected successfully');
   } catch (error) {
-    throw error;
+    console.error('Error connecting to database');
   }
 
 };

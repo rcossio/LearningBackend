@@ -1,18 +1,41 @@
+<div class="container-fluid bg-light py-2 mb-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <a href="/" class="text-decoration-none text-dark"> 
+                  <h3>Rworld Store!</h3>  
+                </a>
+            </div>
+            <div class="col-md-1 text-right">
+                <a href="/my-cart">My Cart</a>
+            </div>
+            <div class="col-md-3 text-left">
+                {{#if user}}
+                    <span class="mr-3">Logged in as <a href="/profile">{{user.firstName}} {{user.lastName}}</a></span>
+                {{else}}
+                    <a href="/login" class="btn btn-primary mr-2">Log In</a>
+                    <a href="/register" class="btn btn-success">Sign Up</a>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>
+
+{{#if error}}
+<div class="alert alert-danger mx-5">{{error}}</div>
+{{/if}}
+
+{{#if message}}
+<div class="alert alert-info mx-5">{{message}}</div>
+{{/if}}
+
 <div class="container">
   <div class="row">
     <div class="col">
-      <h2 class="text-center mb-4">Products in cart</h2>
-
-      {{#if error}}
-      <div class="alert alert-danger">{{error}}</div>
-      {{/if}}
-      
-      {{#if message}}
-      <div class="alert alert-info">{{message}}</div>
-      {{/if}}
+      <h2 class="text-center mb-3">Products in cart</h2>
 
       {{#each products}}
-        <div class="card mb-4">
+        <div class="card store_card mx-auto mb-3">
           <div class="row no-gutters">
 
             <!-- Product Details -->

@@ -35,7 +35,7 @@ router.get("/", async (req, res) => {
     res.status(200).render('home', { ...result, sort, query, user: req.user });
 
   } catch (error) { 
-      return res.status(400).render('home', { error: error.message });
+      return res.status(400).render('home', { error: error.message, page:1, totalPages:1 });
   }
 
 
@@ -52,6 +52,35 @@ router.get('/carts/:cartId', async (req, res) => {
 
 });
 
+
+// Add to cart functionaliy
+router.get('/my-cart', async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.redirect('/login');
+    }
+    const cart = await cartManager.getCartByUserId(req.user);
+    res.status(200).render('cart', {...cart, user: req.user});
+  } catch (error) {
+    res.render('cart', { error: error.message });
+  }
+});
+
+router.get('/add-to-my-cart/:productId', async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.redirect('/login');
+    }
+    const cart = await cartManager.getCartByUserId(req.user);
+    await cartManager.addProductToCart(cart._id, req.params.productId, 1, productManager);
+    res.status(200).redirect('/my-cart');
+  } catch (error) {
+    res.render('home', { error: error.message });
+  }
+});
+
+
+//Chat
 router.get("/chat", (req, res) => {
   res.render('chat');
 }); 

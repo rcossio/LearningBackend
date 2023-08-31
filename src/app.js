@@ -1,3 +1,4 @@
+import './utils/globalHandlers.js';
 import express from 'express';
 
 import displayRoutes from 'express-routemap';
@@ -16,10 +17,12 @@ import sessionMiddleware from './config/sessionsConfig.js';
 
 import passport from './config/passportConfig.js';
 
-
 const PORT = process.env.PORT || 8080; 
 const app = express();
 const __dirname = path.resolve();
+
+//db connection
+connectDB();
 
 //express configuration
 app.use(express.json());
@@ -51,9 +54,6 @@ app.use((err, req, res, next) => {
 app.get('*', (req, res) => {
   res.status(404).render('error', { message: 'Page does not exist' });
 });  
-
-//db connection
-connectDB();
 
 //server initialization
 const httpServer = app.listen(PORT, () => {

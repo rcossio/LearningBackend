@@ -4,7 +4,6 @@
 
 /* This is for the store */
 .store_card {
-  margin: 20px auto;
   max-width: 550px;
   transition: box-shadow 0.3s ease;
 }

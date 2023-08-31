@@ -1,12 +1,30 @@
 import CartModel from '../models/CartModel.js';
 
 class CartManager {
-  async createCart() {
-    return await CartModel.create({ products: [] });
+  async createCart(userId) {
+    return await CartModel.create({ products: [], userId });
   }
 
   async addProductToCart(cartId, productId, quantity, productManager) {
     const cart = await CartModel.findById(cartId);
+
+    const product = await productManager.getProductById(productId);
+
+    const productIndex = cart.products.findIndex((item) => item.productId.toString() === productId);
+    if (productIndex !== -1) {
+      cart.products[productIndex].quantity += quantity;
+    } else {
+      cart.products.push({ productId, quantity });
+    }
+
+    await cart.save();
+  }
+
+  async addProductToUserCart(userId, productId, quantity, productManager) {
+    const cart = await CartModel.findOne({ userId });
+    if (!cart) {
+      cart = await this.createCart(userId);
+    }
 
     const product = await productManager.getProductById(productId);
 
@@ -47,6 +65,14 @@ class CartManager {
 
   async getCartById(cartId) {
     return await CartModel.findById(cartId).populate('products.productId').lean();
+  }
+
+  async getCartByUserId(userId) {
+    let cart = await CartModel.findOne( { userId } ).populate('products.productId').lean();
+    if (!cart) {
+      cart = await this.createCart(userId);
+    }
+    return cart;
   }
 
   async updateCart(cartId, products) {

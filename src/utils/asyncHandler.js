@@ -1,6 +1,6 @@
-function asyncHandler(fn) {
+function asyncHandler(callback) {
   return (req, res, next) => {
-    Promise.resolve(fn(req, res, next))
+    Promise.resolve(callback(req, res, next))
       .catch(next);
   };
 }

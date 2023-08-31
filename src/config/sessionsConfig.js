@@ -1,14 +1,22 @@
 import MongoStore from 'connect-mongo';
 import session from 'express-session';
 import 'dotenv/config';
+import mongoose from 'mongoose';
 
-const MONGO_ATLAS_CONNECTION_STRING = `mongodb+srv://${process.env.ATLAS_USER}:${process.env.ATLAS_PASS}@${process.env.ATLAS_URL}/${process.env.ATLAS_DBNAME}`;
-
-const sessionStore = MongoStore.create({
-  mongoUrl: MONGO_ATLAS_CONNECTION_STRING,
-  collectionName: 'sessions', 
-  ttl:  60
-});
+let sessionStore;
+try {
+  if (mongoose.connection.readyState === 1) {
+    sessionStore = MongoStore.create(
+      {
+      client: mongoose.connection.getClient(),
+      collectionName: 'sessions', 
+      ttl:  300 // 5 min expiration in seconds
+      }
+    )};
+} catch (error) {
+  console.error('Error connecting to MongoDB Atlas: ', error);
+  sessionStore = null
+}
 
 const sessionMiddleware = session({
   secret: process.env.SESSION_SECRET_KEY, 
@@ -16,7 +24,7 @@ const sessionMiddleware = session({
   saveUninitialized: false,   // Obs: Do not save uninitialized sessions (sessions with no data)
   store: sessionStore,
   cookie: {
-    maxAge: 1000 * 60,  //  1 min expiration in milliseconds
+    maxAge: 1000 * 60,  //  60 min expiration in milliseconds
     httpOnly: true
   }
 })

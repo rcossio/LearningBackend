@@ -17,6 +17,11 @@ const cartSchema = new mongoose.Schema({
     }],
     required: true,
     default: []
+  },
+  userId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'users',
+    required: false //for API retrocompatibility
   }
 });
 
