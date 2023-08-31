@@ -66,7 +66,7 @@ router.get("/register", async (req, res) => {
   res.render('register');
 });
 
-router.post("/register", passport.authenticate('local.signup', {
+router.post("/register", passport.authenticate('signupStrategy', {
   successRedirect: '/registered-successfully',
   failureRedirect: '/registered-failed',
 }));
@@ -78,6 +78,14 @@ router.get("/registered-successfully", async (req, res) => {
 router.get("/registered-failed", async (req, res) => {
   return res.render('register', { error: 'Unable to register user.' });
 });
+
+//Github auth
+router.get("/auth-github", passport.authenticate('githubStrategy'));
+
+router.get("/auth/github/callback", passport.authenticate('githubStrategy', {
+  successRedirect: '/',
+  failureRedirect: '/login-failed',
+}));
 
 
 // Login
@@ -95,7 +103,7 @@ router.get("/login", async (req, res) => {
 
 });
 
-router.post("/login", passport.authenticate('local.login', {
+router.post("/login", passport.authenticate('loginStrategy', {
   successRedirect: '/',
   failureRedirect: '/login-failed',
 }));

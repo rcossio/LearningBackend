@@ -13,16 +13,15 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    lowercase: true,
-    match: [/.+\@.+\..+/, 'Invalid email'] 
+    lowercase: true
   },
   age: {
     type: Number,
-    required: true,
+    required: false,
   },
   password: {
     type: String,
-    required: true,
+    required: false,
   },
   role: {
     type: String,
