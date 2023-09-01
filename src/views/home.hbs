@@ -13,8 +13,8 @@
                 {{#if user}}
                     <span class="mr-3">Logged in as <a href="/profile">{{user.firstName}} {{user.lastName}}</a></span>
                 {{else}}
-                    <a href="/login" class="btn btn-primary mr-2">Log In</a>
-                    <a href="/register" class="btn btn-success">Sign Up</a>
+                    <a href="/auth/login" class="btn btn-primary mr-2">Log In</a>
+                    <a href="/auth/register" class="btn btn-success">Sign Up</a>
                 {{/if}}
             </div>
         </div>
@@ -65,9 +65,9 @@
 
             <!-- Add to Cart Button Column -->
             <div class="col-md-4 d-flex align-items-center justify-content-center">
-              <a href="/add-to-my-cart/{{this._id}}">
-                <button class="btn btn-success">Add to Cart</button>
-              </a>
+              <form action="/add-to-my-cart/{{this._id}}" method="post">
+                <button type="submit" class="btn btn-success">Add to Cart</button>
+              </form>
             </div>
 
           </div>

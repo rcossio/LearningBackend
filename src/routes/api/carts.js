@@ -1,12 +1,12 @@
 import { Router } from 'express';
-import { productManager, cartManager } from '../config/config.js';
-import asyncHandler from '../utils/asyncHandler.js';
+import { productManager, cartManager } from '../../config/config.js';
+import asyncHandler from '../../utils/asyncHandler.js';
 
 const router = Router();
 
 router.post('/', asyncHandler(async (req, res) => {
     const cart = await cartManager.createCart();
-    res.status(200).json({ status: 'success', payload: cart });
+    res.status(201).json({ status: 'success', payload: cart });
 }));
 
 router.get('/:cartId', asyncHandler(async (req, res) => {
@@ -21,12 +21,12 @@ router.put('/:cartId', asyncHandler(async (req, res) => {
 
 router.delete('/:cartId', asyncHandler(async (req, res) => {
     await cartManager.deleteCart(req.params.cartId);
-    res.status(200).json({ status: 'success', payload: 'Products emptied from cart successfully' });
+    res.status(200).end();
 }));
 
 router.post('/:cartId/product/:productId', asyncHandler(async (req, res) => {
     await cartManager.addProductToCart(req.params.cartId, req.params.productId, 1, productManager);
-    res.status(200).json({ status: 'success', payload: 'Product added to cart successfully' });
+    res.status(201).json({ status: 'success', payload: 'Product added to cart successfully' });
 }));
 
 router.put('/:cartId/product/:productId', asyncHandler(async (req, res) => {
@@ -36,7 +36,7 @@ router.put('/:cartId/product/:productId', asyncHandler(async (req, res) => {
 
 router.delete('/:cartId/product/:productId', asyncHandler(async (req, res) => {
     await cartManager.deleteProductFromCart(req.params.cartId, req.params.productId);
-    res.status(200).json({ status: 'success', payload: 'Product deleted from cart successfully' });
+    res.status(204).end();
 }));
 
 export { router };

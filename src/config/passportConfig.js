@@ -2,7 +2,6 @@ import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import bcrypt from 'bcrypt';
 import { userManager } from './config.js';
-import 'dotenv/config';
 import {Strategy as GitHubStrategy} from 'passport-github2';
 import {Strategy as GoogleStrategy} from 'passport-google-oauth20';
 

@@ -1,6 +1,6 @@
 import {Router} from 'express';
-import {productManager} from '../config/config.js';
-import asyncHandler from '../utils/asyncHandler.js';
+import {productManager} from '../../config/config.js';
+import asyncHandler from '../../utils/asyncHandler.js';
 
 const router = Router();
 
@@ -49,13 +49,13 @@ router.get('/:productId', asyncHandler(async (req, res) => {
 router.delete('/:productId', asyncHandler(async (req, res) => {
   const { productId } = req.params;
   await productManager.deleteProduct(productId);
-  res.status(200).json({ status: 'success', payload: 'Product deleted successfully' });
+  res.status(204).end();
 }));
 
 router.post('/', asyncHandler(async (req, res) => {
   const product = req.body;
   await productManager.addProduct(product);
-  res.status(200).json({ status: 'success', payload: 'Product added successfully' });
+  res.status(201).json({ status: 'success', payload: 'Product added successfully' });
 }));
 
 router.put('/:productId', asyncHandler(async (req, res) => {

@@ -1,6 +1,5 @@
 import MongoStore from 'connect-mongo';
 import session from 'express-session';
-import 'dotenv/config';
 import mongoose from 'mongoose';
 
 let sessionStore;

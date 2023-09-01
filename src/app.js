@@ -1,12 +1,15 @@
 import './utils/globalHandlers.js';
+import 'dotenv/config';
+
 import express from 'express';
 
 import displayRoutes from 'express-routemap';
-import { router as productRouter } from './routes/products.js';
-import { router as cartRouter } from './routes/carts.js';
+import { router as productRouter } from './routes/api/products.js';
+import { router as cartRouter } from './routes/api/carts.js';
 import { router as viewsRouter } from './routes/views.js';
+import { router as authRouter } from './routes/auth.js';
 
-import 'dotenv/config';
+
 import path from 'path';
 import handlebars from 'express-handlebars';
 
@@ -43,11 +46,13 @@ app.set('views', path.join(__dirname, 'src/views'));
 
 //routes
 app.use('/', viewsRouter);
+app.use('/auth', authRouter);
 app.use('/api/products', productRouter);
 app.use('/api/carts', cartRouter);
 
 //error handling
 app.use((err, req, res, next) => { 
+  console.error(err.stack);
   res.status(500).json({ status: 'error', payload: err.message });
 });
 

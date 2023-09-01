@@ -9,7 +9,7 @@
                     <div class="alert alert-danger">{{error}}</div>
                     {{/if}}
 
-                    <form action="/register" method="post">
+                    <form action="/auth/register" method="post">
                         <div class="form-group">
                             <label for="firstName">First Name:</label>
                             <input type="text" class="form-control" id="firstName" name="firstName" required>
@@ -38,7 +38,7 @@
                         <div class="text-center">
                             <button type="submit" class="btn btn-primary btn-lg mt-3 px-4">Register</button>
                             <div class="mt-2">
-                                <a href="/login">Already registered? Sign in</a>
+                                <a href="/auth/login">Already registered? Sign in</a>
                             </div>
                         </div>
                     </form>
