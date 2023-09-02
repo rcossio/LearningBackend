@@ -1,26 +1,3 @@
-<div class="container-fluid bg-light py-2 mb-4">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-8">
-                <a href="/" class="text-decoration-none text-dark"> 
-                  <h3>Rworld Store!</h3>  
-                </a>
-            </div>
-            <div class="col-md-1 text-right">
-                <a href="/my-cart">My Cart</a>
-            </div>
-            <div class="col-md-3 text-left">
-                {{#if user}}
-                    <span class="mr-3">Logged in as <a href="/profile">{{user.firstName}} {{user.lastName}}</a></span>
-                {{else}}
-                    <a href="/auth/login" class="btn btn-primary mr-2">Log In</a>
-                    <a href="/auth/register" class="btn btn-success">Sign Up</a>
-                {{/if}}
-            </div>
-        </div>
-    </div>
-</div>
-
 {{#if error}}
 <div class="alert alert-danger mx-5">{{error}}</div>
 {{/if}}
@@ -32,44 +9,55 @@
 <div class="container">
   <div class="row">
     <div class="col">
-      <h2 class="text-center mb-3">Products in cart</h2>
+      <h2 class="text-center">Products in cart</h2>
 
       {{#each products}}
-        <div class="card store_card mx-auto mb-3">
-          <div class="row no-gutters">
-
-            <!-- Product Details -->
-            <div class="col-md-8">
-              <div class="card-body">
-                <h5 class="card-title">{{this.productId.title}}</h5>
-                <p class="card-text">{{this.productId.description}}</p>
-                <div class="row">
-                  <div class="col">
-                      <p class="card-text">Price: ${{this.productId.price}}</p>
-                  </div>
-                  <div class="col">
-                      <p class="card-text">Code: {{this.productId.code}}</p>
-                  </div>
+      <div class="card store_card mx-auto mb-2">
+        <div class="row no-gutters">
+          <!-- Product Details -->
+          <div class="col-md-8">
+            <div class="card-body py-2"> 
+              <h5 class="card-title text-sm">{{this.productId.title}}</h5>
+              <p class="card-text text-sm">{{this.productId.description}}</p>
+              <div class="row">
+                <div class="col">
+                    <p class="card-text text-sm">Price: ${{this.productId.price}}</p>
                 </div>
-                <div class="row">
-                  <div class="col">
-                      <p class="card-text">Stock: {{this.productId.stock}}</p>
-                  </div>
-                  <div class="col">
-                      <p class="card-text">Category: {{this.productId.category}}</p>
-                  </div>
+                <div class="col">
+                    <p class="card-text text-sm">Code: {{this.productId.code}}</p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                    <p class="card-text text-sm">Stock: {{this.productId.stock}}</p>
+                </div>
+                <div class="col">
+                    <p class="card-text text-sm">Category: {{this.productId.category}}</p>
                 </div>
               </div>
             </div>
-
-            <!-- Quantity -->
-            <div class="col-md-4 d-flex align-items-center justify-content-center">
-                <h5>{{this.quantity}}</h5>
-            </div>
-
+          </div>
+          <!-- Quantity -->
+          <div class="col-md-3 d-flex align-items-center justify-content-between px-3">
+              <div>
+                  <button class="btn btn-light btn-sm mr-2">-</button>
+                  <span class="text-sm">{{this.quantity}}</span>
+                  <button class="btn btn-light btn-sm ml-2">+</button>
+              </div>
+              <div class="col-md-1">
+                  <i class="fas fa-trash-alt text-dark"></i>
+              </div>
           </div>
         </div>
+      </div>
       {{/each}}
     </div>
+  </div>
+</div>
+
+<div class="row mt-2 mb-3">
+  <div class="col text-center">
+    <a href="/" class="btn btn-primary mr-2">Continue Shopping</a>
+    <a href="/my-cart" class="btn btn-success">Checkout</a>
   </div>
 </div>

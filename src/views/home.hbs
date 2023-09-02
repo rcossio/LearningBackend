@@ -1,26 +1,3 @@
-<div class="container-fluid bg-light py-2 mb-4">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-8">
-                <a href="/" class="text-decoration-none text-dark"> 
-                  <h3>Rworld Store!</h3>  
-                </a>
-            </div>
-            <div class="col-md-1 text-right">
-                <a href="/my-cart">My Cart</a>
-            </div>
-            <div class="col-md-3 text-left">
-                {{#if user}}
-                    <span class="mr-3">Logged in as <a href="/profile">{{user.firstName}} {{user.lastName}}</a></span>
-                {{else}}
-                    <a href="/auth/login" class="btn btn-primary mr-2">Log In</a>
-                    <a href="/auth/register" class="btn btn-success">Sign Up</a>
-                {{/if}}
-            </div>
-        </div>
-    </div>
-</div>
-
 {{#if error}}
 <div class="alert alert-danger mx-5">{{error}}</div>
 {{/if}}
@@ -29,35 +6,34 @@
 <div class="alert alert-info mx-5">{{message}}</div>
 {{/if}}
 
-
 <div class="container">
   <div class="row">
     <div class="col">
       <h2 class="text-center mb-3">Products</h2>
 
       {{#each docs}}
-        <div class="card store_card mx-auto mb-3">
+        <div class="card store_card mx-auto mb-2"> 
           <div class="row no-gutters">
-            
+
             <!-- Product Details Column -->
             <div class="col-md-8">
-              <div class="card-body">
-                <h5 class="card-title">{{this.title}}</h5>
-                <p class="card-text">{{this.description}}</p>
+              <div class="card-body py-2"> 
+                <h5 class="card-title text-sm">{{this.title}}</h5>
+                <p class="card-text text-sm">{{this.description}}</p> 
                 <div class="row">
                   <div class="col">
-                      <p class="card-text">Price: ${{this.price}}</p>
+                      <p class="card-text text-sm">Price: ${{this.price}}</p> 
                   </div>
                   <div class="col">
-                      <p class="card-text">Code: {{this.code}}</p>
+                      <p class="card-text text-sm">Code: {{this.code}}</p> 
                   </div>
                 </div>
                 <div class="row">
                   <div class="col">
-                      <p class="card-text">Stock: {{this.stock}}</p>
+                      <p class="card-text text-sm">Stock: {{this.stock}}</p> 
                   </div>
                   <div class="col">
-                      <p class="card-text">Category: {{this.category}}</p>
+                      <p class="card-text text-sm">Category: {{this.category}}</p> 
                   </div>
                 </div>
               </div>
@@ -66,13 +42,14 @@
             <!-- Add to Cart Button Column -->
             <div class="col-md-4 d-flex align-items-center justify-content-center">
               <form action="/add-to-my-cart/{{this._id}}" method="post">
-                <button type="submit" class="btn btn-success">Add to Cart</button>
+                <button type="submit" class="btn btn-success btn-sm">Add to Cart</button>
               </form>
             </div>
 
           </div>
         </div>
       {{/each}}
+
     </div>
   </div>
 

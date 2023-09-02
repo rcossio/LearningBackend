@@ -1,6 +1,8 @@
 import { Router } from "express";
 import bcrypt from 'bcrypt';
 import passport from '../config/passportConfig.js';
+import {  userManager } from "../config/config.js";
+
 
 const router = Router();
 
@@ -14,8 +16,8 @@ router.get("/register", async (req, res) => {
 });
 
 router.post("/register", passport.authenticate('signupStrategy', {
-  successRedirect: '/registered-successfully',
-  failureRedirect: '/registered-failed',
+  successRedirect: '/auth/registered-successfully',
+  failureRedirect: '/auth/registered-failed',
 }));
 
 router.get("/registered-successfully", async (req, res) => {
@@ -36,7 +38,8 @@ router.get("/login", async (req, res) => {
   
     res.render('login');
   } catch (error) {
-    res.render('login',{ error: error.message });
+    console.log(error.message)
+    res.render('login',{ error: 'Unable to log in' });
 
   }
 
@@ -44,7 +47,7 @@ router.get("/login", async (req, res) => {
 
 router.post("/login", passport.authenticate('loginStrategy', {
   successRedirect: '/',
-  failureRedirect: '/login-failed',
+  failureRedirect: '/auth/login-failed',
 }));
 
 router.get("/login-failed", async (req, res) => {
@@ -105,7 +108,8 @@ router.post("/restore-password", async (req, res) => {
     });
 
   } catch (error) {
-    res.render('restore-password', { error: error.message });
+    console.error(error.message);
+    res.render('restore-password', { error: 'You password could not be restores' });
   }
 });
 

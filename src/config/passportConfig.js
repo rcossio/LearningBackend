@@ -1,9 +1,9 @@
 import passport from 'passport';
-import { Strategy as LocalStrategy } from 'passport-local';
 import bcrypt from 'bcrypt';
 import { userManager } from './config.js';
-import {Strategy as GitHubStrategy} from 'passport-github2';
-import {Strategy as GoogleStrategy} from 'passport-google-oauth20';
+import { Strategy as LocalStrategy } from 'passport-local';
+import { Strategy as GitHubStrategy } from 'passport-github2';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 
 passport.use('signupStrategy', new LocalStrategy(
     {
@@ -54,12 +54,16 @@ passport.use('loginStrategy', new LocalStrategy(
 
             const user = await userManager.getUserByEmail(email);
             if (!user) {
-                return done(null, false, { message: 'User not found.' });
+                return done(null, false);
+            }
+
+            if (user.password === undefined) {
+                return done(null, false);
             }
 
             const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) {
-                return done(null, false, { message: 'Invalid credentials.' });
+                return done(null, false);
             }
             
             return done(null, user);
@@ -82,7 +86,7 @@ passport.use('githubStrategy', new GitHubStrategy(
             if (!user) {
                 const newUser = {
                     firstName: profile.username,
-                    lastName: profile.provider,
+                    lastName: `(${profile.provider})`,
                     email: profile.username
                 }
                 const user = await userManager.addNewUser(newUser);

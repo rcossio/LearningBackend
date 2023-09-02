@@ -1,7 +1,5 @@
 import { Router } from "express";
-import { productManager, cartManager, userManager } from "../config/config.js";
-import bcrypt from 'bcrypt';
-import passport from '../config/passportConfig.js';
+import { productManager, cartManager } from "../config/config.js";
 
 const router = Router();
 
@@ -34,7 +32,8 @@ router.get("/", async (req, res) => {
     res.status(200).render('home', { ...result, sort, query, user: req.user });
 
   } catch (error) { 
-      return res.status(400).render('home', { error: error.message, page:1, totalPages:1 });
+      console.error(error.message)
+      return res.status(400).render('home', { error: 'Error while loading this page', page:1, totalPages:1 });
   }
 
 
@@ -46,7 +45,8 @@ router.get('/carts/:cartId', async (req, res) => {
     const cart = await cartManager.getCartById(cartId);
     res.status(200).render('cart', cart);
   } catch (error) {
-    res.render('cart', { error: error.message });
+    console.error(error.message)
+    res.render('cart', { error: 'Error while loading your cart' });
   }
 
 });
@@ -56,25 +56,27 @@ router.get('/carts/:cartId', async (req, res) => {
 router.get('/my-cart', async (req, res) => {
   try {
     if (!req.user) {
-      return res.redirect('/login');
+      return res.redirect('/auth/login');
     }
     const cart = await cartManager.getCartByUserId(req.user);
     res.status(200).render('cart', {...cart, user: req.user});
   } catch (error) {
-    res.render('cart', { error: error.message });
+    console.error(error.message)
+    res.render('cart', { error: 'Error while loading your cart' });
   }
 });
 
 router.post('/add-to-my-cart/:productId', async (req, res) => {
   try {
     if (!req.user) {
-      return res.redirect('/login');
+      return res.redirect('/auth/login');
     }
     const cart = await cartManager.getCartByUserId(req.user);
     await cartManager.addProductToCart(cart._id, req.params.productId, 1, productManager);
     res.status(200).redirect('/my-cart');
   } catch (error) {
-    res.render('home', { error: error.message });
+    console.error(error.message)
+    res.render('home', { error: 'Error while adding product to cart' });
   }
 });
 
@@ -89,12 +91,13 @@ router.get("/chat", (req, res) => {
 router.get("/profile", async (req, res) => {
   try {
     if (!req.user) {
-      return res.redirect('/login');
+      return res.redirect('/auth/login');
     }
   
     res.render('profile', { user: req.user });
   } catch (error) {
-    res.render('profile', { error: error.message });
+    console.error(error.message)
+    res.render('profile', { error: 'Error while accesing toyou profile information' });
 
   }
 
