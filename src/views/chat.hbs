@@ -1,9 +1,22 @@
-<h1 class="chat-heading">Chat with us</h1>
-<form id="chatForm">
-    <input type="text" id="chatInput" autocomplete="off" placeholder="Write here"/>
-    <input type="submit" value="Send"/>
-</form>
-<div id="chatHistory"></div>
+<div class="container">
+    <h1 class="chat-heading text-center mt-5">Chat with us</h1>
+    <div class="card mt-3">
+        <div class="card-header">
+            Chat Room
+        </div>
+        <div class="card-body" id="chatHistory" style="height: 300px; overflow-y: auto;"></div>
+        <div class="card-footer">
+            <form id="chatForm">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="chatInput" autocomplete="off" placeholder="Write here"/>
+                    <div class="input-group-append">
+                        <input type="submit" class="btn btn-primary" value="Send"/>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <script>
     const username = "{{user.email}}";

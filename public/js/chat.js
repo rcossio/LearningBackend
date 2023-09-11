@@ -4,10 +4,11 @@ socket.emit('userIdentified', username);
 socket.on('chatHistory', (messages) => {
   const chatHistory = document.getElementById('chatHistory');
 
-  chatHistory.innerHTML = ''
+  chatHistory.innerHTML = '';
   messages.forEach(message => {
-    chatHistory.innerHTML += `<p>${message}</p>`;
+    chatHistory.innerHTML += `<div class="p-2 mb-1 rounded bg-light">${message}</div>`;
   });
+  chatHistory.scrollTop = chatHistory.scrollHeight; 
 });
 
 const chatForm = document.getElementById('chatForm');
