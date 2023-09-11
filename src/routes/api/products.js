@@ -40,13 +40,13 @@ router.get('/', asyncHandler(async (req, res) => {
   res.status(200).json(response);
 }));
 
-router.get('/:productId', asyncHandler(async (req, res) => {
+router.get('/:productId([0-9a-fA-F]{24})', asyncHandler(async (req, res) => {
   const { productId } = req.params;
   const product = await productManager.getProductById(productId);
   res.status(200).json({ status: 'success', payload: product });
 }));
 
-router.delete('/:productId', asyncHandler(async (req, res) => {
+router.delete('/:productId([0-9a-fA-F]{24})', asyncHandler(async (req, res) => {
   const { productId } = req.params;
   await productManager.deleteProduct(productId);
   res.status(204).end();
@@ -58,7 +58,7 @@ router.post('/', asyncHandler(async (req, res) => {
   res.status(201).json({ status: 'success', payload: 'Product added successfully' });
 }));
 
-router.put('/:productId', asyncHandler(async (req, res) => {
+router.put('/:productId([0-9a-fA-F]{24})', asyncHandler(async (req, res) => {
   const { productId } = req.params;
   const product = req.body;
   await productManager.updateProduct(productId, product);

@@ -66,7 +66,7 @@ router.get('/my-cart', async (req, res) => {
   }
 });
 
-router.post('/add-to-my-cart/:productId', async (req, res) => {
+router.post('/add-to-my-cart/:productId([0-9a-fA-F]{24})', async (req, res) => {
   try {
     if (!req.user) {
       return res.redirect('/auth/login');
