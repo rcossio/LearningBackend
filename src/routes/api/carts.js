@@ -24,17 +24,17 @@ router.delete('/:cartId([0-9a-fA-F]{24})', asyncHandler(async (req, res) => {
     res.status(200).end();
 }));
 
-router.post('/:cartId/product/:productId([0-9a-fA-F]{24})', asyncHandler(async (req, res) => {
+router.post('/:cartId([0-9a-fA-F]{24})/product/:productId([0-9a-fA-F]{24})', asyncHandler(async (req, res) => {
     await cartManager.addProductToCart(req.params.cartId, req.params.productId, 1, productManager);
     res.status(201).json({ status: 'success', payload: 'Product added to cart successfully' });
 }));
 
-router.put('/:cartId/product/:productId([0-9a-fA-F]{24})', asyncHandler(async (req, res) => {
+router.put('/:cartId([0-9a-fA-F]{24})/product/:productId([0-9a-fA-F]{24})', asyncHandler(async (req, res) => {
     await cartManager.updateProductInCart(req.params.cartId, req.params.productId, req.body.quantity);
     res.status(200).json({ status: 'success', payload: 'Product quantity updated successfully' });
 }));
 
-router.delete('/:cartId/product/:productId([0-9a-fA-F]{24})', asyncHandler(async (req, res) => {
+router.delete('/:cartId([0-9a-fA-F]{24})/product/:productId([0-9a-fA-F]{24})', asyncHandler(async (req, res) => {
     await cartManager.deleteProductFromCart(req.params.cartId, req.params.productId);
     res.status(204).end();
 }));

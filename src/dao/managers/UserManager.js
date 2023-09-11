@@ -1,9 +1,11 @@
 import UserModel from '../models/UserModel.js';
+import { cartManager } from '../../config/config.js';
 
 class UserManager {
 
   async addNewUser(user) {
-    return await UserModel.create(user); 
+    const cart = await cartManager.createCart({ products: [] });
+    return await UserModel.create( {...user, cartId: cart._id} );; 
   }
 
   async getUserByEmail(email) {
@@ -25,7 +27,13 @@ class UserManager {
 
     return user;
   }
-  
+
+  async createChat(id, chatId) {
+    const user = await UserModel.findById(id);
+    user.chatId = chatId;
+    await user.save();
+    return user;
+  }
 
   async setUserPasswordByEmail(email, hashedPassword) {
     const result = await UserModel.updateOne({ email: email }, { password: hashedPassword });

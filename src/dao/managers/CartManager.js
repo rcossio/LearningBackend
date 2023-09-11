@@ -1,8 +1,8 @@
 import CartModel from '../models/CartModel.js';
 
 class CartManager {
-  async createCart(userId) {
-    return await CartModel.create({ products: [], userId });
+  async createCart() {
+    return await CartModel.create({ products: [] });
   }
 
   async addProductToCart(cartId, productId, quantity, productManager) {
@@ -65,14 +65,6 @@ class CartManager {
 
   async getCartById(cartId) {
     return await CartModel.findById(cartId).populate('products.productId').lean();
-  }
-
-  async getCartByUserId(userId) {
-    let cart = await CartModel.findOne( { userId } ).populate('products.productId').lean();
-    if (!cart) {
-      cart = await this.createCart(userId);
-    }
-    return cart;
   }
 
   async updateCart(cartId, products) {

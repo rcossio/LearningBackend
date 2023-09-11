@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { productManager, cartManager } from "../config/config.js";
+import { productManager, cartManager, chatManager, userManager } from "../config/config.js";
 
 const router = Router();
 
@@ -58,7 +58,7 @@ router.get('/my-cart', async (req, res) => {
     if (!req.user) {
       return res.redirect('/auth/login');
     }
-    const cart = await cartManager.getCartByUserId(req.user);
+    const cart = await cartManager.getCartById(req.user.cartId);
     res.status(200).render('cart', {...cart, user: req.user});
   } catch (error) {
     console.error(error.message)
@@ -71,7 +71,7 @@ router.post('/add-to-my-cart/:productId([0-9a-fA-F]{24})', async (req, res) => {
     if (!req.user) {
       return res.redirect('/auth/login');
     }
-    const cart = await cartManager.getCartByUserId(req.user);
+    const cart = await cartManager.getCartById(req.user.cartId);
     await cartManager.addProductToCart(cart._id, req.params.productId, 1, productManager);
     res.status(200).redirect('/my-cart');
   } catch (error) {
@@ -82,8 +82,19 @@ router.post('/add-to-my-cart/:productId([0-9a-fA-F]{24})', async (req, res) => {
 
 
 //Chat
-router.get("/chat", (req, res) => {
-  res.render('chat');
+router.get("/chat", async (req, res) => {
+  if (!req.user) {
+    return res.redirect('/auth/login');
+  } 
+
+  if (!req.user.chatId) {
+    const chat = await chatManager.createChat(req.user.email);
+    const user = await userManager.getUserByEmail(req.user.email);
+    await userManager.createChat(user._id, chat._id);
+  }
+
+  res.render('chat', { user: req.user });
+  
 }); 
 
 
@@ -97,7 +108,7 @@ router.get("/profile", async (req, res) => {
     res.render('profile', { user: req.user });
   } catch (error) {
     console.error(error.message)
-    res.render('profile', { error: 'Error while accesing toyou profile information' });
+    res.render('profile', { error: 'Error while accesing to your profile information' });
 
   }
 

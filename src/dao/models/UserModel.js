@@ -28,6 +28,16 @@ const userSchema = new mongoose.Schema({
     enum: ['admin', 'user'],
     default: 'user',
     required: true 
+  },
+  cartId : {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'carts',
+    required: false  // In case cart creation fails
+  },
+  chatId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'chats',
+    required: false
   }
 });
 

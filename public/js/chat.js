@@ -1,9 +1,3 @@
-let username;
-
-while (!username) {
-  username = prompt('Indicate your user name. It cannot be blank.');
-}
-
 const socket = io();
 socket.emit('userIdentified', username);
 
