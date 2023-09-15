@@ -1,5 +1,4 @@
 import './utils/globalHandlers.js';
-import 'dotenv/config';
 
 import express from 'express';
 
@@ -8,7 +7,6 @@ import { router as productRouter } from './routes/api/products.js';
 import { router as cartRouter } from './routes/api/carts.js';
 import { router as viewsRouter } from './routes/views.js';
 import { router as authRouter } from './routes/auth.js';
-
 
 import path from 'path';
 import handlebars from 'express-handlebars';
@@ -20,7 +18,10 @@ import sessionMiddleware from './config/sessionsConfig.js';
 
 import passport from './config/passportConfig.js';
 
-const PORT = process.env.PORT || 8080; 
+import {config} from './config/config.js';
+
+console.log(config)
+const PORT = config.server.port; 
 const app = express();
 const __dirname = path.resolve();
 
