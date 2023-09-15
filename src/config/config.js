@@ -2,12 +2,7 @@
 import dotenv from 'dotenv';
 import path from 'path';
 
-import ProductManager from '../dao/managers/ProductManager.js';
-import CartManager from '../dao/managers/CartManager.js';
-import ChatManager from '../dao/managers/ChatManager.js';
-import UserManager from '../dao/managers/UserManager.js'
-
-const mode='developement'
+const mode = process.env.NODE_ENV || 'developement'
 
 dotenv.config({
   path: path.join(path.resolve(), `.env.${mode}`)
@@ -46,17 +41,8 @@ const config = {
   }
 }
 
-const productManager = new ProductManager();
-const cartManager = new CartManager();
-const chatManager = new ChatManager();
-const userManager = new UserManager();
-
 export {
-  config, 
-  productManager, 
-  cartManager, 
-  chatManager, 
-  userManager
+  config
 };
 
 

@@ -1,7 +1,23 @@
 import ChatModel from '../models/ChatModel.js';
 import { getQuote } from 'inspirational-quotes';
 
-class ChatManager {
+class ChatDAO {
+
+  static #instance;
+
+  constructor() {
+    if (ChatDAO.#instance) {
+      return ChatDAO.#instance;
+    }
+    ChatDAO.#instance = this; // If no instance exists, assign this instance to the static field
+  }
+
+  static getInstance() {
+    if (!ChatDAO.#instance) {
+      ChatDAO.#instance = new ChatDAO();
+    }
+    return ChatDAO.#instance;
+  }
 
   async createChat(userEmail) {
     return await ChatModel.create( {user: userEmail, messages: [] } );
@@ -23,4 +39,5 @@ class ChatManager {
   }
 }
 
-export default ChatManager;
+const chatDAOInstance = new ChatDAO();
+export default chatDAOInstance;

@@ -3,8 +3,8 @@ import './utils/globalHandlers.js';
 import express from 'express';
 
 import displayRoutes from 'express-routemap';
-import { router as productRouter } from './routes/api/products.js';
-import { router as cartRouter } from './routes/api/carts.js';
+import { router as productRouter } from './routes/products.js';
+import { router as cartRouter } from './routes/carts.js';
 import { router as viewsRouter } from './routes/views.js';
 import { router as authRouter } from './routes/auth.js';
 
@@ -57,6 +57,15 @@ app.use('/auth', authRouter);
 app.use('/api/products', productRouter);
 app.use('/api/carts', cartRouter);
 
+//server initialization
+const httpServer = app.listen(PORT, () => {
+  displayRoutes(app);
+  console.log(`Server is running at PORT ${PORT}`);
+});
+
+//socket.io configuration
+configureSocketIO(httpServer);
+
 //error handling
 app.use((err, req, res, next) => { 
   console.error(err.stack);
@@ -66,12 +75,3 @@ app.use((err, req, res, next) => {
 app.get('*', (req, res) => {
   res.status(404).render('error', { message: 'Page does not exist' });
 });  
-
-//server initialization
-const httpServer = app.listen(PORT, () => {
-  displayRoutes(app);
-  console.log(`Server is running at PORT ${PORT}`);
-});
-
-//socket.io configuration
-configureSocketIO(httpServer);

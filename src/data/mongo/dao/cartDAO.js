@@ -1,14 +1,31 @@
 import CartModel from '../models/CartModel.js';
 
-class CartManager {
+class CartDAO {
+
+  static #instance;
+
+  constructor() {
+    if (CartDAO.#instance) {
+      return CartDAO.#instance;
+    }
+    CartDAO.#instance = this; // If no instance exists, assign this instance to the static field
+  }
+
+  static getInstance() {
+    if (!CartDAO.#instance) {
+      CartDAO.#instance = new CartDAO();
+    }
+    return CartDAO.#instance;
+  }
+
   async createCart() {
     return await CartModel.create({ products: [] });
   }
 
-  async addProductToCart(cartId, productId, quantity, productManager) {
+  async addProductToCart(cartId, productId, quantity, productDAO) {
     const cart = await CartModel.findById(cartId);
 
-    const product = await productManager.getProductById(productId);
+    const product = await productDAO.getProductById(productId);
 
     const productIndex = cart.products.findIndex((item) => item.productId.toString() === productId);
     if (productIndex !== -1) {
@@ -20,13 +37,13 @@ class CartManager {
     await cart.save();
   }
 
-  async addProductToUserCart(userId, productId, quantity, productManager) {
+  async addProductToUserCart(userId, productId, quantity, productDAO) {
     const cart = await CartModel.findOne({ userId });
     if (!cart) {
       cart = await this.createCart(userId);
     }
 
-    const product = await productManager.getProductById(productId);
+    const product = await productDAO.getProductById(productId);
 
     const productIndex = cart.products.findIndex((item) => item.productId.toString() === productId);
     if (productIndex !== -1) {
@@ -83,4 +100,5 @@ class CartManager {
   }
 }
 
-export default CartManager;
+const cartDAOInstance = new CartDAO();
+export default cartDAOInstance;

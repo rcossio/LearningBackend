@@ -1,10 +1,26 @@
 import UserModel from '../models/UserModel.js';
-import { cartManager } from '../../config/config.js';
+import cartDAO from './cartDAO.js';
 
-class UserManager {
+class UserDAO {
+
+  static #instance;
+
+  constructor() {
+    if (UserDAO.#instance) {
+      return UserDAO.#instance;
+    }
+    UserDAO.#instance = this; // If no instance exists, assign this instance to the static field
+  }
+
+  static getInstance() {
+    if (!UserDAO.#instance) {
+      UserDAO.#instance = new UserDAO();
+    }
+    return UserDAO.#instance;
+  }
 
   async addNewUser(user) {
-    const cart = await cartManager.createCart({ products: [] });
+    const cart = await cartDAO.createCart({ products: [] });
     return await UserModel.create( {...user, cartId: cart._id} );; 
   }
 
@@ -47,4 +63,5 @@ class UserManager {
 
 }
 
-export default UserManager;
+const userDAOInstance = new UserDAO();
+export default userDAOInstance;

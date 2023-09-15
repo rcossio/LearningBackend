@@ -1,6 +1,22 @@
 import ProductModel from '../models/ProductModel.js';
 
-class ProductManager {
+class ProductDAO {
+
+  static #instance;
+
+  constructor() {
+    if (ProductDAO.#instance) {
+      return ProductDAO.#instance;
+    }
+    ProductDAO.#instance = this; // If no instance exists, assign this instance to the static field
+  }
+
+  static getInstance() {
+    if (!ProductDAO.#instance) {
+      ProductDAO.#instance = new ProductDAO();
+    }
+    return ProductDAO.#instance;
+  }
 
   async addProduct(product) {
     return await ProductModel.create(product);
@@ -42,5 +58,5 @@ class ProductManager {
     }
   }
 }
-
-export default ProductManager;
+const productDAOInstance = new ProductDAO();
+export default productDAOInstance;

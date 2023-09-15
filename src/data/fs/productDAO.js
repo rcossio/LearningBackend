@@ -1,6 +1,6 @@
 import fs from 'fs';
 
-class ProductManager {
+class ProductDAO {
   #products = [];
   #lastId = 0;
   #path = '';
@@ -134,4 +134,4 @@ class ProductManager {
   }
 }
 
-export default ProductManager;
+export default ProductDAO;

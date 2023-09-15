@@ -1,6 +1,6 @@
 import fs from 'fs';
 
-class CartManager {
+class CartDAO {
   #carts = [];
   #lastId = 0;
   #path = '';
@@ -55,10 +55,10 @@ class CartManager {
     return newCart;
   }
 
-  async addProductToCart(cartId, productId, quantity, productManager) {
+  async addProductToCart(cartId, productId, quantity, productDAO) {
     await this.#loadCarts();
 
-    const product = await productManager.getProductById(Number(productId));
+    const product = await productDAO.getProductById(Number(productId));
     if (!product) {
       throw new Error(`Product not found. Requested ID: ${productId}`);
     }
@@ -116,4 +116,4 @@ class CartManager {
   }
 }
 
-export default CartManager;
+export default CartDAO;
