@@ -3,8 +3,7 @@ import { config } from './config.js';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as GitHubStrategy } from 'passport-github2';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import { registerUser, loginUser, githubAuth, googleAuth } from '../services/auth.js';
-import userDAO from '../data/mongo/dao/userDAO.js';
+import UsersService from '../services/users.js';
 
 passport.use('signupStrategy', new LocalStrategy(
     {
@@ -14,7 +13,7 @@ passport.use('signupStrategy', new LocalStrategy(
     },
     async (req, email, password, done) => {
         try {
-            const user = await registerUser(req, email, password);
+            const user = await UsersService.registerUser(req, email, password);
             return done(null, user);
         } catch (err) {
             return done(null, false, { message: err.message });
@@ -29,7 +28,7 @@ passport.use('loginStrategy', new LocalStrategy(
     },
     async (email, password, done) => {
         try {
-            const user = await loginUser(email, password);
+            const user = await UsersService.loginUser(email, password);
             return done(null, user);
         } catch (err) {
             return done(null, false, { message: err.message });
@@ -45,7 +44,7 @@ passport.use('githubStrategy', new GitHubStrategy(
     },
     async (accessToken, refreshToken, profile, done) => {
         try {
-            const user = await githubAuth(profile);
+            const user = await UsersService.githubAuth(profile);
             return done(null, user);
         } catch (err) {
             return done(err);
@@ -61,7 +60,7 @@ passport.use('googleStrategy', new GoogleStrategy(
     },
     async (accessToken, refreshToken, profile, done) => {
         try {
-            const user = await googleAuth(profile);
+            const user = await UsersService.googleAuth(profile);
             return done(null, user);
         } catch (err) {
             return done(err);
@@ -88,7 +87,7 @@ passport.deserializeUser(async (id, done) => {
             });
         }
 
-        const user = await userDAO.getUserById(id);
+        const user = await UsersService.getUserById(id);
         done(null, user);
     } catch (err) {
         done(err);

@@ -1,26 +1,42 @@
-import productDAO from "../data/mongo/dao/productDAO.js";
+import productDAO from "../data/mongo/dao/productsDAO.js";
 
-export const getProducts = async (filter, options) => {
-    return await productDAO.getProducts(filter, options);
-};
+class ProductsService {
 
-//Repeated!!!
-export const getAllProducts = async (filter, options) => {
-  return await productDAO.getProducts(filter, options);
-};
+    static async getProducts(filter, options) {
+        const result = await productDAO.getProducts(filter, options);
+        if (!result || result.docs.length === 0) {
+            throw new Error('No products found.');
+        }
+        return result;
+    }
 
-export const getProductById = async (productId) => {
-  return await productDAO.getProductById(productId);
-};
+    static async getProductById(productId) {
+        const product = await productDAO.getProductById(productId);
+        if (!product) {
+            throw new Error('Product not found.');
+        }
+        return product;
+    }
 
-export const deleteProduct = async (productId) => {
-  return await productDAO.deleteProduct(productId);
-};
+    static async deleteProduct(productId) {
+        const result = await productDAO.deleteProduct(productId);
+        if (!result) {
+            throw new Error('Product not found. Unable to delete.');
+        }
+        return result;
+    }
 
-export const addNewProduct = async (product) => {
-  return await productDAO.addProduct(product);
-};
+    static async addProduct(product) {
+        return await productDAO.addProduct(product);
+    }
 
-export const modifyProduct = async (productId, product) => {
-  return await productDAO.updateProduct(productId, product);
-};
+    static async updateProduct(productId, product) {
+        const updatedProduct = await productDAO.updateProduct(productId, product);
+        if (!updatedProduct) {
+            throw new Error('Product not found. Unable to update.');
+        }
+        return updatedProduct;
+    }
+}
+
+export default ProductsService;

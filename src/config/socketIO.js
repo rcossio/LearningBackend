@@ -1,5 +1,5 @@
 import { Server } from 'socket.io';
-import { getChatHistory, addChatMessage } from '../services/chat.js';
+import ChatService from '../services/chat.js';
 
 const configureSocketIO = (httpServer) => {
   const io = new Server(httpServer);
@@ -9,12 +9,12 @@ const configureSocketIO = (httpServer) => {
 
     socket.on('userIdentified', async (username) => {
       console.log(`User identified: ${username}`);
-      const messagesWithUser = await getChatHistory(username);
+      const messagesWithUser = await ChatService.getChatHistory(username);
       socket.emit('chatHistory', messagesWithUser);
     });
 
     socket.on('newMessage', async (username, newMessage) => {
-      const messagesWithUser = await addChatMessage(username, newMessage);
+      const messagesWithUser = await ChatService.addChatMessage(username, newMessage);
       socket.emit('chatHistory', messagesWithUser);
     });
   });

@@ -1,39 +1,71 @@
-import cartDAO from "../data/mongo/dao/cartDAO.js";
-import productDAO from "../data/mongo/dao/productDAO.js";
+import cartDAO from "../data/mongo/dao/cartsDAO.js";
+import ProductsService from "./products.js";
 
-export const getCartById = async (cartId) => {
+class CartService {
+  static async getCartById(cartId) {
     return await cartDAO.getCartById(cartId);
-};
+  }
 
-export const addProductToCart = async (cartId, productId, quantity, productDAO) => {
-    return await cartDAO.addProductToCart(cartId, productId, quantity, productDAO);
-};
+  static async getCartRefsById(cartId) {
+    return await cartDAO.getCartRefsById(cartId);
+  }
 
-//SOME ARE REPEATED!!!!
-export const createNewCart = async () => {
+  static async addProductToCart(cartId, productId, quantity) {
+    const cart = await cartDAO.getCartRefsById(cartId);
+
+    const productIndex = cart.products.findIndex((item) => item.productId.toString() === productId);
+    
+    if (productIndex !== -1) {
+        quantity += cart.products[productIndex].quantity;
+    }
+    
+    return await this.updateProductQuantity(cartId, productId, quantity);
+  }
+
+  static async createCart() {
     return await cartDAO.createCart();
-};
+  }
 
-export const fetchCartById = async (cartId) => {
-    return await cartDAO.getCartById(cartId);
-};
-
-export const modifyCart = async (cartId, products) => {
+  static async modifyCart(cartId, products) {
     return await cartDAO.updateCart(cartId, products);
-};
+  }
 
-export const removeCart = async (cartId) => {
-    return await cartDAO.deleteCart(cartId);
-};
+  static async removeCart(cartId) {
+    await cartDAO.deleteCart(cartId);
+  }
 
-export const addProductToUserCart = async (cartId, productId) => {
-    return await cartDAO.addProductToCart(cartId, productId, 1, productDAO);
-};
+  static async addProductToUserCart(userId, productId, quantity = 1) {
+    let cart = await cartDAO.findCartByUserId(userId);
+    if (!cart) {
+      cart = await this.createCart();
+    }
+    return await this.addProductToCart(cart._id, productId, quantity);
+  }
 
-export const updateProductQuantityInCart = async (cartId, productId, quantity) => {
-    return await cartDAO.updateProductInCart(cartId, productId, quantity);
-};
+  static async updateProductQuantity(cartId, productId, quantity) {
+    const cart = await cartDAO.getCartRefsById(cartId);
 
-export const removeProductFromUserCart = async (cartId, productId) => {
-    return await cartDAO.deleteProductFromCart(cartId, productId);
-};
+    const productIndex = cart.products.findIndex((item) => item.productId.toString() === productId);
+    if (productIndex === -1) {
+        cart.products.push({ productId, quantity });
+    } else {
+        cart.products[productIndex].quantity = quantity;
+    }
+
+    return await cartDAO.updateCart(cartId, cart.products);
+  }
+
+  static async removeProductFromCart(cartId, productId) {
+    const cart = await cartDAO.getCartById(cartId);
+
+    const productIndex = cart.products.findIndex((item) => item.productId.toString() === productId);
+    if (productIndex === -1) {
+      throw new Error('Product not found in cart.');
+    }
+
+    cart.products.splice(productIndex, 1);
+    return await cartDAO.updateCart(cartId, cart.products);
+  }
+}
+
+export default CartService;

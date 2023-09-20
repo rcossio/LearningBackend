@@ -1,22 +1,21 @@
 import chatDAO from '../data/mongo/dao/chatDAO.js';
+import { getQuote } from 'inspirational-quotes';
 
-export const getChatHistory = async (username) => {
+class ChatService {
+
+  static async getChatHistory(username) {
     return await chatDAO.getMessages(username);
-};
+  }
 
-export const addChatMessage = async (username, newMessage) => {
-    await chatDAO.addMessage(username, newMessage);
+  static async addChatMessage(username, newMessage) {
+    const backendMessage = `${new Date().toLocaleString()}  -  BACKEND: ${getQuote({ author: false }).text}`;
+    await chatDAO.addMessagesToChat(username, [newMessage, backendMessage]);
     return await chatDAO.getMessages(username);
-};
+  }
 
-export const createNewChat = async (userEmail) => {
-  return await chatDAO.createChat(userEmail);
-};
+  static async createNewChat(userEmail) {
+    return await chatDAO.createChat(userEmail);
+  }
+}
 
-export const assignChatToUser = async (userId, chatId) => {
-  return await userDAO.createChat(userId, chatId);
-};
-
-export const getUserByEmail = async (email) => {
-  return await userDAO.getUserByEmail(email);
-};
+export default ChatService;

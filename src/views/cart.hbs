@@ -38,14 +38,20 @@
             </div>
           </div>
           <!-- Quantity -->
-          <div class="col-md-3 d-flex align-items-center justify-content-between px-3">
-              <div>
-                  <button class="btn btn-light btn-sm mr-2">-</button>
-                  <span class="text-sm">{{this.quantity}}</span>
-                  <button class="btn btn-light btn-sm ml-2">+</button>
-              </div>
-              <div class="col-md-1">
-                  <i class="fas fa-trash-alt text-dark"></i>
+          <div class="col-md-3 d-flex align-items-center px-3">
+              <div class="row w-100">
+                  <div class="col-9 d-flex align-items-center justify-content-between">
+                      <form action="/add-to-my-cart/{{this.productId._id}}/-1" method="post">
+                          <button class="btn btn-light btn-sm mr-2" type="submit">-</button>
+                      </form>
+                      <span class="text-sm">{{this.quantity}}</span>
+                      <form action="/add-to-my-cart/{{this.productId._id}}/1" method="post">
+                          <button class="btn btn-light btn-sm ml-2" type="submit">+</button>
+                      </form>
+                  </div>
+                  <div class="col-3 text-center">
+                      <i class="fas fa-trash-alt text-dark"></i>
+                  </div>
               </div>
           </div>
         </div>

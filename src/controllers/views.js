@@ -1,9 +1,11 @@
-import { getCartById, addProductToCart } from '../services/carts.js';
-import { createNewChat, assignChatToUser, getUserByEmail } from '../services/chat.js';
-import { getProducts } from '../services/products.js';
+import CartsService from '../services/carts.js';
+import ChatService from '../services/chat.js';
+import ProductsService from '../services/products.js';
+import UsersService from '../services/users.js';
 
+class ViewsController {
 
-async function renderHome(req, res) {
+  static async renderHome(req, res) {
     try {
         const { limit = 3, page = 1, sort = 'asc', query = '' } = req.query;
         const sortOrder = sort === 'desc' ? -1 : 1;
@@ -23,7 +25,7 @@ async function renderHome(req, res) {
             lean: true
         };
 
-        const result = await getProducts(filter, options);
+        const result = await ProductsService.getProducts(filter, options);
 
         if (result.docs.length === 0) {
             return res.status(404).render('error', { message: 'Page does not exist' });
@@ -34,56 +36,59 @@ async function renderHome(req, res) {
         console.error(error.message);
         return res.status(400).render('home', { error: 'Error while loading this page', page: 1, totalPages: 1 });
     }
-}
+  }
 
-async function renderCart(req, res) {
+  static async renderCart(req, res) {
     try {
         const { cartId } = req.params;
-        const cart = await getCartById(cartId);
+        const cart = await CartsService.getCartById(cartId);
         res.status(200).render('cart', cart);
     } catch (error) {
         console.error(error.message);
         res.render('cart', { error: 'Error while loading your cart' });
     }
-}
+  }
 
-async function renderMyCart(req, res) {
+  static async renderMyCart(req, res) {
     try {
         if (!req.user) {
             return res.redirect('/auth/login');
         }
-        const cart = await getCartById(req.user.cartId);
+        const cart = await CartsService.getCartById(req.user.cartId);
         res.status(200).render('cart', { ...cart, user: req.user });
     } catch (error) {
         console.error(error.message);
         res.render('cart', { error: 'Error while loading your cart' });
     }
-}
+  }
 
-async function addToMyCart(req, res) {
+  static async addToMyCart(req, res) {
     try {
         if (!req.user) {
             return res.redirect('/auth/login');
         }
-        const cart = await getCartById(req.user.cartId);
-        await addProductToCart(cart._id, req.params.productId, 1);
+        
+        const cart = await CartsService.getCartRefsById(req.user.cartId);
+        const change = parseInt(req.params.adjustment, 10) || 1;
+
+        await CartsService.addProductToCart(cart._id, req.params.productId, change);
         res.status(200).redirect('/my-cart');
     } catch (error) {
         console.error(error.message);
-        res.render('home', { error: 'Error while adding product to cart' });
+        res.render('home', { error: 'Error while updating product in cart' });
     }
 }
 
-async function renderChat(req, res) {
+  static async renderChat(req, res) {
     try {
         if (!req.user) {
             return res.redirect('/auth/login');
         }
 
         if (!req.user.chatId) {
-            const chat = await createNewChat(req.user.email);
-            const user = await getUserByEmail(req.user.email);
-            await assignChatToUser(user._id, chat._id);
+            const chat = await ChatService.createNewChat(req.user.email);
+            const user = await UsersService.getUserByEmail(req.user.email);
+            await UsersService.createChat(user._id, chat._id);
         }
 
         res.render('chat', { user: req.user });
@@ -91,9 +96,9 @@ async function renderChat(req, res) {
         console.error(error.message);
         res.render('chat', { error: 'Error while accessing the chat' });
     }
-}
+  }
 
-async function renderProfile(req, res) {
+  static async renderProfile(req, res) {
     try {
         if (!req.user) {
             return res.redirect('/auth/login');
@@ -104,15 +109,7 @@ async function renderProfile(req, res) {
         console.error(error.message);
         res.render('profile', { error: 'Error while accessing to your profile information' });
     }
+  }
 }
 
-const viewController = {
-    renderHome,
-    renderCart,
-    renderMyCart,
-    addToMyCart,
-    renderChat,
-    renderProfile
-}
-
-export default viewController;
+export default ViewsController;
