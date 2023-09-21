@@ -1,5 +1,4 @@
 import cartDAO from "../data/mongo/dao/cartsDAO.js";
-import ProductsService from "./products.js";
 
 class CartService {
   static async getCartById(cartId) {
@@ -17,9 +16,18 @@ class CartService {
     
     if (productIndex !== -1) {
         quantity += cart.products[productIndex].quantity;
+        quantity = quantity < 1 ? 1 : quantity;
     }
     
     return await this.updateProductQuantity(cartId, productId, quantity);
+  }
+
+  static async deleteProductFromCart(cartId, productId) {
+    const cart = await cartDAO.getCartRefsById(cartId);
+    const productIndex = cart.products.findIndex((item) => item.productId.toString() === productId);
+    cart.products.splice(productIndex, 1);
+    return await cartDAO.updateCart(cartId, cart.products);
+
   }
 
   static async createCart() {

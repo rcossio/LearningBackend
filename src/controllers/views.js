@@ -62,22 +62,35 @@ class ViewsController {
     }
   }
 
-  static async addToMyCart(req, res) {
+  static async addToCart(req, res) {
     try {
         if (!req.user) {
             return res.redirect('/auth/login');
         }
         
-        const cart = await CartsService.getCartRefsById(req.user.cartId);
-        const change = parseInt(req.params.adjustment, 10) || 1;
+        const option = req.params.option || 'increase'
 
-        await CartsService.addProductToCart(cart._id, req.params.productId, change);
+        if (option === 'increase') {
+            await CartsService.addProductToCart(req.user.cartId, req.params.productId, 1);
+        } else if (option === 'decrease') {
+            await CartsService.addProductToCart(req.user.cartId, req.params.productId, -1);
+        }
         res.status(200).redirect('/my-cart');
     } catch (error) {
         console.error(error.message);
         res.render('home', { error: 'Error while updating product in cart' });
     }
-}
+  }
+
+  static async deleteFromCart(req, res) {
+    try {
+        await CartsService.deleteProductFromCart(req.user.cartId, req.params.productId);
+        res.status(200).redirect('/my-cart');
+    } catch (error) {
+        console.error(error.message);
+        res.render('cart', { error: 'Error while deleting product from cart' });
+    }
+  }
 
   static async renderChat(req, res) {
     try {
