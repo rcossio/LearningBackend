@@ -116,8 +116,8 @@ class ViewsController {
         if (!req.user) {
             return res.redirect('/auth/login');
         }
-
-        res.render('profile', { user: req.user });
+        const user = await UsersService.getUserByEmail(req.user.email);
+        res.render('profile', { user });
     } catch (error) {
         console.error(error.message);
         res.render('profile', { error: 'Error while accessing to your profile information' });

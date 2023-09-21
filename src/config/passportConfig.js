@@ -1,9 +1,35 @@
+import JwtStrategy from 'passport-jwt';
+import jwt from 'jsonwebtoken';
+
 import passport from 'passport';
 import { config } from './config.js';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as GitHubStrategy } from 'passport-github2';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import UsersService from '../services/users.js';
+
+const jwtFromRequest = (req) => {
+        let token = null;
+        if (req && req.cookies) {
+            token = req.cookies['jwt'];
+        }
+        return token;
+    };
+
+passport.use(new JwtStrategy.Strategy({
+    jwtFromRequest : jwtFromRequest,
+    secretOrKey : config.auth.jwtSecret
+}, async (jwt_payload, done) => {
+    try {
+        const user = await UsersService.getUserById(jwt_payload.id);
+        if (user) {
+            return done(null, user);
+        }
+        return done(null, false);
+    } catch (e) {
+        return done(e, false);
+    }
+}));
 
 passport.use('signupStrategy', new LocalStrategy(
     {
@@ -67,31 +93,5 @@ passport.use('googleStrategy', new GoogleStrategy(
         }
     }
 ));
-
-passport.serializeUser((user, done) => {
-    if (user.email === config.admin.email) {
-        done(null, user.email);
-    } else {
-        done(null, user._id);
-    }
-});
-
-passport.deserializeUser(async (id, done) => {
-    try {
-        if (id === config.admin.email) {
-            return done(null, {
-                firstName: 'Admin',
-                lastName: 'Admin',
-                email: config.admin.email,
-                role: 'admin'
-            });
-        }
-
-        const user = await UsersService.getUserById(id);
-        done(null, user);
-    } catch (err) {
-        done(err);
-    }
-});
 
 export default passport;

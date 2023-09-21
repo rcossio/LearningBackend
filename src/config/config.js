@@ -28,6 +28,7 @@ const config = {
   },
 
   auth: {
+    jwtSecret: process.env.AUTH_JWT_SECRET,
     github: {
       clientId: process.env.AUTH_GITHUB_CLIENT_ID,
       secretKey: process.env.AUTH_GITHUB_SECRET_KEY,

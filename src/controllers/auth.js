@@ -1,7 +1,29 @@
 import UsersService from '../services/users.js';
 import passport from '../config/passportConfig.js';
+import jwt from 'jsonwebtoken';
+import {config} from '../config/config.js';
+
 
 class AuthController {
+
+    static createJwtAndSetCookie(user, res) {
+        const jwt_payload = {
+            id: user._id,
+            cartId: user.cartId,
+            chatId: user.chatId,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName
+        };
+        const options = { expiresIn: '1h' };
+        const token = jwt.sign(jwt_payload, config.auth.jwtSecret, options);
+        
+        res.cookie('jwt', token, {
+            httpOnly: true,
+            maxAge: 3600000
+        });
+    }
+
     static async registerView(req, res) {
         if (req.user) {
             return res.redirect('/profile');
@@ -33,16 +55,6 @@ class AuthController {
         return res.render('login', { error: 'Unable to log in' });
     }
 
-    static async logout(req, res) {
-        req.logout((error) => {
-            if (error) {
-                return res.render('profile', { error: 'Unable to log out' });
-            } else {
-                return res.redirect('/');
-            }
-        });
-    }
-
     static async restorePasswordView(req, res) {
         res.render('restore-password');
     }
@@ -69,16 +81,22 @@ class AuthController {
     }
 
     static registerUser(req, res, next) {
-        passport.authenticate('signupStrategy', {
-            successRedirect: '/auth/registered-successfully',
-            failureRedirect: '/auth/registered-failed',
+        passport.authenticate('signupStrategy', (error, user, info) => {
+            if (error || !user) {
+                return res.redirect('/auth/registered-failed');
+            }
+            AuthController.createJwtAndSetCookie(user, res);
+            res.redirect('/auth/registered-successfully'); 
         })(req, res, next);
     }
 
     static loginUser(req, res, next) {
-        passport.authenticate('loginStrategy', {
-            successRedirect: '/',
-            failureRedirect: '/auth/login-failed',
+        passport.authenticate('loginStrategy', (err, user, info) => {
+            if (err || !user) {
+                return res.redirect('/auth/login-failed');
+            }
+            AuthController.createJwtAndSetCookie(user, res);
+            res.redirect('/'); 
         })(req, res, next);
     }
 
@@ -87,9 +105,12 @@ class AuthController {
     }
 
     static githubAuthCallback(req, res, next) {
-        passport.authenticate('githubStrategy', {
-            successRedirect: '/',
-            failureRedirect: '/login-failed',
+        passport.authenticate('githubStrategy', (err, user, info) => {
+            if (err || !user) {
+                return res.redirect('/login-failed');
+            }
+            AuthController.createJwtAndSetCookie(user, res);
+            res.redirect('/'); 
         })(req, res, next);
     }
 
@@ -98,10 +119,18 @@ class AuthController {
     }
 
     static googleAuthCallback(req, res, next) {
-        passport.authenticate('googleStrategy', {
-            successRedirect: '/',
-            failureRedirect: '/login-failed',
+        passport.authenticate('googleStrategy', (err, user, info) => {
+            if (err || !user) {
+                return res.redirect('/login-failed');
+            }
+            AuthController.createJwtAndSetCookie(user, res);
+            res.redirect('/'); 
         })(req, res, next);
+    }
+
+    static async logout(req, res) {
+        res.clearCookie('jwt');
+        return res.redirect('/');
     }
     
 }

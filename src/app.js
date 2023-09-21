@@ -14,9 +14,10 @@ import handlebars from 'express-handlebars';
 import connectDB from './config/dbConnection.js';
 import configureSocketIO from './config/socketIO.js';
 
-import sessionMiddleware from './config/sessionsConfig.js';
-
 import passport from './config/passportConfig.js';
+
+import cookieParser from 'cookie-parser';
+import expressjwt from "express-jwt"; 
 
 import {config} from './config/config.js';
 
@@ -33,12 +34,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
-//session configuration
-app.use(sessionMiddleware);
-
 //passport initialization
 app.use(passport.initialize());
-app.use(passport.session());
 
 //handlebars configuration
 app.engine('hbs', handlebars.engine(
@@ -50,6 +47,17 @@ app.engine('hbs', handlebars.engine(
   })); 
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'src/views'));
+
+// Use the cookie parser to get cookies from requests
+app.use(cookieParser());
+
+// JWT middleware
+app.use(expressjwt({
+    secret: config.auth.jwtSecret,
+    algorithms: ['HS256'],
+    credentialsRequired: false,
+    getToken: req => req.cookies.jwt
+}));
 
 //routes
 app.use('/', viewsRouter);
@@ -68,6 +76,10 @@ configureSocketIO(httpServer);
 
 //error handling
 app.use((err, req, res, next) => { 
+  if (err.name === 'UnauthorizedError') {
+    return res.status(401).json({ status: 'error', payload: 'Invalid or expired token' });
+  }
+
   console.error(err.stack);
   res.status(500).json({ status: 'error', payload: err.message });
 });

@@ -19,15 +19,20 @@ The ones marked are the ones currently used
 - [x]  **express-handlebars** : handlebars view engine for express.
 - [x]  **socket.io** : enables real-time bidirectional event-based communication.
 - [x]  **mongoose** : MongoDB object modeling tool.
-- [x] **mongoose-paginate-v2** : mongoose plugin to paginate mongoose queries.
+- [x]  **mongoose-paginate-v2** : mongoose plugin to paginate mongoose queries.
 - [x]  **dotenv** : loads environment variables from a .env file.
 - [x]  **inspirational-quotes** : get inspirational quotes.
-- [x]  **express-session** : session middleware.
+- [ ]  **express-session** : session middleware.
 - [x]  **connect-mongo** : MongoDB session store for Connect and Express.
 - [x]  **bcrypt** : library to help you hash passwords.
 - [x]  **passport** : authentication middleware for Node.js.
 - [x]  **passport-local** : passport strategy for authenticating with a username and password.
-- [ ]  **cookie-parser** : cookie parsing middleware.
+- [x]  **passport-github2** : passport strategy for authenticating with GitHub using the OAuth 2.0 API.
+- [x]  **passport-google-oauth20** : passport strategy for authenticating with Google using the OAuth 2.0 API.
+- [x]  **passport-jwt** : passport strategy for authenticating with a JSON Web Token.
+- [x]  **express-jwt** : middleware that validates JsonWebTokens and sets req.user.
+- [x]  **jsonwebtoken** : implementation of JSON Web Tokens.
+- [x]  **cookie-parser** : cookie parsing middleware.
 - [ ]  **morgan** : HTTP request logger middleware.
 - [ ]  **connect-flash** : special area of the session used for storing messages.
 - [ ]  **express-validator** : middleware for validating data.
