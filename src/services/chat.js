@@ -1,4 +1,5 @@
-import chatDAO from '../data/mongo/dao/chatDAO.js';
+//import chatDAO from '../data/mongo/dao/chatDAO.js';
+import {chatDAO} from "../data/factory.js";
 import { getQuote } from 'inspirational-quotes';
 
 class ChatService {

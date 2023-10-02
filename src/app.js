@@ -11,7 +11,6 @@ import { router as authRouter } from './routes/auth.js';
 import path from 'path';
 import handlebars from 'express-handlebars';
 
-import connectDB from './config/dbConnection.js';
 import configureSocketIO from './config/socketIO.js';
 
 import passport from './config/passportConfig.js';
@@ -25,9 +24,6 @@ console.log(config)
 const PORT = config.server.port; 
 const app = express();
 const __dirname = path.resolve();
-
-//db connection
-connectDB();
 
 //express configuration
 app.use(express.json());

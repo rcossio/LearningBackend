@@ -1,16 +1,15 @@
 import fs from 'fs';
+import { v4 as uuidv4 } from 'uuid';
+import path from 'path';
+
+const __dirname = path.resolve();
 
 class ProductDAO {
   #products = [];
-  #lastId = 0;
   #path = '';
 
-  constructor(path) {
-    try {
-      this.#setPath(path);
-    } catch (error) {
-      throw error;
-    }
+  constructor(path = `${__dirname}/src/data/fs/products_fs.json`) {
+    this.#setPath(path);
   }
 
   #setPath(path) {
@@ -19,22 +18,32 @@ class ProductDAO {
       this.#loadProducts();
     } else {
       this.#saveFile();
+
+      // Adding a test product.
+      this.addProduct({
+        title: "Test Product",
+        description: "This is a test product.",
+        price: 0.00,
+        thumbnails: [],
+        code: "TEST-PROD",
+        stock: 100,
+        category: "Test",
+        status: true
+      });
     }
   }
 
   async #loadProducts() {
     try {
       const content = await fs.promises.readFile(this.#path, 'utf-8');
-      const { products, lastId } = JSON.parse(content);
-      this.#products = products;
-      this.#lastId = lastId;
+      this.#products = JSON.parse(content);
     } catch (error) {
       throw error;
     }
   }
 
   async #saveFile() {
-    const content = JSON.stringify({ products: this.#products, lastId: this.#lastId });
+    const content = JSON.stringify(this.#products);
     try {
       await fs.promises.writeFile(this.#path, content);
     } catch (error) {
@@ -45,7 +54,6 @@ class ProductDAO {
   #isProductValid(product) {
     return (
       product &&
-      typeof product.id === 'undefined' &&
       typeof product.title === 'string' &&
       typeof product.description === 'string' &&
       typeof product.price === 'number' &&
@@ -53,7 +61,9 @@ class ProductDAO {
       Array.isArray(product.thumbnails) &&
       typeof product.code === 'string' &&
       typeof product.stock === 'number' &&
-      product.stock >= 0
+      product.stock >= 0 &&
+      typeof product.category === 'string' &&   // Added category validation
+      typeof product.status === 'boolean'      // Added status validation
     );
   }
 
@@ -62,75 +72,62 @@ class ProductDAO {
   }
 
   #generateProductId() {
-    return ++this.#lastId;
+    return uuidv4();
   }
 
   async addProduct(product) {
     if (!this.#isProductValid(product)) {
       throw new Error('Invalid product');
     }
-
     await this.#loadProducts();
-
     if (this.#isProductCodeDuplicate(product.code)) {
       throw new Error('Product with the same code already exists');
     }
-
-    const id = this.#generateProductId();
-    const newProduct = { id, ...product };
+    const _id = this.#generateProductId();
+    const newProduct = { _id, ...product };
     this.#products.push(newProduct);
-
     await this.#saveFile();
+    return newProduct;
   }
 
-  async getProducts() {
+  async getProducts(filter = {}, options = {}) {
     await this.#loadProducts();
     return this.#products;
   }
 
-  async getProductById(id) {
+  async getProductById(_id) {
     await this.#loadProducts();
-
-    const product = this.#products.find((p) => p.id === id);
-
+    const product = this.#products.find((p) => p._id === _id);
     if (!product) {
-      throw new Error(`Product not found. Requested ID:${id}`);
+      throw new Error(`Product not found. Requested ID:${_id}`);
     }
-
     return product;
   }
 
-  async deleteProduct(id) {
+  async deleteProduct(_id) {
     await this.#loadProducts();
-
-    const productIndex = this.#products.findIndex((p) => p.id === id);
-
+    const productIndex = this.#products.findIndex((p) => p._id === _id);
     if (productIndex === -1) {
-      throw new Error(`Product not found. Requested ID:${id}`);
+      throw new Error(`Product not found. Requested ID:${_id}`);
     }
-
     this.#products.splice(productIndex, 1);
-
     await this.#saveFile();
+    return { message: 'Product successfully deleted.' };
   }
 
-  async updateProduct(id, product) {
+  async updateProduct(_id, product) {
     if (!this.#isProductValid(product)) {
       throw new Error('Invalid product');
     }
-
     await this.#loadProducts();
-
-    const productIndex = this.#products.findIndex((p) => p.id === id);
-
+    const productIndex = this.#products.findIndex((p) => p._id === _id);
     if (productIndex === -1) {
-      throw new Error(`Product not found. Requested ID:${id}`);
+      throw new Error(`Product not found. Requested ID:${_id}`);
     }
-
-    const updatedProduct = { id, ...product };
+    const updatedProduct = { _id, ...product };
     this.#products[productIndex] = updatedProduct;
-
     await this.#saveFile();
+    return updatedProduct;
   }
 }
 

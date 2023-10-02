@@ -26,8 +26,9 @@ class ViewsController {
         };
 
         const result = await ProductsService.getProducts(filter, options);
+        //console.log("CONTROLLER:",result) // this is working but it is not paginated and it wont render the page
 
-        if (result.docs.length === 0) {
+        if (result.docs?.length === 0) {
             return res.status(404).render('error', { message: 'Page does not exist' });
         }
 

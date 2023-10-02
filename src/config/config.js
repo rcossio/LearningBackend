@@ -11,7 +11,8 @@ dotenv.config({
 const config = {
   server : {
     port: process.env.PORT || 8080,
-    host: process.env.HOST || 'localhost'
+    host: process.env.HOST || 'localhost',
+    storageType: process.env.STORAGE_TYPE || 'fs'
   },
   session: {
     secret: process.env.SESSION_SECRET_KEY,

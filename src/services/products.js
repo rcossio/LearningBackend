@@ -1,10 +1,11 @@
-import productDAO from "../data/mongo/dao/productsDAO.js";
+//import productDAO from "../data/mongo/dao/productsDAO.js";
+import {productDAO} from "../data/factory.js";
 
 class ProductsService {
 
     static async getProducts(filter, options) {
         const result = await productDAO.getProducts(filter, options);
-        if (!result || result.docs.length === 0) {
+        if (!result || result.docs?.length === 0) {
             throw new Error('No products found.');
         }
         return result;

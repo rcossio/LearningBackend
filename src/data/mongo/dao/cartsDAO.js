@@ -13,10 +13,6 @@ class CartDAO {
     return await CartModel.findById(cartId).lean();
   }
 
-  static async findCartByUserId(userId) {
-    return await CartModel.findOne({ userId }).lean();
-  }
-
   static async updateCart(cartId, products) {
     const cart = await CartModel.findById(cartId);
     cart.products = products;

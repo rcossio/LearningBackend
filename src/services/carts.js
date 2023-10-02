@@ -1,4 +1,5 @@
-import cartDAO from "../data/mongo/dao/cartsDAO.js";
+//import cartDAO from "../data/mongo/dao/cartsDAO.js";
+import {cartDAO} from "../data/factory.js";
 
 class CartService {
   static async getCartById(cartId) {
@@ -40,14 +41,6 @@ class CartService {
 
   static async removeCart(cartId) {
     await cartDAO.deleteCart(cartId);
-  }
-
-  static async addProductToUserCart(userId, productId, quantity = 1) {
-    let cart = await cartDAO.findCartByUserId(userId);
-    if (!cart) {
-      cart = await this.createCart();
-    }
-    return await this.addProductToCart(cart._id, productId, quantity);
   }
 
   static async updateProductQuantity(cartId, productId, quantity) {
