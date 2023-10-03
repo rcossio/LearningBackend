@@ -1,5 +1,6 @@
 import CartsService from '../services/carts.js';
 import TicketService from '../services/tickets.js';
+import ViewsController from './views.js';
 
 class CartsController {
     static async createCart(req, res) {
@@ -22,28 +23,38 @@ class CartsController {
         res.status(200).end();
     }
 
-    static async addProductToCart(req, res) {
-        await CartsService.addProductToCart(req.params.cartId, req.params.productId);
-        res.status(201).json({ status: 'success', payload: 'Product added to cart successfully' });
-    }
-
     static async updateProductInCart(req, res) {
         await CartsService.updateProductQuantity(req.params.cartId, req.params.productId, req.body.quantity);
         res.status(200).json({ status: 'success', payload: 'Product quantity updated successfully' });
     }
 
     static async deleteProductFromCart(req, res) {
-        await CartsService.removeProductFromCart(req.params.cartId, req.params.productId);
-        res.status(204).end();
+        await CartsService.deleteProductFromCart(req.user.cartId, req.params.productId);
+        res.status(200).redirect('/cart');
+      }
+
+    static async addProductToCart(req, res) {
+        if (!req.user) {
+            return res.redirect('/auth/login');
+        }
+        
+        const option = req.params.option || 'increase'
+
+        if (option === 'increase') {
+            await CartsService.addProductToCart(req.user.cartId, req.params.productId, 1);
+        } else if (option === 'decrease') {
+            await CartsService.addProductToCart(req.user.cartId, req.params.productId, -1);
+        }
+        res.status(200).redirect('/cart');
     }
 
     static async purchaseCart(req, res) {
         try {
             await TicketService.createTicket(req.params.cartId, req.user.email);
-            res.status(200).redirect('/successfull_purchase');
+            res.redirect('/successful-purchase');
         } catch (error) {
             console.error(error.message);
-            res.render('cart', { error: 'Error while purchasing the cart' });
+            res.redirect('/failed-purchase')
         }
     }
 
