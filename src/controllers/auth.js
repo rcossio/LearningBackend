@@ -13,7 +13,8 @@ class AuthController {
             chatId: user.chatId,
             email: user.email,
             firstName: user.firstName,
-            lastName: user.lastName
+            lastName: user.lastName,
+            role: user.role
         };
         const options = { expiresIn: '1h' };
         const token = jwt.sign(jwt_payload, config.auth.jwtSecret, options);

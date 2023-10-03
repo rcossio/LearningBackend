@@ -124,6 +124,16 @@ class ViewsController {
         res.render('profile', { error: 'Error while accessing to your profile information' });
     }
   }
+
+  static async renderNotAuthorized(req, res) {
+    res.status(401).json({ status: 'error', payload: 'You are not authorized to access this resource'})
+  }
+
+  static async renderSuccessfullPurchase(req, res) {
+    const cart = await CartsService.getCartById(req.user.cartId);
+    res.status(200).render('cart', { ...cart, user: req.user , message: "Your purchase was successfull!"});
+  }
+
 }
 
 export default ViewsController;

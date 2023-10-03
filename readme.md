@@ -33,12 +33,12 @@ The ones marked are the ones currently used
 - [x]  **express-jwt** : middleware that validates JsonWebTokens and sets req.user.
 - [x]  **jsonwebtoken** : implementation of JSON Web Tokens.
 - [x]  **cookie-parser** : cookie parsing middleware.
+- [x]  **uuid** : simple, fast generation of RFC4122 UUIDS.
+- [x]  **nodemailer** : module for Node.js applications to allow easy as cake email sending.
 - [ ]  **morgan** : HTTP request logger middleware.
 - [ ]  **connect-flash** : special area of the session used for storing messages.
 - [ ]  **express-validator** : middleware for validating data.
-- [ ]  **mysql2** : MySQL client.
 - [ ]  **sequelize** : promise-based Node.js ORM for Postgres, MySQL, MariaDB, SQLite and Microsoft SQL Server.
-- [ ]  **colors** : get colors in your node.js console.
 - [ ]  **cors** : CORS is a node.js package for providing a Connect/Express middleware that can be used to enable CORS with various options.
 
 ## Dev Dependencies
@@ -47,3 +47,10 @@ The ones marked are the ones currently used
 
 - [x]  **nodemon** : tool that helps develop node.js based applications by automatically restarting the node application when file changes in the directory are detected.
 
+
+## Known issues
+
+jwt is not being able to populate req.user from the cookies in the newest version of express-jwt, so we need to downgrade it to 6.1.0. Run:
+
+`npm uninstall express-jwt`
+`npm install express-jwt@6.1.0`

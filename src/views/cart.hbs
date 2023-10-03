@@ -67,7 +67,9 @@
   <div class="row mt-2 mb-3">
     <div class="col text-center">
       <a href="/" class="btn btn-primary mr-2">Continue Shopping</a>
-      <a href="/my-cart" class="btn btn-success">Checkout</a>
+      <form action="/api/carts/{{user.cartId}}/purchase" method="post" class="d-inline">
+        <button type="submit" class="btn btn-success">Checkout</button>
+      </form>
     </div>
   </div>
 

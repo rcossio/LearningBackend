@@ -1,4 +1,5 @@
 import CartsService from '../services/carts.js';
+import TicketService from '../services/tickets.js';
 
 class CartsController {
     static async createCart(req, res) {
@@ -35,6 +36,12 @@ class CartsController {
         await CartsService.removeProductFromCart(req.params.cartId, req.params.productId);
         res.status(204).end();
     }
+
+    static async purchaseCart(req, res) {
+        await TicketService.createTicket(req.params.cartId, req.user.email);
+        res.status(200).redirect('/successfull_purchase');
+    }
+
 }
 
 export default CartsController;

@@ -43,6 +43,10 @@ class CartService {
     await cartDAO.deleteCart(cartId);
   }
 
+  static emptyCart(cartId) {
+    return this.modifyCart(cartId, []);
+  }
+
   static async updateProductQuantity(cartId, productId, quantity) {
     const cart = await cartDAO.getCartRefsById(cartId);
 
@@ -67,6 +71,16 @@ class CartService {
     cart.products.splice(productIndex, 1);
     return await cartDAO.updateCart(cartId, cart.products);
   }
+
+  static async calculateTotal(cartId) {
+    const cart = await cartDAO.getCartById(cartId);
+    let total = 0;
+    for (const item of cart.products) {
+      total += item.quantity * item.productId.price;
+    }
+    return total;
+  }
+
 }
 
 export default CartService;

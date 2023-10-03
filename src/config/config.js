@@ -40,6 +40,10 @@ const config = {
       secretKey: process.env.AUTH_GOOGLE_SECRET_KEY,
       callbackUrl: process.env.AUTH_GOOGLE_CALLBACK_URL
     }
+  },
+  mail: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_APP_PASSWORD
   }
 }
 

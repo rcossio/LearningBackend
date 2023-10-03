@@ -16,7 +16,7 @@ import configureSocketIO from './config/socketIO.js';
 import passport from './config/passportConfig.js';
 
 import cookieParser from 'cookie-parser';
-import expressjwt from "express-jwt"; 
+import expressjwt from "express-jwt";
 
 import {config} from './config/config.js';
 

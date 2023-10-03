@@ -6,6 +6,7 @@ let productDAO;
 let cartDAO;
 let userDAO;
 let chatDAO;
+let ticketDAO;
 
 switch (storageType) {
 
@@ -17,6 +18,7 @@ switch (storageType) {
     cartDAO = (await import('./mongo/dao/cartsDAO.js')).default;
     userDAO = (await import('./mongo/dao/usersDAO.js')).default;
     chatDAO = (await import('./mongo/dao/chatDAO.js')).default;
+    ticketDAO = (await import('./mongo/dao/ticketsDAO.js')).default;
     break;
 
   case 'fs':
@@ -38,4 +40,4 @@ switch (storageType) {
     throw new Error(`Unknown storage type: ${storageType}`);
 }
 
-export { productDAO, cartDAO, userDAO, chatDAO };
+export { productDAO, cartDAO, userDAO, chatDAO, ticketDAO };
