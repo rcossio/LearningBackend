@@ -38,8 +38,13 @@ class CartsController {
     }
 
     static async purchaseCart(req, res) {
-        await TicketService.createTicket(req.params.cartId, req.user.email);
-        res.status(200).redirect('/successfull_purchase');
+        try {
+            await TicketService.createTicket(req.params.cartId, req.user.email);
+            res.status(200).redirect('/successfull_purchase');
+        } catch (error) {
+            console.error(error.message);
+            res.render('cart', { error: 'Error while purchasing the cart' });
+        }
     }
 
 }

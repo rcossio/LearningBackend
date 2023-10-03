@@ -41,17 +41,6 @@ class ViewsController {
 
   static async renderCart(req, res) {
     try {
-        const { cartId } = req.params;
-        const cart = await CartsService.getCartById(cartId);
-        res.status(200).render('cart', cart);
-    } catch (error) {
-        console.error(error.message);
-        res.render('cart', { error: 'Error while loading your cart' });
-    }
-  }
-
-  static async renderMyCart(req, res) {
-    try {
         if (!req.user) {
             return res.redirect('/auth/login');
         }
@@ -76,7 +65,7 @@ class ViewsController {
         } else if (option === 'decrease') {
             await CartsService.addProductToCart(req.user.cartId, req.params.productId, -1);
         }
-        res.status(200).redirect('/my-cart');
+        res.status(200).redirect('/cart');
     } catch (error) {
         console.error(error.message);
         res.render('home', { error: 'Error while updating product in cart' });
