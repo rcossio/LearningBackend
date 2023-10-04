@@ -1,4 +1,5 @@
 import ProductsService from '../services/products.js';
+import { faker } from '@faker-js/faker';
 
 class ProductsController {
 
@@ -62,6 +63,31 @@ class ProductsController {
     await ProductsService.updateProduct(productId, product);
     res.status(200).json({ status: 'success', payload: 'Product updated successfully' });
   };
+
+  static async mockingProducts(req, res) {
+    const products = [];
+    
+    for (let i = 0; i < 100; i++) {
+      const product = {
+        _id: faker.database.mongodbObjectId(),
+        title: faker.commerce.productName(),     
+        description: faker.commerce.productDescription(),
+        price: parseFloat(faker.commerce.price()), 
+        code: faker.string.alphanumeric(6).toUpperCase(),        
+        stock: faker.number.int({ min: 1, max: 50 }), 
+        category: faker.commerce.department(),    
+        status: faker.datatype.boolean(),           
+        thumbnails: [
+          faker.image.url(),   
+          faker.image.url(),           
+          faker.image.url()
+        ]
+      };
+  
+      products.push(product);
+    }
+    res.status(200).json({status:'success', payload:products})
+  }
 
 }
 

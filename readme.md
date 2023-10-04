@@ -46,6 +46,8 @@ The ones marked are the ones currently used
 The ones marked are the ones currently used
 
 - [x]  **nodemon** : tool that helps develop node.js based applications by automatically restarting the node application when file changes in the directory are detected.
+- [x]  **faker-js** : generate massive amounts of fake data in the browser and node.js.
+
 
 
 ## Known issues

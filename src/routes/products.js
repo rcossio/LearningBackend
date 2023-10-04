@@ -13,5 +13,6 @@ router.get('/:productId([0-9a-fA-F]{24})', ProductsController.getProductById); /
 router.delete('/:productId([0-9a-fA-F]{24})', checkRole(['admin']), ProductsController.deleteProduct);
 router.post('/', checkRole(['admin']), ProductsController.addProduct);
 router.put('/:productId([0-9a-fA-F]{24})', checkRole(['admin']), ProductsController.updateProduct);
+router.get('/mockingproducts', checkRole(['admin']), ProductsController.mockingProducts);
 
 export { router };
