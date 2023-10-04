@@ -1,6 +1,5 @@
 import CartsService from '../services/carts.js';
 import TicketService from '../services/tickets.js';
-import ViewsController from './views.js';
 
 class CartsController {
     static async createCart(req, res) {
@@ -50,11 +49,11 @@ class CartsController {
 
     static async purchaseCart(req, res) {
         try {
-            await TicketService.createTicket(req.params.cartId, req.user.email);
-            res.redirect('/successful-purchase');
+            const ticketCode = await TicketService.createTicket(req.params.cartId, req.user.email);
+            res.redirect(`/purchase-successful/${ticketCode}`);
         } catch (error) {
             console.error(error.message);
-            res.redirect('/failed-purchase')
+            res.redirect('/purchase-failed')
         }
     }
 

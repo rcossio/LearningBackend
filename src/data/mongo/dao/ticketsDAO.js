@@ -6,6 +6,10 @@ class TicketDAO {
     return await TicketModel.create(ticketInfo);
   }
 
+  static async getTicketByCode(ticketCode) {
+    return await TicketModel.findOne({ code: ticketCode });
+  }
+
 }
 
 export default TicketDAO;

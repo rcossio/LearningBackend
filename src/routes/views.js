@@ -5,17 +5,17 @@ import { checkRole } from "../middlewares/roles.js";
 const router = Router();
 
 //public
-router.get("/", ViewsController.renderHome);
-router.get('/not-authorized', ViewsController.renderNotAuthorized);  
+router.get("/", ViewsController.homeView);
+router.get('/not-authorized', ViewsController.notAuthorizedView);  
 
 //for users
-router.get("/cart", checkRole(['user']), ViewsController.renderCart);
-router.get("/chat", checkRole(['user']), ViewsController.renderChat);
-router.get('/successful-purchase', checkRole(['user']), ViewsController.renderSuccessfulPurchase);
-router.get('/failed-purchase', checkRole(['user']), ViewsController.renderFailedPurchase);
+router.get("/cart", checkRole(['user']), ViewsController.cartView);
+router.get("/chat", checkRole(['user']), ViewsController.chatView);
+router.get('/purchase-successful/:ticketCode', checkRole(['user']), ViewsController.purchaseSuccessfulView);
+router.get('/purchase-failed', checkRole(['user']), ViewsController.purchaseFailedView);
 
 //for users and admins
-router.get("/profile", checkRole(['user','admin']),ViewsController.renderProfile);
+router.get("/profile", checkRole(['user','admin']),ViewsController.profileView);
 
 
 export { router };

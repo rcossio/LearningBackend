@@ -41,9 +41,15 @@
 
             <!-- Add to Cart Button Column -->
             <div class="col-md-4 d-flex align-items-center justify-content-center">
+              {{#if ../user}}
               <form action="/api/carts/{{../user.cartId}}/product/{{this._id}}/increase" method="post">
                 <button type="submit" class="btn btn-success btn-sm">Add to Cart</button>
               </form>
+              {{else}}
+              <a href="/auth/login">
+                <button type="submit" class="btn btn-success btn-sm">Add to Cart</button>
+              </a>
+              {{/if}}
             </div>
 
           </div>

@@ -38,14 +38,17 @@ class UserService {
 
     static async registerUser(req, email, password) {
         const existingUser = await this.getUserByEmail(email);
+
         if (existingUser) {
             throw new Error('User already exists.');
         }
 
+        if (email.toLowerCase() === config.admin.email.toLowerCase()) {
+            throw new Error('Admin already exists.');
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10);
-
         const cart = await CartsService.createCart();
-
         const newUser = {
             firstName: req.body.firstName,
             lastName: req.body.lastName,

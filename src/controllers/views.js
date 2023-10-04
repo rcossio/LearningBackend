@@ -2,10 +2,11 @@ import CartsService from '../services/carts.js';
 import ChatService from '../services/chat.js';
 import ProductsService from '../services/products.js';
 import UsersService from '../services/users.js';
+import TicketService from '../services/tickets.js'
 
 class ViewsController {
 
-  static async renderHome(req, res, customResponse = {}) {
+  static async homeView(req, res, customResponse = {}) {
     const { limit = 3, page = 1, sort = 'asc', query = '' } = req.query;
     const sortOrder = sort === 'desc' ? -1 : 1;
 
@@ -27,10 +28,10 @@ class ViewsController {
     const result = await ProductsService.getProducts(filter, options);
     //console.log("CONTROLLER:",result) // if FS this is working but it is not paginated and it wont render the page
 
-    res.status(200).render('home', { ...result, ...customResponse, sort, query, user: req.user });
+    res.status(200).render('home', { ...result, ...customResponse, sort, query, user: req.user }); 
   }
 
-  static async renderCart(req, res, customResponse = {}) {
+  static async cartView(req, res, customResponse = {}) {
     if (!req.user) {
         return res.redirect('/auth/login');
     }
@@ -38,7 +39,7 @@ class ViewsController {
     res.status(200).render('cart', { ...cart, ...customResponse, user: req.user });
   }
 
-  static async renderChat(req, res, customResponse = {}) {
+  static async chatView(req, res, customResponse = {}) {
     if (!req.user) {
         return res.redirect('/auth/login');
     }
@@ -52,24 +53,25 @@ class ViewsController {
     res.render('chat', { ...customResponse, user: req.user });
   }
 
-  static async renderProfile(req, res, customResponse = {}) {
-    if (!req.user) {
-        return res.redirect('/auth/login');
-    }
+  static async profileView(req, res, customResponse = {}) {
     const user = await UsersService.getUserByEmail(req.user.email);
     res.render('profile', { ...customResponse, user });
   }
 
-  static async renderNotAuthorized(req, res) {
-    await ViewsController.renderHome(req, res, { message: 'You are not authorized to access this resource' });
+  static async notAuthorizedView(req, res) {
+    await ViewsController.homeView(req, res, { error: 'You are not authorized to access this resource' });
   }
 
-  static async renderSuccessfulPurchase(req, res) {
-    await ViewsController.renderCart(req, res, { message: 'Your purchase was successfull!' });
+  static async purchaseSuccessfulView(req, res) {
+    const ticketIsValid = await TicketService.validateTicket(req.params.ticketCode, req.user.email);
+    if (ticketIsValid) {
+      return await ViewsController.cartView(req, res, { message: `Your purchase was successfull! Ticket code: ${req.params.ticketCode}` });
+    }
+    res.redirect('/page-not-found'); // endpoint does not exist so it will be captured by the 404 middleware
   }
 
-  static async renderFailedPurchase(req, res) {
-    await ViewsController.renderCart(req, res, { error: 'Error while purchasing the cart' });
+  static async purchaseFailedView(req, res) {
+    await ViewsController.cartView(req, res, { error: 'Error while purchasing the cart' });
   }
 }
 

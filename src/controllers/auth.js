@@ -25,60 +25,8 @@ class AuthController {
         });
     }
 
-    static async registerView(req, res) {
-        if (req.user) {
-            return res.redirect('/profile');
-        }
-        res.render('register');
-    }
-
-    static async registrationSuccessView(req, res) {
-        res.render('login', { message: 'User registered successfully. Please log in' });
-    }
-
-    static async registrationFailedView(req, res) {
-        return res.render('register', { error: 'Unable to register user.' });
-    }
-
-    static async loginView(req, res) {
-        try {
-            if (req.user) {
-                return res.redirect('/profile');
-            }
-            res.render('login');
-        } catch (error) {
-            console.log(error.message)
-            res.render('login', { error: 'Unable to log in' });
-        }
-    }
-
-    static async loginFailedView(req, res) {
-        return res.render('login', { error: 'Unable to log in' });
-    }
-
-    static async restorePasswordView(req, res) {
-        res.render('restore-password');
-    }
-
-    static async restorePassword(req, res) {
-        try {
-            const { email, newPassword, confirmPassword } = req.body;
-            const user = await UsersService.getUserByEmail(email);
-
-            if (!user) {
-                return res.render('restore-password', { error: 'Password was not updatedPassword was not updated.' });
-            }
-
-            if (newPassword !== confirmPassword) {
-                return res.render('restore-password', { error: 'Passwords do not match!' });
-            }
-
-            await UsersService.setUserPasswordByEmail(email, newPassword);
-            res.status(200).render('login', { message: 'Password updated successfully. Please log in with your new password.' });
-        } catch (error) {
-            console.error(error.message);
-            res.render('restore-password', { error: 'Your password could not be restored' });
-        }
+    static registerView(req, res,customResponse = {}) {
+        return res.render('register', { ...customResponse });
     }
 
     static registerUser(req, res, next) {
@@ -87,8 +35,44 @@ class AuthController {
                 return res.redirect('/auth/registered-failed');
             }
             AuthController.createJwtAndSetCookie(user, res);
-            res.redirect('/auth/registered-successfully'); 
+            res.redirect('/auth/registered-successfully');    //<---
         })(req, res, next);
+    }
+
+    static registrationSuccessView(req, res) {
+        return AuthController.loginView(req, res, { message: 'User registered successfully. Please log in' });
+    }
+
+    static registrationFailedView(req, res) {
+        return AuthController.registerView(req, res, { error: 'Unable to register user.' });
+    }
+
+    static loginView(req, res, customResponse = {}) {
+        return res.render('login', { ...customResponse });
+    }
+
+    static loginFailedView(req, res) {
+        return AuthController.loginView(req, res, { error: 'Unable to log in' });
+    }
+
+    static restorePasswordView(req, res, customResponse = {}) {
+        return res.render('restore-password', { ...customResponse });
+    }
+
+    static async restorePassword(req, res) {
+        const { email, newPassword, confirmPassword } = req.body;
+        const user = await UsersService.getUserByEmail(email);
+
+        if (!user) {
+            return AuthController.restorePasswordView(req, res, { error: 'User not found' });
+        }
+
+        if (newPassword !== confirmPassword) {
+            return AuthController.restorePasswordView(req, res, { error: 'Passwords do not match!' });
+        }
+
+        await UsersService.setUserPasswordByEmail(email, newPassword);
+        return AuthController.loginView(req, res, { message: 'Password updated successfully. Please log in with your new password.' });
     }
 
     static loginUser(req, res, next) {
@@ -129,7 +113,7 @@ class AuthController {
         })(req, res, next);
     }
 
-    static async logout(req, res) {
+    static logout(req, res) {
         res.clearCookie('jwt');
         return res.redirect('/');
     }

@@ -50,7 +50,9 @@ The ones marked are the ones currently used
 
 ## Known issues
 
-jwt is not being able to populate req.user from the cookies in the newest version of express-jwt, so we need to downgrade it to 6.1.0. Run:
+- jwt is not being able to populate req.user from the cookies in the newest version of express-jwt, so we need to downgrade it to 6.1.0. Run:
 
 `npm uninstall express-jwt`
 `npm install express-jwt@6.1.0`
+
+- ThunderClient: When working with thunderclient te JWT is not read from the cookie, also from the thunderclient I cant post to /auth/login

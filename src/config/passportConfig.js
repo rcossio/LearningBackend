@@ -1,6 +1,4 @@
 import JwtStrategy from 'passport-jwt';
-import jwt from 'jsonwebtoken';
-
 import passport from 'passport';
 import { config } from './config.js';
 import { Strategy as LocalStrategy } from 'passport-local';

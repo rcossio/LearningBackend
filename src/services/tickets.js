@@ -41,6 +41,17 @@ class TicketService {
     return ticketInfo.code;
     
   }
+
+  static async validateTicket(ticketCode, userEmail) {
+    const ticket = await ticketDAO.getTicketByCode(ticketCode);
+    if (!ticket) {
+      return false
+    }
+    if (ticket.purchaser !== userEmail) {
+      return false
+    }
+    return true
+  }
 }
 
 export default TicketService;

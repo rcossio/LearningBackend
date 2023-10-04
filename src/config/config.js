@@ -24,7 +24,7 @@ const config = {
     dbName: process.env.ATLAS_DBNAME
   },
   admin: {
-    email: process.env.ADMIN_EMAIL,
+    email: process.env.ADMIN_EMAIL.toLowerCase(),  //prevents bad usage of .env file
     pass: process.env.ADMIN_PASS
   },
 
@@ -42,7 +42,7 @@ const config = {
     }
   },
   mail: {
-    user: process.env.GMAIL_USER,
+    user: process.env.GMAIL_USER.toLowerCase(), //prevents bad usage of .env file
     pass: process.env.GMAIL_APP_PASSWORD
   }
 }
