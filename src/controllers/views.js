@@ -25,10 +25,15 @@ class ViewsController {
         lean: true
     };
 
-    const result = await ProductsService.getProducts(filter, options);
-    //console.log("CONTROLLER:",result) // if FS this is working but it is not paginated and it wont render the page
+    try {
+      const result = await ProductsService.getProducts(filter, options);
+      //console.log("CONTROLLER:",result) // if FS this is working but it is not paginated and it wont render the page
+  
+      res.status(200).render('home', { ...result, ...customResponse, sort, query, user: req.user }); 
+    } catch {
+      res.status(500).render('error.hbs', {message: 'Unable to connect to database. The app is not working right now. We are sorry for the inconveniences!'})
+    }
 
-    res.status(200).render('home', { ...result, ...customResponse, sort, query, user: req.user }); 
   }
 
   static async cartView(req, res, customResponse = {}) {

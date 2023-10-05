@@ -1,4 +1,3 @@
-//import productDAO from "../data/mongo/dao/productsDAO.js";
 import {productDAO} from "../data/factory.js";
 
 class ProductsService {

@@ -19,6 +19,7 @@ import cookieParser from 'cookie-parser';
 import expressjwt from "express-jwt";
 
 import {config} from './config/config.js';
+import errorHandler from './middlewares/error.js';
 
 console.log(config)
 const PORT = config.server.port; 
@@ -71,14 +72,7 @@ const httpServer = app.listen(PORT, () => {
 configureSocketIO(httpServer);
 
 //error handling
-app.use((err, req, res, next) => { 
-  if (err.name === 'UnauthorizedError') {
-    return res.status(401).json({ status: 'error', payload: 'Invalid or expired token' });
-  }
-
-  console.error(err.stack);
-  res.status(500).json({ status: 'error', payload: err.message });
-});
+app.use(errorHandler);
 
 app.get('*', (req, res) => {
   res.status(404).render('error', { message: 'Page does not exist' });

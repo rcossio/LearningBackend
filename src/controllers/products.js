@@ -3,7 +3,7 @@ import { faker } from '@faker-js/faker';
 
 class ProductsController {
 
-  static async getProducts(req, res) {
+  static async getProducts(req, res) { //add error due to lack of connection with DB
     const { limit = 3, page = 1, sort = 'asc', query = '' } = req.query;
     const sortOrder = sort === 'desc' ? -1 : 1;
 

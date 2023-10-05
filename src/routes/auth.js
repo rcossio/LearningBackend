@@ -1,6 +1,6 @@
 import { Router } from "express";
 import AuthController from '../controllers/auth.js';
-import { checkRole } from "../middlewares/roles.js";
+import { checkIsLogged } from "../middlewares/roles.js";
 
 const router = Router();
 
@@ -26,7 +26,7 @@ router.get("/restore-password", AuthController.restorePasswordView);
 router.post("/restore-password", AuthController.restorePassword);
 
 // user or ardmin
-router.get("/logout", checkRole(['user','admin']), AuthController.logout);
+router.get("/logout", checkIsLogged, AuthController.logout);
 
 
 export { router };

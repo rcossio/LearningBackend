@@ -1,6 +1,6 @@
 import { Router } from "express";
 import ViewsController from "../controllers/views.js";
-import { checkRole } from "../middlewares/roles.js";
+import { requireUserLogin, checkIsUser, requireLogin } from "../middlewares/roles.js";
 
 const router = Router();
 
@@ -9,13 +9,13 @@ router.get("/", ViewsController.homeView);
 router.get('/not-authorized', ViewsController.notAuthorizedView);  
 
 //for users
-router.get("/cart", checkRole(['user']), ViewsController.cartView);
-router.get("/chat", checkRole(['user']), ViewsController.chatView);
-router.get('/purchase-successful/:ticketCode', checkRole(['user']), ViewsController.purchaseSuccessfulView);
-router.get('/purchase-failed', checkRole(['user']), ViewsController.purchaseFailedView);
+router.get("/cart", requireUserLogin, ViewsController.cartView);
+router.get("/chat", requireUserLogin, ViewsController.chatView);
+router.get('/purchase-successful/:ticketCode', checkIsUser, ViewsController.purchaseSuccessfulView);
+router.get('/purchase-failed', checkIsUser, ViewsController.purchaseFailedView);
 
 //for users and admins
-router.get("/profile", checkRole(['user','admin']),ViewsController.profileView);
+router.get("/profile", requireLogin, ViewsController.profileView);
 
 
 export { router };

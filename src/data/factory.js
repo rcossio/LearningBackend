@@ -12,7 +12,7 @@ switch (storageType) {
 
   case 'mongo':
     const connectDB = (await import('../config/dbConnection.js')).default;
-    connectDB();
+    await connectDB();
 
     productDAO = (await import('./mongo/dao/productsDAO.js')).default;
     cartDAO = (await import('./mongo/dao/cartsDAO.js')).default;

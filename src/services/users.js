@@ -1,5 +1,4 @@
 import bcrypt from 'bcrypt';
-//import userDAO from '../data/mongo/dao/usersDAO.js';
 import {userDAO} from "../data/factory.js";
 import CartsService from './carts.js';
 import { config } from '../config/config.js';

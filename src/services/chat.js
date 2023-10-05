@@ -1,6 +1,5 @@
-//import chatDAO from '../data/mongo/dao/chatDAO.js';
 import {chatDAO} from "../data/factory.js";
-import { getQuote } from 'inspirational-quotes';
+import { faker } from '@faker-js/faker';
 
 class ChatService {
 
@@ -9,7 +8,8 @@ class ChatService {
   }
 
   static async addChatMessage(username, newMessage) {
-    const backendMessage = `${new Date().toLocaleString()}  -  BACKEND: ${getQuote({ author: false }).text}`;
+    const backendResponse = faker.company.catchPhrase()
+    const backendMessage = `${new Date().toLocaleString()}  -  BACKEND: ${backendResponse}`;
     await chatDAO.addMessagesToChat(username, [newMessage, backendMessage]);
     return await chatDAO.getMessages(username);
   }

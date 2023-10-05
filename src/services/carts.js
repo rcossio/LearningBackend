@@ -1,4 +1,3 @@
-//import cartDAO from "../data/mongo/dao/cartsDAO.js";
 import {cartDAO} from "../data/factory.js";
 
 class CartService {
