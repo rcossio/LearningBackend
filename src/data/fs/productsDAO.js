@@ -77,11 +77,11 @@ class ProductDAO {
 
   async addProduct(product) {
     if (!this.#isProductValid(product)) {
-      throw new Error('Invalid product');
+      throw new CustomError('Invalid product', 'INVALID_DATA');
     }
     await this.#loadProducts();
     if (this.#isProductCodeDuplicate(product.code)) {
-      throw new Error('Product with the same code already exists');
+      throw new CustomError('Product with the same code already exists', 'INVALID_DATA');
     }
     const _id = this.#generateProductId();
     const newProduct = { _id, ...product };
@@ -99,7 +99,7 @@ class ProductDAO {
     await this.#loadProducts();
     const product = this.#products.find((p) => p._id === _id);
     if (!product) {
-      throw new Error(`Product not found. Requested ID:${_id}`);
+      throw new CustomError(`Product not found. Requested ID:${_id}`, 'QUERY_ERROR');
     }
     return product;
   }
@@ -108,7 +108,7 @@ class ProductDAO {
     await this.#loadProducts();
     const productIndex = this.#products.findIndex((p) => p._id === _id);
     if (productIndex === -1) {
-      throw new Error(`Product not found. Requested ID:${_id}`);
+      throw new CustomError(`Product not found. Requested ID:${_id}`, 'QUERY_ERROR');
     }
     this.#products.splice(productIndex, 1);
     await this.#saveFile();
@@ -117,12 +117,12 @@ class ProductDAO {
 
   async updateProduct(_id, product) {
     if (!this.#isProductValid(product)) {
-      throw new Error('Invalid product');
+      throw new CustomError('Invalid product', 'INVALID_DATA');
     }
     await this.#loadProducts();
     const productIndex = this.#products.findIndex((p) => p._id === _id);
     if (productIndex === -1) {
-      throw new Error(`Product not found. Requested ID:${_id}`);
+      throw new CustomError(`Product not found. Requested ID:${_id}`,'QUERY_ERROR');
     }
     const updatedProduct = { _id, ...product };
     this.#products[productIndex] = updatedProduct;

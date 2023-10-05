@@ -1,5 +1,6 @@
 import ProductsService from '../services/products.js';
 import { faker } from '@faker-js/faker';
+import handleAndLogError from '../utils/errorHandler.js';
 
 class ProductsController {
 
@@ -22,33 +23,48 @@ class ProductsController {
       lean: true
     };
 
-    const result = await ProductsService.getProducts(filter, options);
-    const response = {
-      status: 'success',
-      payload: result.docs,
-      totalPages: result.totalPages,
-      page: result.page,
-      hasPrevPage: result.hasPrevPage,
-      hasNextPage: result.hasNextPage,
-      prevPage: result.prevPage,
-      nextPage: result.nextPage,
-      prevLink: result.hasPrevPage ? `/api/products?page=${result.prevPage}&limit=${limit}` : null,
-      nextLink: result.hasNextPage ? `/api/products?page=${result.nextPage}&limit=${limit}` : null
-    };
+    try {
+      const result = await ProductsService.getProducts(filter, options);
+      const response = {
+        status: 'success',
+        payload: result.docs,
+        totalPages: result.totalPages,
+        page: result.page,
+        hasPrevPage: result.hasPrevPage,
+        hasNextPage: result.hasNextPage,
+        prevPage: result.prevPage,
+        nextPage: result.nextPage,
+        prevLink: result.hasPrevPage ? `/api/products?page=${result.prevPage}&limit=${limit}` : null,
+        nextLink: result.hasNextPage ? `/api/products?page=${result.nextPage}&limit=${limit}` : null
+      };
 
-    res.status(200).json(response);
+      res.status(200).json(response);
+    } catch (error) {
+      handleAndLogError(error);
+      res.status(400).json({ status: 'error', payload: error.message });
+    }
   };
 
   static async getProductById(req, res) {
     const { productId } = req.params;
-    const product = await ProductsService.getProductById(productId);
-    res.status(200).json({ status: 'success', payload: product });
+    try {
+      const product = await ProductsService.getProductById(productId);
+      res.status(200).json({ status: 'success', payload: product });
+    } catch (error) {
+      handleAndLogError(error);
+      res.status(400).json({ status: 'error', payload: error.message });
+    }
   };
 
   static async deleteProduct(req, res) {
     const { productId } = req.params;
-    await ProductsService.deleteProduct(productId);
-    res.status(204).end();
+    try {
+      await ProductsService.deleteProduct(productId);
+      res.status(204).end();
+    } catch (error) {
+      handleAndLogError(error);
+      res.status(400).json({ status: 'error', payload: error.message });
+    }
   };
 
   static async addProduct(req, res) {
@@ -60,8 +76,13 @@ class ProductsController {
   static async updateProduct(req, res) {
     const { productId } = req.params;
     const product = req.body;
-    await ProductsService.updateProduct(productId, product);
-    res.status(200).json({ status: 'success', payload: 'Product updated successfully' });
+    try {
+      await ProductsService.updateProduct(productId, product);
+      res.status(200).json({ status: 'success', payload: 'Product updated successfully' });
+    } catch (error) {
+      handleAndLogError(error);
+      res.status(400).json({ status: 'error', payload: error.message });
+    }
   };
 
   static async mockingProducts(req, res) {

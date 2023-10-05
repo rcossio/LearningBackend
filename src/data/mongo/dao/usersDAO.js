@@ -1,4 +1,5 @@
 import UserModel from '../models/UserModel.js';
+import CustomError from '../../../services/customError.js';
 
 class UserDAO {
 
@@ -7,11 +8,19 @@ class UserDAO {
   }
 
   static async getUserByEmail(email) {
-    return await UserModel.findOne({ email: email }).lean();
+    const user = await UserModel.findOne({ email: email }).lean();
+    if (!user) {
+      throw new CustomError('User not found.','QUERY_ERROR');
+    }
+    return user 
   }
 
   static async getUserById(id) {
-    return await UserModel.findById(id).lean();
+    const user = await UserModel.findById(id).lean();
+    if (!user) {
+      throw new CustomError('User not found.','QUERY_ERROR');
+    }
+    return user 
   }
 
   static async createChat(id, chatId) {
@@ -22,7 +31,11 @@ class UserDAO {
   }
 
   static async setUserPasswordByEmail(email, hashedPassword) {
-    return await UserModel.updateOne({ email: email }, { password: hashedPassword });
+    const result = await UserModel.updateOne({ email: email }, { password: hashedPassword });
+    if (result.nModified === 0) {
+      throw new CustomError('Failed to update password or user not found.','QUERY_ERROR');
+    }
+    return result;
   }
 }
 

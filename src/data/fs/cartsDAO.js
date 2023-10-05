@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
+import CustomError from '../../services/customError.js';
 
 const __dirname = path.resolve();
 
@@ -51,7 +52,7 @@ class CartDAO {
     await this.#loadCarts();
     const cart = this.#carts.find(cart => cart._id === cartId);
     if (!cart) {
-      throw new Error(`Cart not found. Requested ID: ${cartId}`);
+      throw new CustomError(`Cart not found. Requested ID: ${cartId}`, 'QUERY_ERROR');
     }
     return cart;  //Does not use population like method
   }
@@ -64,7 +65,7 @@ class CartDAO {
     await this.#loadCarts();
     const cartIndex = this.#carts.findIndex(cart => cart._id === cartId);
     if (cartIndex === -1) {
-      throw new Error(`Cart not found. Requested ID: ${cartId}`);
+      throw new CustomError(`Cart not found. Requested ID: ${cartId}`, 'QUERY_ERROR');
     }
     this.#carts[cartIndex].products = products;
     await this.#saveFile();
@@ -75,7 +76,7 @@ class CartDAO {
     await this.#loadCarts();
     const cartIndex = this.#carts.findIndex(cart => cart._id === cartId);
     if (cartIndex === -1) {
-      throw new Error(`Cart not found. Requested ID: ${cartId}`);
+      throw new CustomError(`Cart not found. Requested ID: ${cartId}`, 'QUERY_ERROR');
     }
     this.#carts.splice(cartIndex, 1);
     await this.#saveFile();

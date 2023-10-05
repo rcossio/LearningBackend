@@ -3,27 +3,15 @@ import {productDAO} from "../data/factory.js";
 class ProductsService {
 
     static async getProducts(filter, options) {
-        const result = await productDAO.getProducts(filter, options);
-        if (!result || result.docs?.length === 0) {
-            throw new Error('No products found.');
-        }
-        return result;
+        return await productDAO.getProducts(filter, options);
     }
 
     static async getProductById(productId) {
-        const product = await productDAO.getProductById(productId);
-        if (!product) {
-            throw new Error('Product not found.');
-        }
-        return product;
+        return await productDAO.getProductById(productId);
     }
 
     static async deleteProduct(productId) {
-        const result = await productDAO.deleteProduct(productId);
-        if (!result) {
-            throw new Error('Product not found. Unable to delete.');
-        }
-        return result;
+        return await productDAO.deleteProduct(productId);
     }
 
     static async addProduct(product) {
@@ -31,11 +19,7 @@ class ProductsService {
     }
 
     static async updateProduct(productId, product) {
-        const updatedProduct = await productDAO.updateProduct(productId, product);
-        if (!updatedProduct) {
-            throw new Error('Product not found. Unable to update.');
-        }
-        return updatedProduct;
+        return await productDAO.updateProduct(productId, product); 
     }
 }
 

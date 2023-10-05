@@ -52,7 +52,7 @@ class ChatDAO {
     await this.#loadChats();
     const chat = this.#chats.find(chat => chat.user.toLowerCase() === userEmail.toLowerCase());
     if (!chat) {
-      throw new Error(`Chat not found for user: ${userEmail}`);
+      throw new CustomError(`Chat not found for user: ${userEmail}`, 'QUERY_ERROR');
     }
     chat.messages.push(...messages);
     await this.#saveFile();

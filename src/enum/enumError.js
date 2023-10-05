@@ -4,6 +4,7 @@
     AUTH_ERROR: 3,
     PURCHASE_ERROR: 4,
     QUERY_ERRORS:5,
+    INVALID_DATA:6,
     UNKNOWN_ERROR: 9,
   };
 

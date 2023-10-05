@@ -1,4 +1,5 @@
 import { config } from '../config/config.js';
+import CustomError from '../services/customError.js';
 
 let productDAO;
 let cartDAO;
@@ -38,7 +39,7 @@ async function initialize() {
             break;
 
         default:
-            throw new Error(`Unknown storage type: ${storageType}`);
+            throw new CustomError(`Unknown storage type: ${storageType}`,'INVALID_DATA');
     }
 }
 

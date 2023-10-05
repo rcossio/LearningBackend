@@ -58,7 +58,7 @@ class UserDAO {
     await this.#loadUsers();
     const user = this.#users.find(u => u._id === id);
     if (!user) {
-      throw new Error(`User not found. Requested ID: ${id}`);
+      throw new CustomError(`User not found. Requested ID: ${id}`,'QUERY_ERROR');
     }
     user.chatId = chatId;
     await this.#saveFile();
@@ -69,7 +69,7 @@ class UserDAO {
     await this.#loadUsers();
     const user = this.#users.find(u => u.email.toLowerCase() === email.toLowerCase());
     if (!user) {
-      throw new Error(`User not found. Requested email: ${email}`);
+      throw new CustomError(`User not found. Requested email: ${email}`, 'QUERY_ERROR');
     }
     user.password = hashedPassword;
     await this.#saveFile();

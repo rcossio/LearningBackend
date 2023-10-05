@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 import {userDAO} from "../data/factory.js";
 import CartsService from './carts.js';
 import { config } from '../config/config.js';
+import CustomError from './customError.js';
 
 class UserService {
 
@@ -16,11 +17,7 @@ class UserService {
     static async setUserPasswordByEmail(email, newPassword) {
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
-        const result = await userDAO.setUserPasswordByEmail(email, hashedPassword);
-        if (result.nModified === 0) {
-            throw new Error('Failed to update password or user not found.');
-        }
-        return result;
+        return await userDAO.setUserPasswordByEmail(email, hashedPassword);
     }
 
     static async createChat(userId, chatId) {
@@ -28,22 +25,18 @@ class UserService {
     }
 
     static async getUserById(id) {
-        const user = await userDAO.getUserById(id);
-        if (!user) {
-            throw new Error('User not found.');
-        }
-        return user;
+        return await userDAO.getUserById(id);
     }
 
     static async registerUser(req, email, password) {
         const existingUser = await this.getUserByEmail(email);
 
         if (existingUser) {
-            throw new Error('User already exists.');
+            throw new CustomError('User already exists.', 'INVALID_DATA');
         }
 
         if (email.toLowerCase() === config.admin.email.toLowerCase()) {
-            throw new Error('Admin already exists.');
+            throw new CustomError('Admin already exists.', 'INVALID_DATA');
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -71,13 +64,13 @@ class UserService {
         }
 
         const user = await this.getUserByEmail(email);
-        if (!user || user.password === undefined) {
-            throw new Error('User not found or password undefined.');
+        if (!user.password) {
+            throw new CustomError('Wrong authentication method.', 'AUTH_ERROR');
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            throw new Error('Password mismatch.');
+            throw new CustomError('Password mismatch.', 'INVALID_DATA');
         }
 
         return user;

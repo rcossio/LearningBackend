@@ -64,7 +64,7 @@ class CartService {
 
     const productIndex = cart.products.findIndex((item) => item.productId.toString() === productId);
     if (productIndex === -1) {
-      throw new Error('Product not found in cart.');
+      throw new CustomError('Product not found in cart.', 'QUERY_ERROR');
     }
 
     cart.products.splice(productIndex, 1);
