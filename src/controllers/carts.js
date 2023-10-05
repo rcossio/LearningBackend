@@ -1,5 +1,6 @@
 import CartsService from '../services/carts.js';
 import TicketService from '../services/tickets.js';
+import handleAndLogError from '../utils/errorHandler.js';
 
 class CartsController {
     static async createCart(req, res) {
@@ -8,8 +9,13 @@ class CartsController {
     }
 
     static async getCartById(req, res) {
-        const cart = await CartsService.getCartById(req.params.cartId);
-        res.status(200).json({ status: 'success', payload: cart });
+        try {
+            const cart = await CartsService.getCartById(req.params.cartId);
+            res.status(200).json({ status: 'success', payload: cart });
+        } catch (error) {
+            handleAndLogError(error);
+            res.status(404).json({ status: 'error', payload: error.message });
+        }
     }
 
     static async updateCart(req, res) {
@@ -18,8 +24,14 @@ class CartsController {
     }
 
     static async deleteCart(req, res) {
-        await CartsService.removeCart(req.params.cartId);
-        res.status(200).end();
+        try {
+            await CartsService.removeCart(req.params.cartId);
+            res.status(200).end();
+        } catch (error) {
+            handleAndLogError(error);
+            res.status(404).json({ status: 'error', payload: error.message });
+        }
+
     }
 
     static async updateProductInCart(req, res) {
@@ -52,7 +64,7 @@ class CartsController {
             const ticketCode = await TicketService.createTicket(req.params.cartId, req.user.email);
             res.redirect(`/purchase-successful/${ticketCode}`);
         } catch (error) {
-            console.error(error.message);
+            handleAndLogError(error);
             res.redirect('/purchase-failed')
         }
     }

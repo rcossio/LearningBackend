@@ -6,7 +6,16 @@ const checkRole = ({roles, redirect}) => {
     next();
 }}
 
-const requireUserLogin = checkRole( {roles:['user'], redirect: '/auth/login'})
+const requireUserLogin = (req,res,next) => {
+  if (!req.user) {
+      return res.redirect('/auth/login');
+  } else if (req.user.role === 'admin') {
+      return res.redirect('/not-authorized');
+  } else {
+      next();
+  }
+}
+
 const requireLogin = checkRole( {roles:['user','admin'], redirect: '/auth/login'})
 const checkIsUser = checkRole( {roles:['user']})
 const checkIsAdmin = checkRole( {roles:['admin']})

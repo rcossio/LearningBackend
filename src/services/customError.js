@@ -1,14 +1,13 @@
-class CustomError {
+import enumError from '../enum/enumError.js';
 
-  static createError(name, cause, message, errorCode=1) {
-    const error = new Error(message);
-    error.name = name;
-    error.cause = cause;
-    error.errorCode = errorCode;
-    console.log("CustomError: ", error);
-    throw error;
+class CustomError extends Error {
+  constructor(message, errorType) {
+    super(message);
+    this.name = 'CustomError';
+    this.errorCode = enumError[errorType] || 9;
+    this.date = new Date().toLocaleString();
+    Object.setPrototypeOf(this, CustomError.prototype);
   }
-
 }
 
 export default CustomError;

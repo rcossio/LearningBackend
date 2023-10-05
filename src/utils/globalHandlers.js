@@ -1,5 +1,10 @@
-// Handle unhandled promise rejections
+
 process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  console.error('Unhandled Promise Rejection:', reason);
+  process.exit(1);s
 });
 
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  process.exit(1);
+});

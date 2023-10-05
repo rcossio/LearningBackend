@@ -21,8 +21,7 @@ import expressjwt from "express-jwt";
 import {config} from './config/config.js';
 import errorHandler from './middlewares/error.js';
 
-console.log(config)
-const PORT = config.server.port; 
+//express initialization
 const app = express();
 const __dirname = path.resolve();
 
@@ -63,9 +62,9 @@ app.use('/api/products', productRouter);
 app.use('/api/carts', cartRouter);
 
 //server initialization
-const httpServer = app.listen(PORT, () => {
+const httpServer = app.listen(config.server.port, () => {
   displayRoutes(app);
-  console.log(`Server is running at PORT ${PORT}`);
+  console.log(`Server is running at PORT ${config.server.port}`);
 });
 
 //socket.io configuration

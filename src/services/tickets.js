@@ -2,6 +2,7 @@ import { ticketDAO } from "../data/factory.js";
 import CartsService from './carts.js';
 import ProductsService from './products.js';
 import { v4 as uuidv4 } from 'uuid';
+import CustomError from './customError.js';
 
 class TicketService {
 
@@ -9,7 +10,7 @@ class TicketService {
     
     const amount = await CartsService.calculateTotal(cartId)
     if (amount === 0) {
-      throw new Error('Cart is empty');
+      throw new CustomError('Cart is empty','PURCHASE_ERROR');   // WARNING: this could also mean free products (like special offers)
     }
 
     //check stock availability for each product in cart
@@ -17,7 +18,7 @@ class TicketService {
     for (const product of cart.products) {
       const productInfo = await ProductsService.getProductById(product.productId);
       if (productInfo.stock < product.quantity) {
-        throw new Error(`Product ${productInfo.code} is out of stock`);
+        throw new CustomError(`Product ${productInfo.code} is out of stock`, 'PURCHASE_ERROR');
       }
     }
 

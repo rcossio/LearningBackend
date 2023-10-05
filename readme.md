@@ -58,3 +58,5 @@ The ones marked are the ones currently used
 `npm install express-jwt@6.1.0`
 
 - ThunderClient: When working with thunderclient te JWT is not read from the cookie, also from the thunderclient I cant post to /auth/login
+
+- Chat: When a chat is deleted, the user is not asign a new empty chat, it just crashes the socketIO functionality

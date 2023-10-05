@@ -24,8 +24,8 @@ passport.use(new JwtStrategy.Strategy({
             return done(null, user);
         }
         return done(null, false);
-    } catch (e) {
-        return done(e, false);
+    } catch (error) {
+        return done(error, false);
     }
 }));
 
@@ -39,8 +39,8 @@ passport.use('signupStrategy', new LocalStrategy(
         try {
             const user = await UsersService.registerUser(req, email, password);
             return done(null, user);
-        } catch (err) {
-            return done(null, false, { message: err.message });
+        } catch (error) {
+            return done(null, false, { message: error.message });
         }
     }
 ));
@@ -54,8 +54,8 @@ passport.use('loginStrategy', new LocalStrategy(
         try {
             const user = await UsersService.loginUser(email, password);
             return done(null, user);
-        } catch (err) {
-            return done(null, false, { message: err.message });
+        } catch (error) {
+            return done(null, false, { message: error.message });
         }
     }
 ));
@@ -70,8 +70,8 @@ passport.use('githubStrategy', new GitHubStrategy(
         try {
             const user = await UsersService.githubAuth(profile);
             return done(null, user);
-        } catch (err) {
-            return done(err);
+        } catch (error) {
+            return done(error);
         }
     }
 ));
@@ -86,8 +86,8 @@ passport.use('googleStrategy', new GoogleStrategy(
         try {
             const user = await UsersService.googleAuth(profile);
             return done(null, user);
-        } catch (err) {
-            return done(err);
+        } catch (error) {
+            return done(error);
         }
     }
 ));

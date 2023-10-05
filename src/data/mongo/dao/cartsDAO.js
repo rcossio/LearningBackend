@@ -1,4 +1,5 @@
 import CartModel from '../models/CartModel.js';
+import CustomError from '../../../services/customError.js';
 
 class CartDAO {
   static async createCart() {
@@ -6,22 +7,39 @@ class CartDAO {
   }
 
   static async getCartById(cartId) {
-    return await CartModel.findById(cartId).populate('products.productId').lean();
+    const cart = await CartModel.findById(cartId).populate('products.productId').lean();
+    if (!cart) {
+      throw new CustomError(`Cart not found with ID ${cartId} `,'QUERY_ERRORS');
+    }
+    return cart
   }
 
   static async getCartRefsById(cartId) {
-    return await CartModel.findById(cartId).lean();
+    const cart = await CartModel.findById(cartId).lean();
+    if (!cart) {
+      throw new CustomError(`Cart not found with ID ${cartId} `,'QUERY_ERRORS');
+    }
+    return cart
   }
 
   static async updateCart(cartId, products) {
     const cart = await CartModel.findById(cartId);
+
+    if (!cart) {
+      throw new CustomError(`Cart not found with ID ${cartId} `,'QUERY_ERRORS');
+    }
+
     cart.products = products;
     await cart.save();
     return cart;
   }
 
   static async deleteCart(cartId) {
-    await CartModel.findByIdAndDelete(cartId);
+    const cart = await CartModel.findByIdAndDelete(cartId);
+    if (!cart) {
+      throw new CustomError(`Cart not found with ID ${cartId} `,'QUERY_ERRORS');
+    }
+
   }
 }
 

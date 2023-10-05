@@ -1,43 +1,47 @@
 import { config } from '../config/config.js';
 
-const storageType = config.server.storageType;
-
 let productDAO;
 let cartDAO;
 let userDAO;
 let chatDAO;
 let ticketDAO;
 
-switch (storageType) {
+async function initialize() {
+    const storageType = config.server.storageType;
 
-  case 'mongo':
-    const connectDB = (await import('../config/dbConnection.js')).default;
-    await connectDB();
+    switch (storageType) {
 
-    productDAO = (await import('./mongo/dao/productsDAO.js')).default;
-    cartDAO = (await import('./mongo/dao/cartsDAO.js')).default;
-    userDAO = (await import('./mongo/dao/usersDAO.js')).default;
-    chatDAO = (await import('./mongo/dao/chatDAO.js')).default;
-    ticketDAO = (await import('./mongo/dao/ticketsDAO.js')).default;
-    break;
+        case 'mongo':
+            const connectDB = (await import('../config/dbConnection.js')).default;
+            await connectDB();
 
-  case 'fs':
-    productDAO = (await import('./fs/productsDAO.js')).default;
-    productDAO = new productDAO();
+            productDAO = (await import('./mongo/dao/productsDAO.js')).default;
+            cartDAO = (await import('./mongo/dao/cartsDAO.js')).default;
+            userDAO = (await import('./mongo/dao/usersDAO.js')).default;
+            chatDAO = (await import('./mongo/dao/chatDAO.js')).default;
+            ticketDAO = (await import('./mongo/dao/ticketsDAO.js')).default;
+            break;
 
-    cartDAO = (await import('./fs/cartsDAO.js')).default;
-    cartDAO = new cartDAO();
+        case 'fs':
+            productDAO = (await import('./fs/productsDAO.js')).default;
+            productDAO = new productDAO();
 
-    userDAO = (await import('./fs/usersDAO.js')).default;
-    userDAO = new userDAO();
+            cartDAO = (await import('./fs/cartsDAO.js')).default;
+            cartDAO = new cartDAO();
 
-    chatDAO = (await import('./fs/chatDAO.js')).default;
-    chatDAO = new chatDAO();
+            userDAO = (await import('./fs/usersDAO.js')).default;
+            userDAO = new userDAO();
 
-    break;
+            chatDAO = (await import('./fs/chatDAO.js')).default;
+            chatDAO = new chatDAO();
 
-  default:
-    throw new Error(`Unknown storage type: ${storageType}`);
+            break;
+
+        default:
+            throw new Error(`Unknown storage type: ${storageType}`);
+    }
 }
+
+initialize()
 
 export { productDAO, cartDAO, userDAO, chatDAO, ticketDAO };
