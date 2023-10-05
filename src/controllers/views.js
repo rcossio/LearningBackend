@@ -3,6 +3,7 @@ import ChatService from '../services/chat.js';
 import ProductsService from '../services/products.js';
 import UsersService from '../services/users.js';
 import TicketService from '../services/tickets.js'
+import handleAndLogError from '../utils/errorHandler.js';
 
 class ViewsController {
 
@@ -45,8 +46,13 @@ class ViewsController {
     if (!req.user) {
         return res.redirect('/auth/login');
     }
-    const cart = await CartsService.getCartById(req.user.cartId);
-    res.status(200).render('cart', { ...cart, ...customResponse, user: req.user });
+    try {
+      const cart = await CartsService.getCartById(req.user.cartId);
+      res.status(200).render('cart', { ...cart, ...customResponse, user: req.user });
+    } catch(error) {
+      handleAndLogError(error);
+      res.status(500).render('cart', { products: [], error: 'Unable to load your cart, please contact our customer service' });
+    }
   }
 
   static async chatView(req, res, customResponse = {}) {
@@ -77,12 +83,17 @@ class ViewsController {
     if (ticketIsValid) {
       return await ViewsController.cartView(req, res, { message: `Your purchase was successfull! Ticket code: ${req.params.ticketCode}` });
     }
-    res.redirect('/page-not-found'); // endpoint does not exist so it will be captured by the 404 middleware
+    res.redirect('/page-not-found'); // INFO: endpoint does not exist so it will be captured by the 404 middleware
   }
 
   static async purchaseFailedView(req, res) {
-    await ViewsController.cartView(req, res, { error: 'Error while purchasing the cart' });
+    await ViewsController.cartView(req, res, { error: 'Error while purchasing the cart' }); // TODO: add out-of-stock error message
   }
+
+  static async addProductToCartFailedView(req, res) {
+    await ViewsController.homeView(req, res, { error: 'Unable to add product to cart. Please contact customer support.' });
+  }
+
 }
 
 export default ViewsController;

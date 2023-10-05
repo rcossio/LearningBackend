@@ -6,8 +6,8 @@ import { checkIsAdmin, checkRole } from "../middlewares/roles.js";
 const router = Router();
 
 //public API
-router.get('/', ProductsController.getProducts); //not very useful
-router.get('/:productId([0-9a-fA-F]{24})', ProductsController.getProductById); //not very useful
+router.get('/', ProductsController.getProducts); 
+router.get('/:productId([0-9a-fA-F]{24})', ProductsController.getProductById); 
 
 //API for admin
 router.delete('/:productId([0-9a-fA-F]{24})', checkIsAdmin, ProductsController.deleteProduct);

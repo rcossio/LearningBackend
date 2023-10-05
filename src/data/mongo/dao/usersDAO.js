@@ -9,9 +9,6 @@ class UserDAO {
 
   static async getUserByEmail(email) {
     const user = await UserModel.findOne({ email: email }).lean();
-    if (!user) {
-      throw new CustomError('User not found.','QUERY_ERROR');
-    }
     return user 
   }
 

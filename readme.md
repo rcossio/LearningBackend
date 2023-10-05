@@ -59,4 +59,8 @@ The ones marked are the ones currently used
 
 - ThunderClient: When working with thunderclient te JWT is not read from the cookie, also from the thunderclient I cant post to /auth/login
 
-- Chat: When a chat is deleted, the user is not asign a new empty chat, it just crashes the socketIO functionality
+- Chat: When a chat is deleted, the user is not asign a new empty chat, it just crashes the socketIO functionality.
+
+- Cart: The same as with chat but at least there is a sign of the error in the frontend
+
+- API endpoint errors have not been testest thorougly, so there might be some errors there.

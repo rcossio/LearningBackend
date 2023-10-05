@@ -7,11 +7,7 @@ import CustomError from './customError.js';
 class UserService {
 
     static async getUserByEmail(email) {
-        const user = await userDAO.getUserByEmail(email);
-        if (!user) {
-            return null;
-        }
-        return user;
+        return await userDAO.getUserByEmail(email);
     }
 
     static async setUserPasswordByEmail(email, newPassword) {
@@ -55,12 +51,13 @@ class UserService {
 
     static async loginUser(email, password) {
         if (email.toLowerCase() === config.admin.email && password === config.admin.pass) {
-            return {
+            const adminUser = {
                 firstName: 'Admin',
                 lastName: 'Admin',
                 email: config.admin.email,
                 role: 'admin'
             };
+            return adminUser;
         }
 
         const user = await this.getUserByEmail(email);
@@ -78,36 +75,41 @@ class UserService {
 
     static async githubAuth(profile) {
         const user = await this.getUserByEmail(profile.username);
-        if (!user) {
 
-            const cart = await CartsService.createCart();
-
-            const newUser = {
-                firstName: profile.username,
-                lastName: `(${profile.provider})`,
-                email: profile.username,
-                cartId: cart._id
-            };
-            return await userDAO.addNewUser(newUser);
+        if (user) {
+            return user;
         }
-        return user;
+
+        const cart = await CartsService.createCart();
+
+        const newUser = {
+            firstName: profile.username,
+            lastName: `(${profile.provider})`,
+            email: profile.username,
+            cartId: cart._id
+        };
+        return await userDAO.addNewUser(newUser);
+        
     }
 
     static async googleAuth(profile) {
         const user = await this.getUserByEmail(profile.emails[0].value);
-        if (!user) {
 
-            const cart = await CartsService.createCart();
-
-            const newUser = {
-                firstName: profile.name.givenName,
-                lastName: profile.name.familyName,
-                email: profile.emails[0].value,
-                cartId: cart._id
-            };
-            return await userDAO.addNewUser(newUser);
+        if (user) {
+            return user;
         }
-        return user;
+
+        const cart = await CartsService.createCart();
+
+        const newUser = {
+            firstName: profile.name.givenName,
+            lastName: profile.name.familyName,
+            email: profile.emails[0].value,
+            cartId: cart._id
+        };
+        
+        return await userDAO.addNewUser(newUser);
+        
     }
 }
 

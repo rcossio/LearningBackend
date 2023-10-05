@@ -14,8 +14,8 @@ router.post('/:cartId([0-9a-fA-F]{24})/purchase', checkIsUser , CartsController.
 router.get('/:cartId([0-9a-fA-F]{24})', checkIsAdmin, CartsController.getCartById);
 router.put('/:cartId([0-9a-fA-F]{24})', checkIsAdmin, CartsController.updateCart);
 router.delete('/:cartId([0-9a-fA-F]{24})', checkIsAdmin, CartsController.deleteCart);
-router.post('/', checkIsAdmin, CartsController.createCart); //not useful
-router.put('/:cartId([0-9a-fA-F]{24})/product/:productId([0-9a-fA-F]{24})', checkIsAdmin, CartsController.updateProductInCart); //not useful
+router.post('/', checkIsAdmin, CartsController.createCart);
+router.put('/:cartId([0-9a-fA-F]{24})/product/:productId([0-9a-fA-F]{24})', checkIsAdmin, CartsController.updateProductInCart); 
 
 
 export { router };

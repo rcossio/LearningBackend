@@ -1,4 +1,5 @@
 import {cartDAO} from "../data/factory.js";
+import CustomError from "./customError.js";
 
 class CartService {
   static async getCartById(cartId) {
@@ -24,7 +25,13 @@ class CartService {
 
   static async deleteProductFromCart(cartId, productId) {
     const cart = await cartDAO.getCartRefsById(cartId);
-    const productIndex = cart.products.findIndex((item) => item.productId.toString() === productId);
+    const productIndex = cart.products.findIndex((item) => item.productId.toString() === productId );
+
+    console.log(cart,productId)
+    if (productIndex === -1) {
+      throw new CustomError('Product not found in cart.', 'QUERY_ERROR');
+    }
+
     cart.products.splice(productIndex, 1);
     return await cartDAO.updateCart(cartId, cart.products);
 
@@ -49,6 +56,10 @@ class CartService {
   static async updateProductQuantity(cartId, productId, quantity) {
     const cart = await cartDAO.getCartRefsById(cartId);
 
+    if (quantity < 1) {
+      throw new CustomError('Quantity must be greater than 0.', 'INVALID_DATA');
+    }
+
     const productIndex = cart.products.findIndex((item) => item.productId.toString() === productId);
     if (productIndex === -1) {
         cart.products.push({ productId, quantity });
@@ -56,18 +67,6 @@ class CartService {
         cart.products[productIndex].quantity = quantity;
     }
 
-    return await cartDAO.updateCart(cartId, cart.products);
-  }
-
-  static async removeProductFromCart(cartId, productId) {
-    const cart = await cartDAO.getCartById(cartId);
-
-    const productIndex = cart.products.findIndex((item) => item.productId.toString() === productId);
-    if (productIndex === -1) {
-      throw new CustomError('Product not found in cart.', 'QUERY_ERROR');
-    }
-
-    cart.products.splice(productIndex, 1);
     return await cartDAO.updateCart(cartId, cart.products);
   }
 

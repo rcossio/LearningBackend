@@ -39,7 +39,9 @@ async function initialize() {
             break;
 
         default:
-            throw new CustomError(`Unknown storage type: ${storageType}`,'INVALID_DATA');
+            console.error(new CustomError(`Unknown storage type: ${storageType}`,'INVALID_DATA'));
+            process.exit(1);
+
     }
 }
 

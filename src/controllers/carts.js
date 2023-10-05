@@ -51,12 +51,17 @@ class CartsController {
         
         const option = req.params.option || 'increase'
 
-        if (option === 'increase') {
-            await CartsService.addProductToCart(req.user.cartId, req.params.productId, 1);
-        } else if (option === 'decrease') {
-            await CartsService.addProductToCart(req.user.cartId, req.params.productId, -1);
+        try {
+            if (option === 'increase') {
+                await CartsService.addProductToCart(req.user.cartId, req.params.productId, 1);
+            } else if (option === 'decrease') {
+                await CartsService.addProductToCart(req.user.cartId, req.params.productId, -1);
+            }
+            res.status(200).redirect('/cart');
+        } catch (error) {
+            handleAndLogError(error);
+            res.status(500).redirect('/add-product-to-cart-failed')
         }
-        res.status(200).redirect('/cart');
     }
 
     static async purchaseCart(req, res) {
