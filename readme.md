@@ -35,6 +35,8 @@ The ones marked are the ones currently used
 - [x]  **cookie-parser** : cookie parsing middleware.
 - [x]  **uuid** : simple, fast generation of RFC4122 UUIDS.
 - [x]  **nodemailer** : module for Node.js applications to allow easy as cake email sending.
+- [x]  **winston** : logger for just about everything.
+- [x]  **colors** : get colors in your node.js console.
 - [ ]  **morgan** : HTTP request logger middleware.
 - [ ]  **connect-flash** : special area of the session used for storing messages.
 - [ ]  **express-validator** : middleware for validating data.

@@ -4,6 +4,9 @@
   "description": "This is a project from the course Backend Programming from Coderhouse",
   "main": "app.js",
   "type": "module",
+  "engines": {
+    "node": "18.16.1"
+  },
   "scripts": {
     "start": "node src/app.js",
     "startDev": "npx nodemon src/app.js"
@@ -20,6 +23,7 @@
   "homepage": "https://github.com/rcossio/LearningBackend#readme",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "colors": "^1.4.0",
     "connect-mongo": "^5.0.0",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.3.1",
@@ -38,7 +42,8 @@
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "socket.io": "^4.7.2",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "winston": "^3.10.0"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.1.0",

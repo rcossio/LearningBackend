@@ -10,6 +10,7 @@ dotenv.config({
 
 const config = {
   server : {
+    mode: mode,
     port: process.env.PORT || 8080,
     host: process.env.HOST || 'localhost',
     storageType: process.env.STORAGE_TYPE || 'fs'

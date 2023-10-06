@@ -1,5 +1,3 @@
-import './utils/globalHandlers.js';
-
 import express from 'express';
 
 import displayRoutes from 'express-routemap';
@@ -7,6 +5,7 @@ import { router as productRouter } from './routes/products.js';
 import { router as cartRouter } from './routes/carts.js';
 import { router as viewsRouter } from './routes/views.js';
 import { router as authRouter } from './routes/auth.js';
+import { router as devRouter } from './routes/dev.js';
 
 import path from 'path';
 import handlebars from 'express-handlebars';
@@ -19,7 +18,9 @@ import cookieParser from 'cookie-parser';
 import expressjwt from "express-jwt";
 
 import {config} from './config/config.js';
-import errorHandler from './middlewares/error.js';
+
+import logger from './utils/logger.js';
+import './utils/globalHandlers.js';
 
 //express initialization
 const app = express();
@@ -60,19 +61,26 @@ app.use('/', viewsRouter);
 app.use('/auth', authRouter);
 app.use('/api/products', productRouter);
 app.use('/api/carts', cartRouter);
+app.use('/api/dev', devRouter);
+
+/* This dynamic import didn't work
+if (config.server.mode === 'development') {
+  import('./routes/dev.js').then(( devRouter ) => {
+    app.use('/api/dev', devRouter);
+  });
+} 
+*/
 
 //server initialization
 const httpServer = app.listen(config.server.port, () => {
   displayRoutes(app);
-  console.log(`Server is running at PORT ${config.server.port}`);
+  logger.info(`Server is running at PORT ${config.server.port}`);
 });
 
 //socket.io configuration
 configureSocketIO(httpServer);
 
 //error handling
-app.use(errorHandler);
-
 app.get('*', (req, res) => {
   res.status(404).render('error', { message: 'Page does not exist' });
 });  

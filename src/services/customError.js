@@ -5,7 +5,6 @@ class CustomError extends Error {
     super(message);
     this.name = 'CustomError';
     this.errorCode = enumError[errorType] || 9;
-    this.date = new Date().toLocaleString();
     Object.setPrototypeOf(this, CustomError.prototype);
   }
 }

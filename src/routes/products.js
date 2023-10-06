@@ -13,6 +13,5 @@ router.get('/:productId([0-9a-fA-F]{24})', ProductsController.getProductById);
 router.delete('/:productId([0-9a-fA-F]{24})', checkIsAdmin, ProductsController.deleteProduct);
 router.post('/', checkIsAdmin, ProductsController.addProduct);
 router.put('/:productId([0-9a-fA-F]{24})', checkIsAdmin, ProductsController.updateProduct);
-router.get('/mockingproducts', checkIsAdmin, ProductsController.mockingProducts);
 
 export { router };

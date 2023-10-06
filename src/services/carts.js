@@ -27,7 +27,6 @@ class CartService {
     const cart = await cartDAO.getCartRefsById(cartId);
     const productIndex = cart.products.findIndex((item) => item.productId.toString() === productId );
 
-    console.log(cart,productId)
     if (productIndex === -1) {
       throw new CustomError('Product not found in cart.', 'QUERY_ERROR');
     }
