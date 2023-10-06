@@ -6,6 +6,7 @@ import { router as cartRouter } from './routes/carts.js';
 import { router as viewsRouter } from './routes/views.js';
 import { router as authRouter } from './routes/auth.js';
 import { router as devRouter } from './routes/dev.js';
+import { router as userRouter } from './routes/users.js';
 
 import path from 'path';
 import handlebars from 'express-handlebars';
@@ -62,6 +63,7 @@ app.use('/auth', authRouter);
 app.use('/api/products', productRouter);
 app.use('/api/carts', cartRouter);
 app.use('/api/dev', devRouter);
+app.use('/api/users', userRouter);
 
 /* This dynamic import didn't work
 if (config.server.mode === 'development') {

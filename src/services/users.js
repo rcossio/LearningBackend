@@ -111,6 +111,10 @@ class UserService {
         return await userDAO.addNewUser(newUser);
         
     }
+
+    static async userUpgradeToPremium(userId) {
+        throw new CustomError('Method not implemented.','UNKNOWN_ERROR');
+    }
 }
 
 export default UserService;
