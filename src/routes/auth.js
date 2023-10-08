@@ -23,7 +23,11 @@ router.get("/google", AuthController.googleAuth);
 router.get("/google/callback", AuthController.googleAuthCallback);
 
 router.get("/restore-password", AuthController.restorePasswordView);
-router.post("/restore-password", AuthController.restorePassword);
+router.post("/restore-password", AuthController.sendEmailToRestorePassword);
+router.get("/restore-password-confirmation/:email", AuthController.createNewPasswordView);
+router.post("/create-password/:email", AuthController.restorePassword);
+
+
 
 // user or ardmin
 router.get("/logout", checkIsLogged, AuthController.logout);

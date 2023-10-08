@@ -2,7 +2,7 @@ import UsersService from '../services/users.js';
 import passport from '../config/passportConfig.js';
 import jwt from 'jsonwebtoken';
 import {config} from '../config/config.js';
-
+import emailTransporter from '../config/email.js';
 
 class AuthController {
 
@@ -59,8 +59,37 @@ class AuthController {
         return res.render('restore-password', { ...customResponse });
     }
 
+    static createNewPasswordView(req, res, customResponse = {}) {
+        return res.render('create-password', { ...customResponse, email: req.params.email });
+    }
+
+    static async sendEmailToRestorePassword(req, res) {
+        const { email } = req.body;
+        const user = await UsersService.getUserByEmail(email);
+
+        if (!user) {
+            return AuthController.restorePasswordView(req, res, { error: 'User not found' });
+        }
+
+        const mailOptions = {
+            from: 'rworls@coder.com', 
+            to: email,
+            subject: 'Restore password',
+            text: `Restore your password by going to this link: http://localhost:${config.server.port}/auth/restore-password-confirmation/${email}`
+        };
+
+        try {
+            await emailTransporter.sendMail(mailOptions);
+            return AuthController.restorePasswordView(req, res, { message: `An restoration link was sent to ${email}. Please also check spam mailbox.` });
+        } catch (error) {
+            return AuthController.restorePasswordView(req, res, { error: 'Failed to send email.' });
+        }
+
+    }
+
     static async restorePassword(req, res) {
-        const { email, newPassword, confirmPassword } = req.body;
+        const { email } = req.params;
+        const { newPassword, confirmPassword } = req.body;
         const user = await UsersService.getUserByEmail(email);
 
         if (!user) {
