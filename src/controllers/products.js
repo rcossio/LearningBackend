@@ -58,8 +58,9 @@ class ProductsController {
 
   static async deleteProduct(req, res) {
     const { productId } = req.params;
+    const email = req.user.role === 'admin' ? null : req.user.email;
     try {
-      await ProductsService.deleteProduct(productId);
+      await ProductsService.deleteProduct(productId, email);
       res.status(204).end();
     } catch (error) {
       handleAndLogError(error);
@@ -68,7 +69,10 @@ class ProductsController {
   };
 
   static async addProduct(req, res) {
-    const product = req.body;
+    const product = { 
+      ...req.body,
+      owner: req.user.email || 'admin'
+    };
     await ProductsService.addProduct(product);
     res.status(201).json({ status: 'success', payload: 'Product added successfully' });
   };
@@ -76,8 +80,9 @@ class ProductsController {
   static async updateProduct(req, res) {
     const { productId } = req.params;
     const product = req.body;
+    const email = req.user.role === 'admin' ? null : req.user.email;
     try {
-      await ProductsService.updateProduct(productId, product);
+      await ProductsService.updateProduct(productId, product, email);
       res.status(200).json({ status: 'success', payload: 'Product updated successfully' });
     } catch (error) {
       handleAndLogError(error);

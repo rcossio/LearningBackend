@@ -113,7 +113,7 @@ class UserService {
     }
 
     static async userUpgradeToPremium(userId) {
-        throw new CustomError('Method not implemented.','UNKNOWN_ERROR');
+        return await userDAO.userUpgradeToPremium(userId)
     }
 }
 

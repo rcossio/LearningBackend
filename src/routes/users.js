@@ -5,4 +5,6 @@ import { checkIsAdmin } from "../middlewares/roles.js";
 const router = Router();
 
 // admin
-router.post("/premium/:userId", checkIsAdmin, UserController.userUpgradeToPremium);
+router.post("/premium/:userId", checkIsAdmin, UserController.userUpgradeToPremium); 
+
+export {router};

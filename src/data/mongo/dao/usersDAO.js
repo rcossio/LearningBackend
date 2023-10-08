@@ -22,6 +22,11 @@ class UserDAO {
 
   static async createChat(id, chatId) {
     const user = await UserModel.findById(id);
+
+    if (!user) {
+      throw new CustomError('User not found.','QUERY_ERROR');
+    }
+
     user.chatId = chatId;
     await user.save();
     return user;
@@ -34,6 +39,19 @@ class UserDAO {
     }
     return result;
   }
+
+  static async userUpgradeToPremium(userId) {
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      throw new CustomError('User not found.','QUERY_ERROR');
+    }
+
+    user.role = 'premium';
+    await user.save();
+    return user;
+  }
+
 }
 
 export default UserDAO;

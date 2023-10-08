@@ -44,18 +44,14 @@ class CartsController {
         res.status(200).redirect('/cart');
       }
 
-    static async addProductToCart(req, res) {
-        if (!req.user) {
-            return res.redirect('/auth/login');
-        }
-        
+    static async addProductToCart(req, res) {      
         const option = req.params.option || 'increase'
-
+        const email = req.user.email;
         try {
             if (option === 'increase') {
-                await CartsService.addProductToCart(req.user.cartId, req.params.productId, 1);
+                await CartsService.addProductToCart(req.user.cartId, req.params.productId, 1, email);
             } else if (option === 'decrease') {
-                await CartsService.addProductToCart(req.user.cartId, req.params.productId, -1);
+                await CartsService.addProductToCart(req.user.cartId, req.params.productId, -1, email);
             }
             res.status(200).redirect('/cart');
         } catch (error) {

@@ -16,9 +16,10 @@ const requireUserLogin = (req,res,next) => {
   }
 }
 
-const requireLogin = checkRole( {roles:['user','admin'], redirect: '/auth/login'})
-const checkIsUser = checkRole( {roles:['user']})
+const requireLogin = checkRole( {roles:['user','premium','admin'], redirect: '/auth/login'})
+const checkIsUser = checkRole( {roles:['user','premium']})
+const checkIsPremiumOrAdmin = checkRole( {roles:['premium','admin']})
 const checkIsAdmin = checkRole( {roles:['admin']})
-const checkIsLogged = checkRole( {roles:['user', 'admin']})
+const checkIsLogged = checkRole( {roles:['user', 'premium', 'admin']})
 
-export {checkRole, requireUserLogin, requireLogin, checkIsUser, checkIsAdmin, checkIsLogged }
+export {checkRole, requireUserLogin, requireLogin, checkIsUser, checkIsAdmin, checkIsLogged, checkIsPremiumOrAdmin }

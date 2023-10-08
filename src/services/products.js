@@ -1,4 +1,5 @@
 import {productDAO} from "../data/factory.js";
+import CustomError from "./customError.js";
 
 class ProductsService {
 
@@ -10,7 +11,13 @@ class ProductsService {
         return await productDAO.getProductById(productId);
     }
 
-    static async deleteProduct(productId) {
+    static async deleteProduct(productId, ownerEmail = null) {
+        if (ownerEmail) {
+            const product = await productDAO.getProductById(productId);
+            if (product.owner !== ownerEmail) {
+                throw new CustomError('You are not allowed to delete this product','INVALID_DATA');
+            }
+        }
         return await productDAO.deleteProduct(productId);
     }
 
@@ -18,7 +25,13 @@ class ProductsService {
         return await productDAO.addProduct(product);
     }
 
-    static async updateProduct(productId, product) {
+    static async updateProduct(productId, product, owneremail = null) {
+        if (owneremail) {
+            const product = await productDAO.getProductById(productId);
+            if (product.owner !== owneremail) {
+                throw new CustomError('You are not allowed to edit this product','INVALID_DATA');
+            }
+        }
         return await productDAO.updateProduct(productId, product); 
     }
 }

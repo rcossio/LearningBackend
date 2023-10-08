@@ -1,5 +1,6 @@
 import {cartDAO} from "../data/factory.js";
 import CustomError from "./customError.js";
+import ProductsService from "./products.js";
 
 class CartService {
   static async getCartById(cartId) {
@@ -10,7 +11,13 @@ class CartService {
     return await cartDAO.getCartRefsById(cartId);
   }
 
-  static async addProductToCart(cartId, productId, quantity) {
+  static async addProductToCart(cartId, productId, quantity, email = null) {
+    if (email) {
+      const product = await ProductsService.getProductById(productId);
+      if (product.owner === email) {
+        throw new CustomError('You can only add products you don\'t own','INVALID_DATA') }
+    }
+
     const cart = await cartDAO.getCartRefsById(cartId);
 
     const productIndex = cart.products.findIndex((item) => item.productId.toString() === productId);
