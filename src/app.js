@@ -23,6 +23,9 @@ import {config} from './config/config.js';
 import logger from './utils/logger.js';
 import './utils/globalHandlers.js';
 
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
+
 //express initialization
 const app = express();
 const __dirname = path.resolve();
@@ -57,6 +60,21 @@ app.use(expressjwt({
     getToken: req => req.cookies.jwt
 }));
 
+//swagger configuration
+const swaggerOptions = {
+  definition: {
+    openapi: '3.0.1',
+    info: {
+      title: 'Rworld API documentation',
+      version: '1.0.0',
+      description: 'Here we explain the API endpoins of this ecommerce',
+    }
+  },
+  apis: [`${__dirname}/docs/**/*.yaml`],
+}
+const swaggerSpec = swaggerJSDoc(swaggerOptions);
+
+
 //routes
 app.use('/', viewsRouter);
 app.use('/auth', authRouter);
@@ -64,14 +82,8 @@ app.use('/api/products', productRouter);
 app.use('/api/carts', cartRouter);
 app.use('/api/dev', devRouter);
 app.use('/api/users', userRouter);
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-/* This dynamic import didn't work
-if (config.server.mode === 'development') {
-  import('./routes/dev.js').then(( devRouter ) => {
-    app.use('/api/dev', devRouter);
-  });
-} 
-*/
 
 //server initialization
 const httpServer = app.listen(config.server.port, () => {

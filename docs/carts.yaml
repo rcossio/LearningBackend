@@ -1,0 +1,171 @@
+openapi: 3.0.1
+info:
+  title: Rworld API documentation
+  version: "1.0.0"
+paths:
+  /api/carts/{cartId}/product/{productId}/{option}:
+    post:
+      tags:
+        - Carts
+      summary: Add product to cart
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          description: ID of the cart
+          schema:
+            type: string
+        - name: productId
+          in: path
+          required: true
+          description: ID of the product to be added to the cart
+          schema:
+            type: string
+        - name: option
+          in: path
+          required: true
+          description: Option for increasing or decreasing the product quantity in the cart
+          schema:
+            type: string
+            enum: [increase, decrease]
+      responses:
+        '200':
+          description: Product successfully added to cart
+        '500':
+          description: Failed to add product to cart
+
+  /api/carts/{cartId}/product/{productId}:
+    post:
+      tags:
+        - Carts
+      summary: Delete product from cart
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Product successfully deleted from cart
+        '404':
+          description: Product not found in cart
+
+  /api/carts/{cartId}/purchase:
+    post:
+      tags:
+        - Carts
+      summary: Purchase items in the cart
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '302':
+          description: Purchase successful or failed (Redirect)
+          
+  /api/carts/{cartId}:
+    get:
+      tags:
+        - Carts
+      summary: Get cart details by ID (Admin only)
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '404':
+          description: Cart not found
+    put:
+      tags:
+        - Carts
+      summary: Update the entire cart (Admin only)
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Cart'
+      responses:
+        '200':
+          description: Cart updated successfully
+    delete:
+      tags:
+        - Carts
+      summary: Delete a cart by its ID (Admin only)
+      parameters:
+        - name: cartId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Cart deleted successfully
+        '404':
+          description: Cart not found
+
+  /api/carts/:
+    post:
+      tags:
+        - Carts
+      summary: Create a new cart (Admin only)
+      responses:
+        '201':
+          description: Cart created successfully
+
+components:
+  schemas:
+    Cart:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: objectId
+          description: ID of the cart
+          example: "651f3577e5584e6755d76d8b"
+        products:
+          type: array
+          items:
+            type: object
+            properties:
+              productId:
+                type: string
+                format: objectId
+                description: ID of the product
+                example: "64b97c687084efd5376dab47"
+              quantity:
+                type: integer
+                description: Quantity of the product in the cart
+                example: 2
+          example:
+            - productId: "64b97c687084efd5376dab47"
+              quantity: 2
+            - productId: "64b97c687084efd5376dab4f"
+              quantity: 1
+            - productId: "64b97c687084efd5376dab48"
+              quantity: 5
+        __v:
+          type: integer
+          description: Version key (used internally by MongoDB and Mongoose)
+          example: 40

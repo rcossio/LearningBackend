@@ -37,7 +37,8 @@ The ones marked are the ones currently used
 - [x]  **nodemailer** : module for Node.js applications to allow easy as cake email sending.
 - [x]  **winston** : logger for just about everything.
 - [x]  **colors** : get colors in your node.js console.
-- [ ]  **morgan** : HTTP request logger middleware.
+- [x]  **swagger-jsdoc** : allows you to integrate swagger using JSDoc comments in your code.
+- [x]  **swagger-ui-express** : serves auto-generated swagger-ui generated API docs from express. 
 - [ ]  **connect-flash** : special area of the session used for storing messages.
 - [ ]  **express-validator** : middleware for validating data.
 - [ ]  **sequelize** : promise-based Node.js ORM for Postgres, MySQL, MariaDB, SQLite and Microsoft SQL Server.
@@ -59,10 +60,8 @@ The ones marked are the ones currently used
 `npm uninstall express-jwt`
 `npm install express-jwt@6.1.0`
 
-- ThunderClient: When working with thunderclient te JWT is not read from the cookie, also from the thunderclient I cant post to /auth/login
+- When working with thunderclient te JWT is not read from the cookie. Login in the front end and use Postman instead (copy the jwt cookie manually).
 
 - Chat: When a chat is deleted, the user is not asign a new empty chat, it just crashes the socketIO functionality.
 
 - Cart: The same as with chat but at least there is a sign of the error in the frontend
-
-- API endpoint errors have not been testest thorougly, so there might be some errors there.
