@@ -52,6 +52,18 @@ class UserDAO {
     return user;
   }
 
+  static async updateLoginDate(userId, date) {
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      throw new CustomError('User not found.','QUERY_ERROR');
+    }
+
+    user.last_connection = date;
+    await user.save();
+    return user;
+  }
+
 }
 
 export default UserDAO;

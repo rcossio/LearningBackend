@@ -115,6 +115,13 @@ class UserService {
     static async userUpgradeToPremium(userId) {
         return await userDAO.userUpgradeToPremium(userId)
     }
+
+    static async updateLoginDate(userId) {
+        const date = new Date()
+        return await userDAO.updateLoginDate(userId, date);
+    }
+
+
 }
 
 export default UserService;

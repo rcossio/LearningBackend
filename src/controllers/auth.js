@@ -34,8 +34,7 @@ class AuthController {
             if (error || !user) {
                 return res.redirect('/auth/registered-failed');
             }
-            AuthController.createJwtAndSetCookie(user, res);
-            res.redirect('/auth/registered-successfully');    //<---
+            res.redirect('/auth/registered-successfully'); 
         })(req, res, next);
     }
 
@@ -118,6 +117,7 @@ class AuthController {
                 return res.redirect('/auth/login-failed');
             }
             AuthController.createJwtAndSetCookie(user, res);
+            UsersService.updateLoginDate(user._id);
             res.redirect('/'); 
         })(req, res, next);
     }
@@ -132,6 +132,7 @@ class AuthController {
                 return res.redirect('/login-failed');
             }
             AuthController.createJwtAndSetCookie(user, res);
+            UsersService.updateLoginDate(user._id);
             res.redirect('/'); 
         })(req, res, next);
     }
@@ -146,12 +147,14 @@ class AuthController {
                 return res.redirect('/login-failed');
             }
             AuthController.createJwtAndSetCookie(user, res);
+            UsersService.updateLoginDate(user._id);
             res.redirect('/'); 
         })(req, res, next);
     }
 
     static logout(req, res) {
         res.clearCookie('jwt');
+        UsersService.updateLoginDate(req.user.id);
         return res.redirect('/');
     }
     

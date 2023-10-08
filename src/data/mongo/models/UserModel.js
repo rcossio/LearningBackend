@@ -38,6 +38,23 @@ const userSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'chats',
     required: false
+  },
+  documents: {
+    type: [{
+      name: {
+        type: String,
+        required: true
+      },
+      reference: {
+        type: String,
+        required: true
+      },
+    }],
+    default: []
+  },
+  last_connection: {
+    type: Date,
+    required: false
   }
 });
 
