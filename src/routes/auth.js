@@ -24,8 +24,8 @@ router.get("/google/callback", AuthController.googleAuthCallback);
 
 router.get("/restore-password", AuthController.restorePasswordView);
 router.post("/restore-password", AuthController.sendEmailToRestorePassword);
-router.get("/restore-password-confirmation/:email", AuthController.createNewPasswordView);
-router.post("/create-password/:email", AuthController.restorePassword);
+router.get("/restore-password-confirmation/:email/:date", AuthController.createNewPasswordView);
+router.post("/create-password/:email/:date", AuthController.restorePassword);
 
 
 

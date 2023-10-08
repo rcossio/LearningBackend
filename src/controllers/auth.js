@@ -60,7 +60,7 @@ class AuthController {
     }
 
     static createNewPasswordView(req, res, customResponse = {}) {
-        return res.render('create-password', { ...customResponse, email: req.params.email });
+        return res.render('create-password', { ...customResponse, email: req.params.email, date: req.params.date });
     }
 
     static async sendEmailToRestorePassword(req, res) {
@@ -71,11 +71,13 @@ class AuthController {
             return AuthController.restorePasswordView(req, res, { error: 'User not found' });
         }
 
+        // date as integer
+        const date = Date.now()
         const mailOptions = {
             from: 'rworls@coder.com', 
             to: email,
             subject: 'Restore password',
-            text: `Restore your password by going to this link: http://localhost:${config.server.port}/auth/restore-password-confirmation/${email}`
+            text: `Restore your password by going to this link: http://localhost:${config.server.port}/auth/restore-password-confirmation/${email}/${date}`   // TOFIX: Very insecure, encrypt the email and date, or create a code to save in the DB
         };
 
         try {
@@ -88,12 +90,18 @@ class AuthController {
     }
 
     static async restorePassword(req, res) {
-        const { email } = req.params;
+        const { email, date } = req.params;
         const { newPassword, confirmPassword } = req.body;
         const user = await UsersService.getUserByEmail(email);
 
         if (!user) {
             return AuthController.restorePasswordView(req, res, { error: 'User not found' });
+        }
+
+        const currentDate = Date.now();
+        const expirationTime = 60000; // 1 min
+        if (currentDate - date > expirationTime) {
+            return AuthController.restorePasswordView(req, res, { error: 'Link expired. Please try again.' });
         }
 
         if (newPassword !== confirmPassword) {
