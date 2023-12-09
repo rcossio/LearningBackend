@@ -28,7 +28,7 @@ const transports = {
 
 const logger = winston.createLogger({
   levels: errorLevels,
-  level: config.server.mode === 'production' ? 'info' : 'debug',
+  level: config.server.mode === 'production' ? 'info' : config.server.mode === 'testing' ? 'warn' : 'debug',
   format: combine(
     timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     logFormat

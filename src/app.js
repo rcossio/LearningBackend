@@ -87,7 +87,8 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 //server initialization
 const httpServer = app.listen(config.server.port, () => {
-  displayRoutes(app);
+  //displayRoutes(app);
+  logger.info(`Selected environment: ${config.server.mode}`);
   logger.info(`Server is running at PORT ${config.server.port}`);
 });
 
@@ -98,3 +99,5 @@ configureSocketIO(httpServer);
 app.get('*', (req, res) => {
   res.status(404).render('error', { message: 'Page does not exist' });
 });  
+
+export {app};

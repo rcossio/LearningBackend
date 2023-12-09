@@ -2,7 +2,7 @@
 import dotenv from 'dotenv';
 import path from 'path';
 
-const mode = process.env.NODE_ENV || 'developement'
+const mode = process.env.NODE_ENV || 'development'
 
 dotenv.config({
   path: path.join(path.resolve(), `.env.${mode}`)

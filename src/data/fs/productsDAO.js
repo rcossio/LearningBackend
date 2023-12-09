@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
+import CustomError from '../../services/customError.js';
 
 const __dirname = path.resolve();
 
@@ -18,18 +19,6 @@ class ProductDAO {
       this.#loadProducts();
     } else {
       this.#saveFile();
-
-      // Adding a test product.
-      this.addProduct({
-        title: "Test Product",
-        description: "This is a test product.",
-        price: 0.00,
-        thumbnails: [],
-        code: "TEST-PROD",
-        stock: 100,
-        category: "Test",
-        status: true
-      });
     }
   }
 
@@ -38,7 +27,7 @@ class ProductDAO {
       const content = await fs.promises.readFile(this.#path, 'utf-8');
       this.#products = JSON.parse(content);
     } catch (error) {
-      throw error;
+      throw new CustomError(`Could not load products File. ${error.message} `,'FILESYSYEM_ERROR');
     }
   }
 
@@ -47,23 +36,31 @@ class ProductDAO {
     try {
       await fs.promises.writeFile(this.#path, content);
     } catch (error) {
-      throw error;
+      throw new CustomError(`Could not save products File. ${error.message} `,'FILESYSYEM_ERROR');
     }
   }
 
   #isProductValid(product) {
+
+    const allowedKeys = [ 'title', 'description', 'price', 'thumbnails', 'code', 'stock', 'category', 'status' ];
+    const productKeys = Object.keys(product);
+    const hasOnlyAllowedKeys = productKeys.length === allowedKeys.length && 
+                               productKeys.every(key => allowedKeys.includes(key));
+
     return (
       product &&
+      hasOnlyAllowedKeys &&
       typeof product.title === 'string' &&
       typeof product.description === 'string' &&
       typeof product.price === 'number' &&
-      product.price >= 0 &&
+      product.price >= 0.1 &&
       Array.isArray(product.thumbnails) &&
       typeof product.code === 'string' &&
       typeof product.stock === 'number' &&
+      Number.isInteger(product.stock) &&
       product.stock >= 0 &&
-      typeof product.category === 'string' &&   // Added category validation
-      typeof product.status === 'boolean'      // Added status validation
+      typeof product.category === 'string' &&
+      typeof product.status === 'boolean'
     );
   }
 
@@ -90,7 +87,7 @@ class ProductDAO {
     return newProduct;
   }
 
-  async getProducts(filter = {}, options = {}) {
+  async getProducts(filter = {}, options = {}) { // filters and aptions are not implemented in FS
     await this.#loadProducts();
     return this.#products;
   }
