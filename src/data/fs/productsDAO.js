@@ -81,7 +81,8 @@ class ProductDAO {
       throw new CustomError('Product with the same code already exists', 'INVALID_DATA');
     }
     const _id = this.#generateProductId();
-    const newProduct = { _id, ...product };
+    const owner = 'admin';
+    const newProduct = { _id, ...product, owner };
     this.#products.push(newProduct);
     await this.#saveFile();
     return newProduct;

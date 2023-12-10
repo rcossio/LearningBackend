@@ -4,7 +4,7 @@ import handleAndLogError from '../utils/errorHandler.js';
 
 class ProductsController {
 
-  static async getProducts(req, res) { //add error due to lack of connection with DB
+  static async getProducts(req, res) { //TODO: add error due to lack of connection with DB
     const { limit = 3, page = 1, sort = 'asc', query = '' } = req.query;
     const sortOrder = sort === 'desc' ? -1 : 1;
 
@@ -73,8 +73,8 @@ class ProductsController {
       ...req.body,
       owner: req.user.email || 'admin'
     };
-    await ProductsService.addProduct(product);
-    res.status(201).json({ status: 'success', payload: 'Product added successfully' });
+    const addedProduct = await ProductsService.addProduct(product);
+    res.status(201).json({ status: 'success', payload: addedProduct });
   };
 
   static async updateProduct(req, res) {
