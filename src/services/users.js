@@ -7,7 +7,12 @@ import CustomError from './customError.js';
 class UserService {
 
     static async getUserByEmail(email) {
-        return await userDAO.getUserByEmail(email);
+        try {
+            const user = await userDAO.getUserByEmail(email);
+            return user
+        } catch (error) {
+            throw new CustomError('User not found.', 'INVALID_DATA');
+        }
     }
 
     static async setUserPasswordByEmail(email, newPassword) {
@@ -52,6 +57,7 @@ class UserService {
     static async loginUser(email, password) {
         if (email.toLowerCase() === config.admin.email && password === config.admin.pass) {
             const adminUser = {
+                _id: 0,
                 firstName: 'Admin',
                 lastName: 'Admin',
                 email: config.admin.email,

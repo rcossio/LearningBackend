@@ -13,11 +13,26 @@ const { expect } = chai;
 chai.use(chaiAsPromised);
 const request = supertest(app);
 
-describe('Product Router', function() {
+async function getJwtCookie(email, password) {
+  const loginResponse = await request.post('/auth/login').send({ email, password });
+  const jwtCookie = loginResponse.headers['set-cookie']
+      .find(cookie => cookie.startsWith('jwt='))
+      .split(';')[0]; // Extracts the JWT token from the cookie
 
-  before(function() {
+  return jwtCookie;
+}
+
+describe('Product Router', function() {
+  let jwtPremiumUserCookie;
+  let jwtAdminCookie;
+
+  before(async function() {
     this.timeout(5000); // Set a timeout of 10 seconds for all tests in this describe block
-    return new Promise(resolve => setTimeout(resolve, 1000));  //wait 1 second for the server to start
+    await new Promise(resolve => setTimeout(resolve, 1000));  //wait 1 second for the server to start
+
+    jwtPremiumUserCookie = await getJwtCookie(process.env.PREMIUM_USER_EMAIL, process.env.PREMIUM_USER_PASS);
+    jwtAdminCookie = await getJwtCookie(process.env.ADMIN_EMAIL, process.env.ADMIN_PASS);
+
   });
 
   describe('GET /api/products', () => {
@@ -71,12 +86,10 @@ describe('Product Router', function() {
 
   describe('Product Management by Premium User', () => {
     let user;
-    let jwtCookie;
     let productId;
   
     before(async () => {
-      jwtCookie = process.env.PREMIUM_USER_COOKIE;
-      const baseResponse = await request.get('/auth/current-user').set('Cookie', [`jwt=${jwtCookie}`]);
+      const baseResponse = await request.get('/auth/current-user').set('Cookie', [jwtPremiumUserCookie]);
       user = baseResponse.body.payload;
     });
   
@@ -93,7 +106,7 @@ describe('Product Router', function() {
       };
   
       const response = await request.post('/api/products')
-                                    .set('Cookie', [`jwt=${jwtCookie}`])
+                                    .set('Cookie', [jwtPremiumUserCookie])
                                     .send(newProduct);
   
       expect(response.status).to.equal(201);
@@ -112,7 +125,7 @@ describe('Product Router', function() {
       const updatedProduct = { title: "New Title", stock: 123 };
   
       const response = await request.put(`/api/products/${productId}`)
-                                    .set('Cookie', [`jwt=${jwtCookie}`])
+                                    .set('Cookie', [jwtPremiumUserCookie])
                                     .send(updatedProduct);
   
       expect(response.status).to.equal(200);
@@ -127,7 +140,7 @@ describe('Product Router', function() {
   
     it('should allow a premium user to delete the product', async () => {
       const response = await request.delete(`/api/products/${productId}`)
-                                    .set('Cookie', [`jwt=${jwtCookie}`]);
+                                    .set('Cookie', [jwtPremiumUserCookie]);
   
       expect(response.status).to.equal(204);
     });
@@ -156,7 +169,7 @@ describe('Product Router', function() {
       };
 
       const response = await request.post('/api/products')
-                                    .set('Cookie', [`jwt=${jwtCookie}`])
+                                    .set('Cookie', [jwtAdminCookie])
                                     .send(newProduct);
 
       expect(response.status).to.equal(201);
@@ -175,7 +188,7 @@ describe('Product Router', function() {
       const updatedProduct = { title: "New Title", stock: 123 };
 
       const response = await request.put(`/api/products/${productId}`)
-                                    .set('Cookie', [`jwt=${jwtCookie}`])
+                                    .set('Cookie', [jwtAdminCookie])
                                     .send(updatedProduct);
 
       expect(response.status).to.equal(200);
@@ -190,7 +203,7 @@ describe('Product Router', function() {
 
     it('should allow an admin user to delete the product', async () => {
       const response = await request.delete(`/api/products/${productId}`)
-                                    .set('Cookie', [`jwt=${jwtCookie}`]);
+                                    .set('Cookie', [jwtAdminCookie]);
 
       expect(response.status).to.equal(204);
     });

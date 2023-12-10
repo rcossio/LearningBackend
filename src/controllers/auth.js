@@ -73,7 +73,7 @@ class AuthController {
         // date as integer
         const date = Date.now()
         const mailOptions = {
-            from: 'rworls@coder.com', 
+            from: 'rworld@coder.com', 
             to: email,
             subject: 'Restore password',
             text: `Restore your password by going to this link: http://localhost:${config.server.port}/auth/restore-password-confirmation/${email}/${date}`   // TOFIX: Very insecure, encrypt the email and date, or create a code to save in the DB
@@ -117,7 +117,9 @@ class AuthController {
                 return res.redirect('/auth/login-failed');
             }
             AuthController.createJwtAndSetCookie(user, res);
-            UsersService.updateLoginDate(user._id);
+            if (!(user._id === 0)) {
+                UsersService.updateLoginDate(user._id);
+            }
             res.redirect('/'); 
         })(req, res, next);
     }
