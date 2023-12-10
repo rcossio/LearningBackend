@@ -16,13 +16,17 @@ import configureSocketIO from './config/socketIO.js';
 import passport from './config/passportConfig.js';
 
 import cookieParser from 'cookie-parser';
-import expressjwt from "express-jwt";
+import { expressjwt as jwt } from "express-jwt";
 
 import {config} from './config/config.js';
 
 import logger from './utils/logger.js';
-import './utils/globalHandlers.js';
-/* process.on('unhandledRejection', (reason, promise) => {
+
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
+
+//global handlers
+process.on('unhandledRejection', (reason, promise) => {
   logger.error('Unhandled Promise Rejection:', reason);
   process.exit(1);
 });
@@ -30,10 +34,7 @@ import './utils/globalHandlers.js';
 process.on('uncaughtException', (err) => {
   logger.error('Uncaught Exception:', err);
   process.exit(1);
-}); */
-
-import swaggerJSDoc from 'swagger-jsdoc';
-import swaggerUi from 'swagger-ui-express';
+});
 
 //express initialization
 const app = express();
@@ -62,12 +63,13 @@ app.set('views', path.join(__dirname, 'src/views'));
 app.use(cookieParser());
 
 // JWT middleware
-app.use(expressjwt({
-    secret: config.auth.jwtSecret,
-    algorithms: ['HS256'],
+app.use(jwt({ 
+    secret: config.auth.jwtSecret, 
+    algorithms: ["HS256"],
     credentialsRequired: false,
-    getToken: req => req.cookies.jwt
-}));
+    getToken: (req) => {
+      return req.cookies.jwt}
+}))
 
 //swagger configuration
 const swaggerOptions = {

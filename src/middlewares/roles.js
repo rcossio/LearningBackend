@@ -1,15 +1,15 @@
 const checkRole = ({roles, redirect}) => {
   return (req, res, next) => {
-    if (!req.user || !roles.includes(req.user.role)) {
+    if (!req.auth || !roles.includes(req.auth.role)) {
         return res.redirect( redirect || '/not-authorized');
     }
     next();
 }}
 
 const requireUserLogin = (req,res,next) => {
-  if (!req.user) {
+  if (!req.auth) {
       return res.redirect('/auth/login');
-  } else if (req.user.role === 'admin') {
+  } else if (req.auth.role === 'admin') {
       return res.redirect('/not-authorized');
   } else {
       next();

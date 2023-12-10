@@ -154,8 +154,12 @@ class AuthController {
 
     static logout(req, res) {
         res.clearCookie('jwt');
-        UsersService.updateLoginDate(req.user.id);
+        UsersService.updateLoginDate(req.auth.id);
         return res.redirect('/');
+    }
+
+    static currentUser(req,res) {
+        return res.json({ status: 'success', payload: req.auth });
     }
     
 }

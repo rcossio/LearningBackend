@@ -4,7 +4,7 @@ import handleAndLogError from '../utils/errorHandler.js';
 
 class CartsController {
     static async createCart(req, res) {
-        const cart = await CartsService.createNewCart();
+        const cart = await CartsService.createCart();
         res.status(201).json({ status: 'success', payload: cart });
     }
 
@@ -26,7 +26,7 @@ class CartsController {
     static async deleteCart(req, res) {
         try {
             await CartsService.removeCart(req.params.cartId);
-            res.status(200).end();
+            res.status(204).end();
         } catch (error) {
             handleAndLogError(error);
             res.status(404).json({ status: 'error', payload: error.message });
@@ -40,29 +40,34 @@ class CartsController {
     }
 
     static async deleteProductFromCart(req, res) {
-        await CartsService.deleteProductFromCart(req.user.cartId, req.params.productId);
-        res.status(200).redirect('/cart');
+        try {
+            await CartsService.deleteProductFromCart(req.auth.cartId, req.params.productId);
+            res.redirect('/cart');
+        } catch (error) {
+            handleAndLogError(error);
+            res.redirect('/cart-modification-failed')
+        }
       }
 
     static async addProductToCart(req, res) {      
         const option = req.params.option || 'increase'
-        const email = req.user.email;
+        const email = req.auth.email;
         try {
             if (option === 'increase') {
-                await CartsService.addProductToCart(req.user.cartId, req.params.productId, 1, email);
+                await CartsService.addProductToCart(req.auth.cartId, req.params.productId, 1, email);
             } else if (option === 'decrease') {
-                await CartsService.addProductToCart(req.user.cartId, req.params.productId, -1, email);
+                await CartsService.addProductToCart(req.auth.cartId, req.params.productId, -1, email);
             }
-            res.status(200).redirect('/cart');
+            res.redirect('/cart');
         } catch (error) {
             handleAndLogError(error);
-            res.status(500).redirect('/add-product-to-cart-failed')
+            res.redirect('/cart-modification-failed')
         }
     }
 
     static async purchaseCart(req, res) {
         try {
-            const ticketCode = await TicketService.createTicket(req.params.cartId, req.user.email);
+            const ticketCode = await TicketService.createTicket(req.params.cartId, req.auth.email);
             res.redirect(`/purchase-successful/${ticketCode}`);
         } catch (error) {
             handleAndLogError(error);

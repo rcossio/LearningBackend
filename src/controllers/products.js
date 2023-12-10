@@ -1,6 +1,7 @@
 import ProductsService from '../services/products.js';
 import { faker } from '@faker-js/faker';
 import handleAndLogError from '../utils/errorHandler.js';
+import {config} from '../config/config.js';
 
 class ProductsController {
 
@@ -58,7 +59,7 @@ class ProductsController {
 
   static async deleteProduct(req, res) {
     const { productId } = req.params;
-    const email = req.user.role === 'admin' ? null : req.user.email;
+    const email = req.auth.role === 'admin' ? null : req.auth.email;
     try {
       await ProductsService.deleteProduct(productId, email);
       res.status(204).end();
@@ -71,7 +72,7 @@ class ProductsController {
   static async addProduct(req, res) {
     const product = { 
       ...req.body,
-      owner: req.user.email || 'admin'
+      owner: req.auth.email === config.admin.email? 'admin': req.auth.email
     };
     const addedProduct = await ProductsService.addProduct(product);
     res.status(201).json({ status: 'success', payload: addedProduct });
@@ -80,7 +81,7 @@ class ProductsController {
   static async updateProduct(req, res) {
     const { productId } = req.params;
     const product = req.body;
-    const email = req.user.role === 'admin' ? null : req.user.email;
+    const email = req.auth.role === 'admin' ? null : req.auth.email;
     try {
       await ProductsService.updateProduct(productId, product, email);
       res.status(200).json({ status: 'success', payload: 'Product updated successfully' });

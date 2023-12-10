@@ -60,11 +60,20 @@ describe('Product Router', function() {
     });
   });
 
-  describe('POST /api/products, PUT /api/products/productId and DELETE /api/products/productId', () => {
 
-    it('should add a new product, consult it, update it and delete it for an premium user', async () => {
-      const jwtCookie = process.env.PREMIUM_USER_COOKIE
-
+  describe('Product Management by Premium User', () => {
+    let user;
+    let jwtCookie;
+    let productId;
+  
+    before(async () => {
+      // Authenticate as a premium user and get user details
+      jwtCookie = process.env.PREMIUM_USER_COOKIE;
+      const baseResponse = await request.get('/auth/current-user').set('Cookie', [`jwt=${jwtCookie}`]);
+      user = baseResponse.body.payload;
+    });
+  
+    it('should allow a premium user to add a new product', async () => {
       const newProduct = {
         title: "New Product",
         description: "A description for the new product",
@@ -76,77 +85,109 @@ describe('Product Router', function() {
         thumbnails: ["thumbnail1.jpg", "thumbnail2.jpg"],
       };
   
-      const response = await request.post('/api/products').set('Cookie', [`jwt=${jwtCookie}`]).send(newProduct);
+      const response = await request.post('/api/products')
+                                    .set('Cookie', [`jwt=${jwtCookie}`])
+                                    .send(newProduct);
+  
+      expect(response.status).to.equal(201);
+      expect(response.body.status).to.equal('success'); 
+      expect(response.body.payload).to.have.property('_id');
+      productId = response.body.payload._id;
+    });
+  
+    it('should retrieve the newly added product', async () => {
+      const response = await request.get(`/api/products/${productId}`);
+      expect(response.body.payload).to.have.property('title', 'New Product');
+      expect(response.body.payload.owner).to.equal(user.email);
+    });
+  
+    it('should allow a premium user to update the product', async () => {
+      const updatedProduct = { title: "New Title", stock: 123 };
+  
+      const response = await request.put(`/api/products/${productId}`)
+                                    .set('Cookie', [`jwt=${jwtCookie}`])
+                                    .send(updatedProduct);
+  
+      expect(response.status).to.equal(200);
+      expect(response.body.status).to.equal('success');
+    });
+  
+    it('should reflect the updated product details', async () => {
+      const response = await request.get(`/api/products/${productId}`);
+      expect(response.body.payload).to.have.property('title', 'New Title');
+      expect(response.body.payload.stock).to.equal(123);
+    });
+  
+    it('should allow a premium user to delete the product', async () => {
+      const response = await request.delete(`/api/products/${productId}`)
+                                    .set('Cookie', [`jwt=${jwtCookie}`]);
+  
+      expect(response.status).to.equal(204);
+    });
+  });  
+
+
+  describe('Admin Product Management', () => {
+    let jwtCookie;
+    let productId;
+
+    before(async () => {
+      // Authenticate as an admin user
+      jwtCookie = process.env.ADMIN_USER_COOKIE;
+    });
+
+    it('should allow an admin user to add a new product', async () => {
+      const newProduct = {
+        title: "New Product",
+        description: "A description for the new product",
+        code: "123XYZ",
+        price: 19.99,
+        status: true,
+        stock: 100,
+        category: "New Category",
+        thumbnails: ["thumbnail1.jpg", "thumbnail2.jpg"],
+      };
+
+      const response = await request.post('/api/products')
+                                    .set('Cookie', [`jwt=${jwtCookie}`])
+                                    .send(newProduct);
 
       expect(response.status).to.equal(201);
       expect(response.body.status).to.equal('success'); 
       expect(response.body.payload).to.have.property('_id');
+      productId = response.body.payload._id;
+    });
 
-      const productId = response.body.payload._id;
-      const secondResponse = await request.get(`/api/products/${productId}`);
-      expect(secondResponse.body.payload).to.have.property('title');
-      expect(secondResponse.body.payload.title).to.equal('New Product');
-      //TO DO: Add this validation expect(secondResponse.body.payload.owner).to.equal(user.email);
+    it('should retrieve the newly added product', async () => {
+      const response = await request.get(`/api/products/${productId}`);
+      expect(response.body.payload).to.have.property('title', 'New Product');
+      expect(response.body.payload.owner).to.equal('admin');
+    });
 
-      const updatedProduct = {
-        title: "New Title",
-        stock: 123,
-      };
+    it('should allow an admin user to update the product', async () => {
+      const updatedProduct = { title: "New Title", stock: 123 };
 
-      const thirdResponse = await request.put(`/api/products/${productId}`).set('Cookie', [`jwt=${jwtCookie}`]).send(updatedProduct);
-      expect(thirdResponse.status).to.equal(200);
-      expect(thirdResponse.body.status).to.equal('success');
+      const response = await request.put(`/api/products/${productId}`)
+                                    .set('Cookie', [`jwt=${jwtCookie}`])
+                                    .send(updatedProduct);
 
-      const fourthResponse = await request.get(`/api/products/${productId}`);
-      expect(fourthResponse.body.payload.title).to.equal('New Title');
-      expect(fourthResponse.body.payload.stock).to.equal(123);
+      expect(response.status).to.equal(200);
+      expect(response.body.status).to.equal('success');
+    });
 
-      const fifthResponse = await request.delete(`/api/products/${productId}`).set('Cookie', [`jwt=${jwtCookie}`]);
-      expect(fifthResponse.status).to.equal(204);
-    });  
+    it('should reflect the updated product details', async () => {
+      const response = await request.get(`/api/products/${productId}`);
+      expect(response.body.payload).to.have.property('title', 'New Title');
+      expect(response.body.payload.stock).to.equal(123);
+    });
 
+    it('should allow an admin user to delete the product', async () => {
+      const response = await request.delete(`/api/products/${productId}`)
+                                    .set('Cookie', [`jwt=${jwtCookie}`]);
 
-    it('should add a new product, consult it, update it and delete it for the admin user', async () => {
-        const jwtCookie = process.env.ADMIN_USER_COOKIE
-        
-        const newProduct = {
-          title: "New Product",
-          description: "A description for the new product",
-          code: "123XYZ",
-          price: 19.99,
-          status: true,
-          stock: 100,
-          category: "New Category",
-          thumbnails: ["thumbnail1.jpg", "thumbnail2.jpg"],
-        };
-    
-        const response = await request.post('/api/products').set('Cookie', [`jwt=${jwtCookie}`]).send(newProduct);
-        expect(response.status).to.equal(201);
-        expect(response.body.status).to.equal('success'); 
-        expect(response.body.payload).to.have.property('_id');
-  
-        const productId = response.body.payload._id;
-        const secondResponse = await request.get(`/api/products/${productId}`);
-        expect(secondResponse.body.payload).to.have.property('title');
-        expect(secondResponse.body.payload.title).to.equal('New Product');
-        //TO DO: Add this validation expect(secondResponse.body.payload.owner).to.equal('admin');
-  
-        const updatedProduct = {
-          title: "New Title",
-          stock: 123,
-        };
-  
-        const thirdResponse = await request.put(`/api/products/${productId}`).set('Cookie', [`jwt=${jwtCookie}`]).send(updatedProduct);
-        expect(thirdResponse.status).to.equal(200);
-        expect(thirdResponse.body.status).to.equal('success');
-  
-        const fourthResponse = await request.get(`/api/products/${productId}`);
-        expect(fourthResponse.body.payload.title).to.equal('New Title');
-        expect(fourthResponse.body.payload.stock).to.equal(123);
-  
-        const fifthResponse = await request.delete(`/api/products/${productId}`).set('Cookie', [`jwt=${jwtCookie}`]);
-        expect(fifthResponse.status).to.equal(204);
-      });  
+      expect(response.status).to.equal(204);
+    });
   });
+
 
 });

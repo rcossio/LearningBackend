@@ -30,6 +30,7 @@ router.post("/create-password/:email/:date", AuthController.restorePassword);
 
 
 // user or ardmin
+router.get("/current-user", checkIsLogged, AuthController.currentUser);
 router.get("/logout", checkIsLogged, AuthController.logout);
 
 

@@ -15,7 +15,7 @@ class CartService {
     if (email) {
       const product = await ProductsService.getProductById(productId);
       if (product.owner === email) {
-        throw new CustomError('You can only add products you don\'t own','INVALID_DATA') }
+        throw new CustomError('You can only add products you do not own','INVALID_DATA') }
     }
 
     const cart = await cartDAO.getCartRefsById(cartId);

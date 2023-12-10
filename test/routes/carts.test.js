@@ -1,33 +1,106 @@
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import supertest from 'supertest';
-import { app } from '../../src/app.js'; 
+import { app } from '../../src/app.js';
 import dotenv from 'dotenv';
 import path from 'path';
 
 dotenv.config({
     path: path.join(path.resolve(), '.env.testing')
-  });
+});
 
 const { expect } = chai;
 chai.use(chaiAsPromised);
 const request = supertest(app);
 
-describe('Product Router', function() {
+describe('Cart Router', function() {
+  let jwtAdminCookie;
+  let jwtUserCookie;
+  let cartId;
+  let productId = "64b97c687084efd5376dab4c"; // Valid product ID with stock
 
   before(function() {
+    jwtAdminCookie = process.env.ADMIN_USER_COOKIE;
+    jwtUserCookie = process.env.REGULAR_USER_COOKIE;
+
     this.timeout(5000); // Set a timeout of 10 seconds for all tests in this describe block
     return new Promise(resolve => setTimeout(resolve, 1000));  //wait 1 second for the server to start
+
   });
 
-  describe('GET /cart', () => {
-    it('should return the list of products in the cart for a premium user', async () => {
-      const jwtCookie = process.env.PREMIUM_USER_COOKIE
-
-      const response = await request.get('/cart').set('Cookie', jwtCookie);
-      expect(response.status).to.equal(200);
-      //I HAVE TO IMPLEMENT THE CURRENT USER ROUTE BEFORE DOING THIS; I NEED THE INFORMATION FROM THE USER
+  describe('Admin Cart Management', () => {
+    it('should create a new cart', async () => {
+      const response = await request.post('/api/carts').set('Cookie', [`jwt=${jwtAdminCookie}`]);
+      expect(response.status).to.equal(201);
+      cartId = response.body.payload._id; 
     });
 
+    it('should get a cart by ID', async () => {
+      const response = await request.get(`/api/carts/${cartId}`).set('Cookie', [`jwt=${jwtAdminCookie}`]);
+      expect(response.status).to.equal(200);
+      expect(response.body.payload._id).to.equal(cartId);
+    });
+
+    it('should update product quantity in the cart', async () => {
+      const response = await request.put(`/api/carts/${cartId}/product/${productId}`).set('Cookie', [`jwt=${jwtAdminCookie}`]).send({ quantity: 5 }); // Setting new quantity
+    
+      expect(response.status).to.equal(200);
+      expect(response.body.status).to.equal('success');
+      expect(response.body.payload).to.equal('Product quantity updated successfully');
+    });
+    
+
+    it('should update a cart', async () => {
+      const updateData = {
+        products: [
+          { productId, quantity: 2 }
+        ]
+      };
+    
+      const response = await request.put(`/api/carts/${cartId}`).set('Cookie', [`jwt=${jwtAdminCookie}`]).send(updateData);
+    
+      expect(response.status).to.equal(200);
+      expect(response.body.status).to.equal('success');
+      expect(response.body.payload).to.equal('Cart updated successfully');
+    });
+    
+    it('should delete a cart', async () => {
+      const response = await request.delete(`/api/carts/${cartId}`).set('Cookie', [`jwt=${jwtAdminCookie}`]);
+    
+      expect(response.status).to.equal(204);
+    });        
+    
   });
+
+  describe('User Cart Management', () => {
+    let user;
+
+    before(async () => {
+      const baseResponse = await request.get('/auth/current-user').set('Cookie', [`jwt=${jwtUserCookie}`]);
+      user = baseResponse.body.payload; 
+    });
+
+    it('should add a product to the cart', async () => {
+      const response = await request.post(`/api/carts/${user.cartId}/product/${productId}/increase`).set('Cookie', [`jwt=${jwtUserCookie}`]);
+      expect(response.status).to.equal(302);
+      expect(response.headers.location).to.equal('/cart'); //this redirection means successful adding
+    });
+
+    it('should delete a product from the cart', async () => {
+      const response = await request.post(`/api/carts/${user.cartId}/product/${productId}`).set('Cookie', [`jwt=${jwtUserCookie}`]);
+      expect(response.status).to.equal(302);
+      expect(response.headers.location).to.equal('/cart'); //this redirection means successful adding
+    });
+
+    it('should successfully purchase items in the cart and redirect', async () => {
+      await request.post(`/api/carts/${user.cartId}/product/${productId}/increase`).set('Cookie', [`jwt=${jwtUserCookie}`]); //we make sure there is a product
+      const response = await request.post(`/api/carts/${user.cartId}/purchase`).set('Cookie', [`jwt=${jwtUserCookie}`]);
+  
+      expect(response.status).to.equal(302);
+      expect(response.headers.location).to.include('/purchase-successful');
+    });
+  
+  });
+
+
 });

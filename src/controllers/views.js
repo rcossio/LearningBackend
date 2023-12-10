@@ -28,8 +28,7 @@ class ViewsController {
 
     try {
       const result = await ProductsService.getProducts(filter, options);
-  
-      res.status(200).render('home', { ...result, ...customResponse, sort, query, user: req.user }); 
+      res.status(200).render('home', { ...result, ...customResponse, sort, query, user: req.auth }); 
     } catch {
       //get date in readable format
       const date = new Date().toLocaleString();
@@ -43,12 +42,12 @@ class ViewsController {
   }
 
   static async cartView(req, res, customResponse = {}) {
-    if (!req.user) {
+    if (!req.auth) {
         return res.redirect('/auth/login');
     }
     try {
-      const cart = await CartsService.getCartById(req.user.cartId);
-      res.status(200).render('cart', { ...cart, ...customResponse, user: req.user });
+      const cart = await CartsService.getCartById(req.auth.cartId);
+      res.status(200).render('cart', { ...cart, ...customResponse, user: req.auth });
     } catch(error) {
       handleAndLogError(error);
       res.status(500).render('cart', { products: [], error: 'Unable to load your cart, please contact our customer service' });
@@ -56,21 +55,21 @@ class ViewsController {
   }
 
   static async chatView(req, res, customResponse = {}) {
-    if (!req.user) {
+    if (!req.auth) {
         return res.redirect('/auth/login');
     }
 
-    if (!req.user.chatId) {
-        const chat = await ChatService.createNewChat(req.user.email);
-        const user = await UsersService.getUserByEmail(req.user.email);
+    if (!req.auth.chatId) {
+        const chat = await ChatService.createNewChat(req.auth.email);
+        const user = await UsersService.getUserByEmail(req.auth.email);
         await UsersService.createChat(user._id, chat._id);
     }
 
-    res.render('chat', { ...customResponse, user: req.user });
+    res.render('chat', { ...customResponse, user: req.auth });
   }
 
   static async profileView(req, res, customResponse = {}) {
-    const user = await UsersService.getUserByEmail(req.user.email);
+    const user = await UsersService.getUserByEmail(req.auth.email);
     res.render('profile', { ...customResponse, user });
   }
 
@@ -79,7 +78,7 @@ class ViewsController {
   }
 
   static async purchaseSuccessfulView(req, res) {
-    const ticketIsValid = await TicketService.validateTicket(req.params.ticketCode, req.user.email);
+    const ticketIsValid = await TicketService.validateTicket(req.params.ticketCode, req.auth.email);
     if (ticketIsValid) {
       return await ViewsController.cartView(req, res, { message: `Your purchase was successfull! Ticket code: ${req.params.ticketCode}` });
     }
@@ -90,8 +89,8 @@ class ViewsController {
     await ViewsController.cartView(req, res, { error: 'Error while purchasing the cart' }); // TODO: add out-of-stock error message
   }
 
-  static async addProductToCartFailedView(req, res) {
-    await ViewsController.homeView(req, res, { error: 'Unable to add product to cart. Please contact customer support.' });
+  static async unableToModifyCartFailedView(req, res) {
+    await ViewsController.homeView(req, res, { error: 'Unable to modify cart. Please contact customer support.' });
   }
 
 }
