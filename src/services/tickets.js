@@ -31,7 +31,7 @@ class TicketService {
 
     const ticketInfo = {
       code: uuidv4(),
-      putchase_datetime: Date.now(),
+      purchase_datetime: Date.now(),
       amount,
       purchaser: email
     };

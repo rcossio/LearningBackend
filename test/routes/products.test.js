@@ -89,7 +89,7 @@ describe('Product Router', function() {
     let productId;
   
     before(async () => {
-      const baseResponse = await request.get('/auth/current-user').set('Cookie', [jwtPremiumUserCookie]);
+      const baseResponse = await request.get('/api/users/current').set('Cookie', [jwtPremiumUserCookie]);
       user = baseResponse.body.payload;
     });
   

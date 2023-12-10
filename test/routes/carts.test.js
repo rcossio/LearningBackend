@@ -84,7 +84,7 @@ describe('Cart Router', function() {
     let user;
 
     before(async () => {
-      const baseResponse = await request.get('/auth/current-user').set('Cookie', [jwtUserCookie]);
+      const baseResponse = await request.get('/api/users/current').set('Cookie', [jwtUserCookie]);
       user = baseResponse.body.payload; 
     });
 

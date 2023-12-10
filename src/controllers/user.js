@@ -25,6 +25,12 @@ class UserController {
       res.status(500).json({ status: 'error', payload: error.message });
     }
   }
+
+  static currentUser(req,res) {
+    const userData = UserService.getUserData(req.auth);
+    return res.json({ status: 'success', payload: userData });
+  }
+
 }
 
 export default UserController;

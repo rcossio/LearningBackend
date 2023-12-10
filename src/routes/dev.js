@@ -1,13 +1,14 @@
 import { Router } from 'express';
 import ProductsController from '../controllers/products.js';
 import DevController from '../controllers/dev.js';
-import { checkIsAdmin} from "../middlewares/roles.js";
+import { requireAdmin} from "../middlewares/authorization.js";
 
 
 const router = Router();
 
-router.get('/mockingproducts', checkIsAdmin, ProductsController.mockingProducts);
-router.get('/loggerTest', checkIsAdmin, DevController.testLogger);
+// API for admin
+router.get('/mockingproducts', requireAdmin, ProductsController.mockingProducts);
+router.get('/loggerTest', requireAdmin, DevController.testLogger);
 
 
 export { router };

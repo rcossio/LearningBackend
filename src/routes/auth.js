@@ -1,6 +1,6 @@
 import { Router } from "express";
 import AuthController from '../controllers/auth.js';
-import { checkIsLogged } from "../middlewares/roles.js";
+import { requireAuthenticated } from "../middlewares/authorization.js";
 
 const router = Router();
 
@@ -27,9 +27,8 @@ router.post("/restore-password", AuthController.sendEmailToRestorePassword);
 router.get("/restore-password-confirmation/:email/:date", AuthController.createNewPasswordView);
 router.post("/create-password/:email/:date", AuthController.restorePassword);
 
-// user or ardmin
-router.get("/current-user", checkIsLogged, AuthController.currentUser);
-router.get("/logout", checkIsLogged, AuthController.logout);
+// user, premium or ardmin
+router.get("/logout", requireAuthenticated, AuthController.logout);
 
 
 export { router };

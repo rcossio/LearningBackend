@@ -159,10 +159,6 @@ class AuthController {
         UsersService.updateLoginDate(req.auth.id);
         return res.redirect('/');
     }
-
-    static currentUser(req,res) {
-        return res.json({ status: 'success', payload: req.auth });
-    }
     
 }
 

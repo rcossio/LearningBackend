@@ -1,22 +1,23 @@
 import { Router } from "express";
 import ViewsController from "../controllers/views.js";
-import { requireUserLogin, checkIsUser, requireLogin } from "../middlewares/roles.js";
+import { redirectUnauthorizedOrAdmin, requireUserOrPremium, redirectUnauthenticated } from "../middlewares/authorization.js";
 
 const router = Router();
+const objIdFormat = "[0-9a-fA-F]{24}";
 
 //public
-router.get("/", ViewsController.homeView);
+router.get('/', ViewsController.homeView);
 router.get('/not-authorized', ViewsController.notAuthorizedView);  
 
-//for users
-router.get("/cart", requireUserLogin, ViewsController.cartView);
-router.get("/chat", requireUserLogin, ViewsController.chatView);
-router.get('/purchase-successful/:ticketCode', checkIsUser, ViewsController.purchaseSuccessfulView);
-router.get('/purchase-failed', checkIsUser, ViewsController.purchaseFailedView);
-router.get('/cart-modification-failed', checkIsUser, ViewsController.unableToModifyCartFailedView);
+//users and premium
+router.get('/cart', redirectUnauthorizedOrAdmin, ViewsController.cartView);
+router.get('/chat', redirectUnauthorizedOrAdmin, ViewsController.chatView);
+router.get(`/purchase-successful/:ticketCode(${objIdFormat})`, requireUserOrPremium, ViewsController.purchaseSuccessfulView);
+router.get('/purchase-failed', requireUserOrPremium, ViewsController.purchaseFailedView);
+router.get('/cart-modification-failed', requireUserOrPremium, ViewsController.unableToModifyCartFailedView);
 
-//for users and admins
-router.get("/profile", requireLogin, ViewsController.profileView);
+//users, premium and admin
+router.get('/profile', redirectUnauthenticated, ViewsController.profileView);
 
 
 export { router };

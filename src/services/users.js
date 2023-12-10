@@ -131,6 +131,20 @@ class UserService {
         return await userDAO.deleteUser(userId);
     }
 
+    static getUserData(user) {
+        // Create a DTO with only the necessary information
+        const userDTO = {
+          _id: user.id,
+          cartId: user.cartId,
+          chatId: user.chatId,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role
+        };
+    
+        return userDTO;
+      }
 
 }
 
