@@ -35,7 +35,15 @@ describe('Product Router', function() {
         expect(response.status).to.equal(200);
         const products = response.body.payload;
         expect(products.length).to.equal(2);
-      });
+    });
+    
+    it('should return the product called ZZ', async () => {
+      const response = await request.get('/api/products/?query=ZZ');
+      expect(response.status).to.equal(200);
+      const products = response.body.payload;
+      expect(products.length).to.equal(1);
+      expect(products[0]).to.have.property('title', 'Product ZZ');
+    });
   });
 
   describe('GET /api/products/:productId', () => {
@@ -67,7 +75,6 @@ describe('Product Router', function() {
     let productId;
   
     before(async () => {
-      // Authenticate as a premium user and get user details
       jwtCookie = process.env.PREMIUM_USER_COOKIE;
       const baseResponse = await request.get('/auth/current-user').set('Cookie', [`jwt=${jwtCookie}`]);
       user = baseResponse.body.payload;

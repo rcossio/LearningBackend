@@ -4,7 +4,11 @@ import CustomError from '../../../services/customError.js';
 class ProductDAO {
 
   static async addProduct(product) {
-    return await ProductModel.create(product);
+    try {
+      return await ProductModel.create(product);
+    } catch (err) {
+      throw new CustomError('Unable to add product.','UNKNOWN_ERROR');
+    }
   }
 
   static async getProducts(filter = {}, options = {}) {
@@ -28,6 +32,7 @@ class ProductDAO {
     if (!product) {
       throw new CustomError(`Product not found ID ${id}`,'QUERY_ERROR')
     }
+    return product;
   }
 
   static async updateProduct(id, product) {

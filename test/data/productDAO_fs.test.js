@@ -11,7 +11,7 @@ const testFilePath = path.join(__dirname, 'test-products.json');
 const { expect } = chai;
 chai.use(chaiAsPromised);
 
-describe('ProductDAO', function () {
+describe('ProductDAO filesystem', function () {
     let productDAO;
 
     beforeEach(() => {

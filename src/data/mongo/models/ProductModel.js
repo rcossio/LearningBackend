@@ -22,7 +22,8 @@ const productSchema = new mongoose.Schema({
   },
   stock: { 
     type: Number, 
-    required: true 
+    required: true,
+    min: [0, 'Stock cannot be negative'] 
   },
   category: { 
     type: String, 
@@ -33,8 +34,8 @@ const productSchema = new mongoose.Schema({
     default: true
   },
   thumbnails: { 
-    type: Array, 
-    default: [] 
+    type: [String],
+    default: []
   },
   owner: {
     type: String, //email
