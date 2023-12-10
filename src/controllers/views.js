@@ -38,7 +38,6 @@ class ViewsController {
         Date: ${date}`
       });
     } 
-
   }
 
   static async cartView(req, res, customResponse = {}) {
@@ -80,7 +79,7 @@ class ViewsController {
   static async purchaseSuccessfulView(req, res) {
     const ticketIsValid = await TicketService.validateTicket(req.params.ticketCode, req.auth.email);
     if (ticketIsValid) {
-      return await ViewsController.cartView(req, res, { message: `Your purchase was successfull! Ticket code: ${req.params.ticketCode}` });
+      return await ViewsController.cartView(req, res, { message: `Your purchase was successful! Ticket code: ${req.params.ticketCode}` });
     }
     res.redirect('/page-not-found'); // INFO: endpoint does not exist so it will be captured by the 404 middleware
   }
@@ -92,7 +91,6 @@ class ViewsController {
   static async unableToModifyCartFailedView(req, res) {
     await ViewsController.homeView(req, res, { error: 'Unable to modify cart. Please contact customer support.' });
   }
-
 }
 
 export default ViewsController;

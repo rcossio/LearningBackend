@@ -64,6 +64,10 @@ class UserDAO {
     return user;
   }
 
+  static async deleteUser(userId) {
+    return await UserModel.findByIdAndDelete(userId);
+  }
+
 }
 
 export default UserDAO;

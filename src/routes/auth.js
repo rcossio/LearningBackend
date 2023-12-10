@@ -27,8 +27,6 @@ router.post("/restore-password", AuthController.sendEmailToRestorePassword);
 router.get("/restore-password-confirmation/:email/:date", AuthController.createNewPasswordView);
 router.post("/create-password/:email/:date", AuthController.restorePassword);
 
-
-
 // user or ardmin
 router.get("/current-user", checkIsLogged, AuthController.currentUser);
 router.get("/logout", checkIsLogged, AuthController.logout);

@@ -127,6 +127,10 @@ class UserService {
         return await userDAO.updateLoginDate(userId, date);
     }
 
+    static async deleteUser(userId) {
+        return await userDAO.deleteUser(userId);
+    }
+
 
 }
 
