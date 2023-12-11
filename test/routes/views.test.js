@@ -63,7 +63,7 @@ describe('Views Router', function() {
     });
 
     it('should return the purchase successful view for a valid ticket code', async () => {
-      const validTicketCode = '7ae44c32-5287-43cf-811e-ab5095e9500c'; //valid ticket code for regular user
+      const validTicketCode = '99cb9622-cdc3-4996-9bba-dfa736bdd0fa'; //valid ticket code for regular user
       const response = await request.get(`/purchase-successful/${validTicketCode}`).set('Cookie', [jwtUserCookie]);
       expect(response.status).to.equal(200);
       expect(response.text).to.include('Your purchase was successful!');

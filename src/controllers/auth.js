@@ -131,7 +131,7 @@ class AuthController {
     static githubAuthCallback(req, res, next) {
         passport.authenticate('githubStrategy', (err, user, info) => {
             if (err || !user) {
-                return res.redirect('/login-failed');
+                return res.redirect('/auth/login-failed');
             }
             AuthController.createJwtAndSetCookie(user, res);
             UsersService.updateLoginDate(user._id);
@@ -146,7 +146,7 @@ class AuthController {
     static googleAuthCallback(req, res, next) {
         passport.authenticate('googleStrategy', (err, user, info) => {
             if (err || !user) {
-                return res.redirect('/login-failed');
+                return res.redirect('/auth/login-failed');
             }
             AuthController.createJwtAndSetCookie(user, res);
             UsersService.updateLoginDate(user._id);

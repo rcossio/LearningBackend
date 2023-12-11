@@ -20,46 +20,17 @@ class UserDAO {
     return user 
   }
 
-  static async createChat(id, chatId) {
+  static async updateUserById(id, updates) {
     const user = await UserModel.findById(id);
 
     if (!user) {
-      throw new CustomError('User not found.','QUERY_ERROR');
+      throw new CustomError('User not found.', 'QUERY_ERROR');
     }
 
-    user.chatId = chatId;
-    await user.save();
-    return user;
-  }
-
-  static async setUserPasswordByEmail(email, hashedPassword) {
-    const result = await UserModel.updateOne({ email: email }, { password: hashedPassword });
-    if (result.nModified === 0) {
-      throw new CustomError('Failed to update password or user not found.','QUERY_ERROR');
-    }
-    return result;
-  }
-
-  static async userUpgradeToPremium(userId) {
-    const user = await UserModel.findById(userId);
-
-    if (!user) {
-      throw new CustomError('User not found.','QUERY_ERROR');
+    for (const key in updates) {
+      user[key] = updates[key];
     }
 
-    user.role = 'premium';
-    await user.save();
-    return user;
-  }
-
-  static async updateLoginDate(userId, date) {
-    const user = await UserModel.findById(userId);
-
-    if (!user) {
-      throw new CustomError('User not found.','QUERY_ERROR');
-    }
-
-    user.last_connection = date;
     await user.save();
     return user;
   }

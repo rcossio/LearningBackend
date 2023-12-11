@@ -16,40 +16,43 @@ class UserService {
     }
 
     static async setUserPasswordByEmail(email, newPassword) {
+        const user = await userDAO.getUserByEmail(email);
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
-        return await userDAO.setUserPasswordByEmail(email, hashedPassword);
+        return await userDAO.updateUserById(user._id, {password: hashedPassword});
     }
 
     static async createChat(userId, chatId) {
-        return await userDAO.createChat(userId, chatId); 
+        const user = await userDAO.getUserById(userId);
+        user.chatId = chatId;
+        return await userDAO.updateUserById(userId, user);
     }
 
     static async getUserById(id) {
         return await userDAO.getUserById(id);
     }
 
-    static async registerUser(req, email, password) {
-        const existingUser = await this.getUserByEmail(email);
+    static async registerUser(userDTO) {
+        const existingUser = await this.getUserByEmail(userDTO.email);
 
         if (existingUser) {
             throw new CustomError('User already exists.', 'INVALID_DATA');
         }
 
-        if (email.toLowerCase() === config.admin.email.toLowerCase()) {
+        if (userDTO.email.toLowerCase() === config.admin.email.toLowerCase()) {
             throw new CustomError('Admin already exists.', 'INVALID_DATA');
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(userDTO.password, 10);
         const cart = await CartsService.createCart();
         const newUser = {
-            firstName: req.body.firstName,
-            lastName: req.body.lastName,
-            email: email,
-            age: req.body.age,
+            firstName: userDTO.firstName,
+            lastName: userDTO.lastName,
+            email: userDTO.email,
+            age: userDTO.age,
             password: hashedPassword,
             cartId: cart._id
-        };
+        }; 
         
         return await userDAO.addNewUser(newUser);
     }
@@ -79,52 +82,26 @@ class UserService {
         return user;
     }
 
-    static async githubAuth(profile) {
-        const user = await this.getUserByEmail(profile.username);
 
+    static async loginOrCreateUser(userDTO) {
+        const user = await this.getUserByEmail(userDTO.email);
         if (user) {
             return user;
         }
-
         const cart = await CartsService.createCart();
-
-        const newUser = {
-            firstName: profile.username,
-            lastName: `(${profile.provider})`,
-            email: profile.username,
-            cartId: cart._id
-        };
+        const newUser = { ...userDTO, cartId: cart._id };
         return await userDAO.addNewUser(newUser);
-        
-    }
-
-    static async googleAuth(profile) {
-        const user = await this.getUserByEmail(profile.emails[0].value);
-
-        if (user) {
-            return user;
-        }
-
-        const cart = await CartsService.createCart();
-
-        const newUser = {
-            firstName: profile.name.givenName,
-            lastName: profile.name.familyName,
-            email: profile.emails[0].value,
-            cartId: cart._id
-        };
-        
-        return await userDAO.addNewUser(newUser);
-        
     }
 
     static async userUpgradeToPremium(userId) {
-        return await userDAO.userUpgradeToPremium(userId)
+        const user = await userDAO.getUserById(userId);
+        return await userDAO.updateUserById(userId, {role: 'premium'});
     }
 
     static async updateLoginDate(userId) {
+        const user = await userDAO.getUserById(userId);
         const date = new Date()
-        return await userDAO.updateLoginDate(userId, date);
+        return await userDAO.updateUserById(userId, {last_connection: date});
     }
 
     static async deleteUser(userId) {
@@ -132,7 +109,6 @@ class UserService {
     }
 
     static getUserData(user) {
-        // Create a DTO with only the necessary information
         const userDTO = {
           _id: user.id,
           cartId: user.cartId,
@@ -145,7 +121,6 @@ class UserService {
     
         return userDTO;
       }
-
 }
 
 export default UserService;

@@ -1,6 +1,6 @@
 import {chatDAO} from "../data/factory.js";
 import { faker } from '@faker-js/faker';
-
+import {config} from "../config/config.js";
 class ChatService {
 
   static async getChatHistory(username) {
@@ -8,9 +8,11 @@ class ChatService {
   }
 
   static async addChatMessage(username, newMessage) {
-    const backendResponse = faker.company.catchPhrase()
-    const backendMessage = `${new Date().toLocaleString()}  -  BACKEND: ${backendResponse}`;
-    await chatDAO.addMessagesToChat(username, [newMessage, backendMessage]);
+    await chatDAO.addMessagesToChat(username, newMessage);
+    if (["development","testing"].includes(config.server.mode)) {
+      const backendMessage = `${new Date().toLocaleString()}  -  BACKEND: ${faker.company.catchPhrase()}`;
+      await chatDAO.addMessagesToChat(username, backendMessage);
+    }
     return await chatDAO.getMessages(username);
   }
 

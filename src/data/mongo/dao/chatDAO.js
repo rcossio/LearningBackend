@@ -6,9 +6,9 @@ class ChatDAO {
     return await ChatModel.create({ user: userEmail, messages: [] });
   }
 
-  static async addMessagesToChat(userEmail, messages) {
+  static async addMessagesToChat(userEmail, message) { 
     let chat = await ChatModel.findOne({ user: userEmail });
-    messages.forEach(message => chat.messages.push(message));
+    chat.messages.push(message);
     return await chat.save();
   }
 

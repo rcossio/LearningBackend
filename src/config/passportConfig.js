@@ -38,7 +38,14 @@ passport.use('signupStrategy', new LocalStrategy(
     },
     async (req, email, password, done) => {
         try {
-            const user = await UsersService.registerUser(req, email, password);
+            const userData = {
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                age: req.body.age,
+                email,
+                password
+            };
+            const user = await UsersService.registerUser(userData);
             return done(null, user);
         } catch (error) {
             handleAndLogError(error)
@@ -70,7 +77,12 @@ passport.use('githubStrategy', new GitHubStrategy(
     },
     async (accessToken, refreshToken, profile, done) => {
         try {
-            const user = await UsersService.githubAuth(profile);
+            const userData = {
+                firstName: profile.username,
+                lastName: `(${profile.provider})`,
+                email: profile.username,
+            };
+            const user = await UsersService.loginOrCreateUser(userData);
             return done(null, user);
         } catch (error) {
             return done(error);
@@ -86,7 +98,12 @@ passport.use('googleStrategy', new GoogleStrategy(
     },
     async (accessToken, refreshToken, profile, done) => {
         try {
-            const user = await UsersService.googleAuth(profile);
+            const userData = {
+                firstName: profile.name.givenName,
+                lastName: profile.name.familyName,
+                email: profile.emails[0].value,
+            };
+            const user = await UsersService.loginOrCreateUser(userData);
             return done(null, user);
         } catch (error) {
             return done(error);
