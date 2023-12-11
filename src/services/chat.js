@@ -4,7 +4,7 @@ import {config} from "../config/config.js";
 class ChatService {
 
   static async getChatHistory(username) {
-    return await chatDAO.getMessages(username);
+    return await chatDAO.getMessages(username); //TODO: handle chat not found
   }
 
   static async addChatMessage(username, newMessage) {
@@ -13,7 +13,7 @@ class ChatService {
       const backendMessage = `${new Date().toLocaleString()}  -  BACKEND: ${faker.company.catchPhrase()}`;
       await chatDAO.addMessagesToChat(username, backendMessage);
     }
-    return await chatDAO.getMessages(username);
+    return await chatDAO.getMessages(username); //TODO: handle chat not found
   }
 
   static async createNewChat(userEmail) {

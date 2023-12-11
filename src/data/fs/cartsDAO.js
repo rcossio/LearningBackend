@@ -6,80 +6,83 @@ import CustomError from '../../services/customError.js';
 const __dirname = path.resolve();
 
 class CartDAO {
-  #carts = [];
-  #path = '';
+  static #carts = [];
+  static #path = '';
 
   constructor(path = `${__dirname}/src/data/fs/carts_fs.json`) {
-    this.#setPath(path);
+    CartDAO.#setPath(path);
   }
 
-  #setPath(path) {
-    this.#path = path;
-    if (!fs.existsSync(this.#path)) {
-      this.#saveFile();
+  static #setPath(path) {
+    CartDAO.#path = path;
+    if (!fs.existsSync(CartDAO.#path)) {
+      CartDAO.#saveFile();
     }
   }
 
-  async #loadCarts() {
+  static async #loadCarts() {
     try {
-      const content = await fs.promises.readFile(this.#path, 'utf-8');
-      this.#carts = JSON.parse(content);
+      const content = await fs.promises.readFile(CartDAO.#path, 'utf-8');
+      CartDAO.#carts = JSON.parse(content);
     } catch (error) {
       throw error;
     }
   }
 
-  async #saveFile() {
-    const content = JSON.stringify(this.#carts);
+  static async #saveFile() {
+    const content = JSON.stringify(CartDAO.#carts);
     try {
-      await fs.promises.writeFile(this.#path, content);
+      await fs.promises.writeFile(CartDAO.#path, content);
     } catch (error) {
       throw error;
     }
   }
 
-  async createCart() {
+  static async createCart() {
     const newCart = {
       _id: uuidv4(),
       products: []
     };
-    this.#carts.push(newCart);
-    await this.#saveFile();
+    CartDAO.#carts.push(newCart);
+    await CartDAO.#saveFile();
     return newCart;
   }
 
-  async getCartById(cartId) {
-    await this.#loadCarts();
-    const cart = this.#carts.find(cart => cart._id === cartId);
+  static async getCartById(cartId) {
+    await CartDAO.#loadCarts();
+    const cart = CartDAO.#carts.find(cart => cart._id === cartId);
     if (!cart) {
       throw new CustomError(`Cart not found. Requested ID: ${cartId}`, 'QUERY_ERROR');
     }
-    return cart;  //Does not use population like method
+    return cart;  //Does not use population-like method
   }
 
-  async getCartRefsById(cartId) {
-    return this.getCartById(cartId);  // We are not using population
+  static async getCartRefsById(cartId) {
+    return CartDAO.getCartById(cartId);  // We are not using population
   }
 
-  async updateCart(cartId, products) {
-    await this.#loadCarts();
-    const cartIndex = this.#carts.findIndex(cart => cart._id === cartId);
+  static async updateCart(cartId, products) {
+    await CartDAO.#loadCarts();
+    const cartIndex = CartDAO.#carts.findIndex(cart => cart._id === cartId);
     if (cartIndex === -1) {
       throw new CustomError(`Cart not found. Requested ID: ${cartId}`, 'QUERY_ERROR');
     }
-    this.#carts[cartIndex].products = products;
-    await this.#saveFile();
-    return this.#carts[cartIndex];
+    CartDAO.#carts[cartIndex].products = products;
+    await CartDAO.#saveFile();
+    const cart = CartDAO.#carts[cartIndex];
+    return cart;
   }
 
-  async deleteCart(cartId) {
-    await this.#loadCarts();
-    const cartIndex = this.#carts.findIndex(cart => cart._id === cartId);
+  static async deleteCart(cartId) {
+    await CartDAO.#loadCarts();
+    const cartIndex = CartDAO.#carts.findIndex(cart => cart._id === cartId);
     if (cartIndex === -1) {
       throw new CustomError(`Cart not found. Requested ID: ${cartId}`, 'QUERY_ERROR');
     }
-    this.#carts.splice(cartIndex, 1);
-    await this.#saveFile();
+    const cart = CartDAO.#carts[cartIndex];
+    CartDAO.#carts.splice(cartIndex, 1);
+    await CartDAO.#saveFile();
+    return cart;
   }
 }
 

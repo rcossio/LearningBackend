@@ -29,7 +29,7 @@ class TicketService {
       await ProductsService.updateProduct(product.productId, { stock: newStock });
     }
 
-    const ticketInfo = {
+    const ticketData = {
       code: uuidv4(),
       purchase_datetime: Date.now(),
       amount,
@@ -37,9 +37,9 @@ class TicketService {
     };
 
     await CartsService.emptyCart(cartId);
-    await ticketDAO.createTicket(ticketInfo);
+    await ticketDAO.createTicket(ticketData);
 
-    return ticketInfo.code;
+    return ticketData.code;
     
   }
 

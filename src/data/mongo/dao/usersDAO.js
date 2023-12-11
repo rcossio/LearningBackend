@@ -4,12 +4,8 @@ import CustomError from '../../../services/customError.js';
 class UserDAO {
 
   static async addNewUser(user) {
-    return await UserModel.create(user);
-  }
-
-  static async getUserByEmail(email) {
-    const user = await UserModel.findOne({ email: email }).lean();
-    return user 
+    const user = await UserModel.create(user);
+    return user;
   }
 
   static async getUserById(id) {
@@ -20,23 +16,29 @@ class UserDAO {
     return user 
   }
 
-  static async updateUserById(id, updates) {
-    const user = await UserModel.findById(id);
+  static async getUserByEmail(email) {
+    const user = await UserModel.findOne({ email: email }).lean();
+    if (!user) {
+      throw new CustomError('User not found.','QUERY_ERROR');
+    }
+    return user 
+  }
 
+  static async updateUserById(id, updates) {
+    const options = { new: true }; // return the updated document
+    const user = await UserModel.findByIdAndUpdate(id, updates, options).lean();
     if (!user) {
       throw new CustomError('User not found.', 'QUERY_ERROR');
     }
-
-    for (const key in updates) {
-      user[key] = updates[key];
-    }
-
-    await user.save();
     return user;
   }
 
   static async deleteUser(userId) {
-    return await UserModel.findByIdAndDelete(userId);
+    const user = await UserModel.findByIdAndDelete(userId);
+    if (!user) {
+      throw new CustomError('User not found.', 'QUERY_ERROR');
+    }
+    return user;
   }
 
 }

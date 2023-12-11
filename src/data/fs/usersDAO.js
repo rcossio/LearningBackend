@@ -1,78 +1,90 @@
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import path from 'path';
+import CustomError from '../../services/customError.js';
 
 const __dirname = path.resolve();
 
 class UserDAO {
-  #users = [];
-  #path = '';
+  static #users = [];
+  static #path = '';
 
   constructor(path = `${__dirname}/src/data/fs/users_fs.json`) {
-    this.#setPath(path);
+    UserDAO.#setPath(path);
   }
 
-  #setPath(path) {
-    this.#path = path;
-    if (!fs.existsSync(this.#path)) {
-      this.#saveFile();
+  static #setPath(path) {
+    UserDAO.#path = path;
+    if (!fs.existsSync(UserDAO.#path)) {
+      UserDAO.#saveFile();
     }
   }
 
-  async #loadUsers() {
+  static async #loadUsers() {
     try {
-      const content = await fs.promises.readFile(this.#path, 'utf-8');
-      this.#users = JSON.parse(content);
+      const content = await fs.promises.readFile(UserDAO.#path, 'utf-8');
+      UserDAO.#users = JSON.parse(content);
     } catch (error) {
       throw error;
     }
   }
 
-  async #saveFile() {
-    const content = JSON.stringify(this.#users);
+  static async #saveFile() {
+    const content = JSON.stringify(UserDAO.#users);
     try {
-      await fs.promises.writeFile(this.#path, content);
+      await fs.promises.writeFile(UserDAO.#path, content);
     } catch (error) {
       throw error;
     }
   }
 
-  async addNewUser(user) {
+  static async addNewUser(user) {
     user._id = uuidv4(); 
-    this.#users.push(user);
-    await this.#saveFile();
+    UserDAO.#users.push(user);
+    await UserDAO.#saveFile();
     return user;
   }
 
-  async getUserByEmail(email) {
-    await this.#loadUsers();
-    return this.#users.find(user => user.email.toLowerCase() === email.toLowerCase());
-  }
-
-  async getUserById(id) {
-    await this.#loadUsers();
-    return this.#users.find(user => user._id === id);
-  }
-
-  async createChat(id, chatId) {
-    await this.#loadUsers();
-    const user = this.#users.find(u => u._id === id);
+  static async getUserById(id) {
+    await UserDAO.#loadUsers();
+    const user = UserDAO.#users.find(user => user._id === id);
     if (!user) {
-      throw new CustomError(`User not found. Requested ID: ${id}`,'QUERY_ERROR');
+      throw new CustomError('User not found.','QUERY_ERROR');
     }
-    user.chatId = chatId;
-    await this.#saveFile();
     return user;
   }
 
-  async setUserPasswordByEmail(email, hashedPassword) {
-    await this.#loadUsers();
-    const user = this.#users.find(u => u.email.toLowerCase() === email.toLowerCase());
+  static async getUserByEmail(email) {
+    await UserDAO.#loadUsers();
+    const user = UserDAO.#users.find(user => user.email.toLowerCase() === email.toLowerCase());
     if (!user) {
-      throw new CustomError(`User not found. Requested email: ${email}`, 'QUERY_ERROR');
+      throw new CustomError('User not found.','QUERY_ERROR');
     }
-    user.password = hashedPassword;
-    await this.#saveFile();
+    return user;
+  }
+
+  static async updateUserById(id, updates) {
+    await UserDAO.#loadUsers();
+    const userIndex = UserDAO.#users.findIndex(user => user._id === id);
+    if (userIndex === -1) {
+      throw new CustomError('User not found.', 'QUERY_ERROR');
+    }
+    
+    UserDAO.#users[userIndex] = { ...UserDAO.#users[userIndex], ...updates };
+    const user = UserDAO.#users[userIndex];
+    await UserDAO.#saveFile();
+    return user;
+  }
+
+  static async deleteUser(userId) {
+    await UserDAO.#loadUsers();
+    const userIndex = UserDAO.#users.findIndex(user => user._id === userId);
+    if (userIndex === -1) {
+      throw new CustomError('User not found.', 'QUERY_ERROR');
+    }
+    const user = UserDAO.#users[userIndex];
+    UserDAO.#users.splice(userIndex, 1);
+    await UserDAO.#saveFile();
     return user;
   }
 }

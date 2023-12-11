@@ -7,7 +7,7 @@ paths:
     post:
       tags:
         - Carts
-      summary: Add product to cart
+      summary: Add or remove a product to/from the cart
       parameters:
         - name: cartId
           in: path
@@ -18,7 +18,7 @@ paths:
         - name: productId
           in: path
           required: true
-          description: ID of the product to be added to the cart
+          description: ID of the product to be added or removed from the cart
           schema:
             type: string
         - name: option
@@ -29,16 +29,14 @@ paths:
             type: string
             enum: [increase, decrease]
       responses:
-        '200':
-          description: Product successfully added to cart
-        '500':
-          description: Failed to add product to cart
+        '302':
+          description: Redirects to the cart page upon success or home upon failure
 
   /api/carts/{cartId}/product/{productId}:
     post:
       tags:
         - Carts
-      summary: Delete product from cart
+      summary: Delete a product from the cart
       parameters:
         - name: cartId
           in: path
@@ -51,10 +49,8 @@ paths:
           schema:
             type: string
       responses:
-        '200':
-          description: Product successfully deleted from cart
-        '404':
-          description: Product not found in cart
+        '302':
+          description: Redirects to the cart page upon success or home upon failure
 
   /api/carts/{cartId}/purchase:
     post:
@@ -69,13 +65,13 @@ paths:
             type: string
       responses:
         '302':
-          description: Purchase successful or failed (Redirect)
-          
+          description: Redirects to the purchase success or failure page
+
   /api/carts/{cartId}:
     get:
       tags:
         - Carts
-      summary: Get cart details by ID (Admin only)
+      summary: Retrieve cart details by ID (Admin only)
       parameters:
         - name: cartId
           in: path
@@ -84,13 +80,14 @@ paths:
             type: string
       responses:
         '200':
-          description: Successful operation
+          description: Cart details retrieved successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Cart'
         '404':
           description: Cart not found
+
     put:
       tags:
         - Carts
@@ -102,6 +99,7 @@ paths:
           schema:
             type: string
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -109,6 +107,13 @@ paths:
       responses:
         '200':
           description: Cart updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '400':
+          description: Error ocurred
+
     delete:
       tags:
         - Carts
@@ -120,10 +125,10 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        '204':
           description: Cart deleted successfully
-        '404':
-          description: Cart not found
+        '400':
+          description: Error ocurred
 
   /api/carts/:
     post:
@@ -132,7 +137,13 @@ paths:
       summary: Create a new cart (Admin only)
       responses:
         '201':
-          description: Cart created successfully
+          description: New cart created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '400':
+          description: Error ocurred
 
 components:
   schemas:
@@ -142,8 +153,8 @@ components:
         _id:
           type: string
           format: objectId
-          description: ID of the cart
-          example: "651f3577e5584e6755d76d8b"
+          description: Unique ID of the cart
+          example: "6123f5a39cd38b6cc1a0b123"
         products:
           type: array
           items:
@@ -152,20 +163,19 @@ components:
               productId:
                 type: string
                 format: objectId
-                description: ID of the product
+                description: Unique ID of the product
                 example: "64b97c687084efd5376dab47"
               quantity:
                 type: integer
                 description: Quantity of the product in the cart
                 example: 2
+          description: List of products in the cart
           example:
             - productId: "64b97c687084efd5376dab47"
               quantity: 2
-            - productId: "64b97c687084efd5376dab4f"
-              quantity: 1
             - productId: "64b97c687084efd5376dab48"
-              quantity: 5
+              quantity: 1
         __v:
           type: integer
           description: Version key (used internally by MongoDB and Mongoose)
-          example: 40
+          example: 0

@@ -9,7 +9,7 @@ class CartDAO {
   static async getCartById(cartId) {
     const cart = await CartModel.findById(cartId).populate('products.productId').lean();
     if (!cart) {
-      throw new CustomError(`Cart not found with ID ${cartId} `,'QUERY_ERRORS');
+      throw new CustomError(`Cart not found with ID ${cartId} `,'QUERY_ERROR');
     }
     return cart
   }
@@ -17,7 +17,7 @@ class CartDAO {
   static async getCartRefsById(cartId) {
     const cart = await CartModel.findById(cartId).lean();
     if (!cart) {
-      throw new CustomError(`Cart not found with ID ${cartId} `,'QUERY_ERRORS');
+      throw new CustomError(`Cart not found with ID ${cartId} `,'QUERY_ERROR');
     }
     return cart
   }
@@ -26,7 +26,7 @@ class CartDAO {
     const cart = await CartModel.findById(cartId);
 
     if (!cart) {
-      throw new CustomError(`Cart not found with ID ${cartId} `,'QUERY_ERRORS');
+      throw new CustomError(`Cart not found with ID ${cartId} `,'QUERY_ERROR');
     }
 
     cart.products = products;
@@ -37,9 +37,9 @@ class CartDAO {
   static async deleteCart(cartId) {
     const cart = await CartModel.findByIdAndDelete(cartId);
     if (!cart) {
-      throw new CustomError(`Cart not found with ID ${cartId} `,'QUERY_ERRORS');
+      throw new CustomError(`Cart not found with ID ${cartId} `,'QUERY_ERROR');
     }
-
+    return cart;
   }
 }
 

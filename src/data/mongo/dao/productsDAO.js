@@ -5,7 +5,8 @@ class ProductDAO {
 
   static async addProduct(product) {
     try {
-      return await ProductModel.create(product);
+      const product = await ProductModel.create(product);
+      return product;
     } catch (err) {
       throw new CustomError('Unable to add product.','UNKNOWN_ERROR');
     }
@@ -27,20 +28,20 @@ class ProductDAO {
     return product;
   }
 
-  static async deleteProduct(id) {
-    const product = await ProductModel.findByIdAndDelete(id);
-    if (!product) {
-      throw new CustomError(`Product not found ID ${id}`,'QUERY_ERROR')
-    }
-    return product;
-  }
-
   static async updateProduct(id, product) {
     const updatedProduct = await ProductModel.findByIdAndUpdate(id, product, { new: true });
     if (!updatedProduct) {
       throw new CustomError('Unable to update.','UNKNOWN_ERROR');
     } 
     return updatedProduct;
+  }
+
+  static async deleteProduct(id) {
+    const product = await ProductModel.findByIdAndDelete(id);
+    if (!product) {
+      throw new CustomError(`Product not found ID ${id}`,'QUERY_ERROR')
+    }
+    return product;
   }
 }
 

@@ -3,9 +3,15 @@ import TicketService from '../services/tickets.js';
 import handleAndLogError from '../utils/errorHandler.js';
 
 class CartsController {
+
     static async createCart(req, res) {
-        const cart = await CartsService.createCart();
-        res.status(201).json({ status: 'success', payload: cart });
+        try {
+            const cart = await CartsService.createCart();
+            res.status(201).json({ status: 'success', payload: cart });
+        } catch (error) {
+            handleAndLogError(error);
+            res.status(400).json({ status: 'error', payload: error.message });
+        }
     }
 
     static async getCartById(req, res) {
@@ -19,8 +25,13 @@ class CartsController {
     }
 
     static async updateCart(req, res) {
-        await CartsService.modifyCart(req.params.cartId, req.body.products);
-        res.status(200).json({ status: 'success', payload: 'Cart updated successfully' });
+        try {
+            const cart = await CartsService.modifyCart(req.params.cartId, req.body.products);
+            res.status(200).json({ status: 'success', payload: cart });
+        } catch (error) {
+            handleAndLogError(error);
+            res.status(400).json({ status: 'error', payload: error.message });
+        }
     }
 
     static async deleteCart(req, res) {
@@ -35,8 +46,13 @@ class CartsController {
     }
 
     static async updateProductInCart(req, res) {
-        await CartsService.updateProductQuantity(req.params.cartId, req.params.productId, req.body.quantity);
-        res.status(200).json({ status: 'success', payload: 'Product quantity updated successfully' });
+        try {
+            await CartsService.updateProductQuantity(req.params.cartId, req.params.productId, req.body.quantity);
+            res.status(200).json({ status: 'success', payload: 'Product quantity updated successfully' });
+        } catch (error) {
+            handleAndLogError(error);
+            res.status(400).json({ status: 'error', payload: error.message });
+        }
     }
 
     static async deleteProductFromCart(req, res) {

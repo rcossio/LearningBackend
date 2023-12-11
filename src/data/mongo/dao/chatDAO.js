@@ -1,21 +1,26 @@
 import ChatModel from '../models/ChatModel.js';
+import CustomError from '../../../services/customError.js';
 
 class ChatDAO {
 
   static async createChat(userEmail) {
-    return await ChatModel.create({ user: userEmail, messages: [] });
+    const chat = await ChatModel.create({ user: userEmail, messages: [] });
+    return chat;
   }
 
   static async addMessagesToChat(userEmail, message) { 
     let chat = await ChatModel.findOne({ user: userEmail });
+    if (!chat) {
+      throw new CustomError(`Chat not found for user: ${userEmail}`, 'QUERY_ERROR');
+    }
     chat.messages.push(message);
-    return await chat.save();
+    await chat.save();
   }
 
   static async getMessages(userEmail) {
     const chat = await ChatModel.findOne({ user: userEmail });
     if (!chat) {
-      return [];
+      throw new CustomError(`Chat not found for user: ${userEmail}`, 'QUERY_ERROR');
     }
     return chat.messages;
   }
