@@ -7,7 +7,7 @@ paths:
     get:
       tags:
         - Products
-      summary: Get all products with optional pagination and sorting
+      summary: Get all products with optional pagination, sorting, and filtering
       parameters:
         - name: limit
           in: query
@@ -37,7 +37,7 @@ paths:
             type: string
       responses:
         '200':
-          description: Successful operation
+          description: List of products with pagination details
           content:
             application/json:
               schema:
@@ -45,15 +45,36 @@ paths:
                 properties:
                   status:
                     type: string
+                    example: "success"
                   payload:
                     type: array
                     items:
                       $ref: '#/components/schemas/Product'
+                  totalPages:
+                    type: integer
+                  page:
+                    type: integer
+                  hasPrevPage:
+                    type: boolean
+                  hasNextPage:
+                    type: boolean
+                  prevPage:
+                    type: integer
+                  nextPage:
+                    type: integer
+                  prevLink:
+                    type: string
+                  nextLink:
+                    type: string
+        '400':
+          description: Error occurred
+
     post:
       tags:
         - Products
       summary: Add a new product
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -61,44 +82,59 @@ paths:
       responses:
         '201':
           description: Product added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  payload:
+                    $ref: '#/components/schemas/Product'
         '400':
-          description: Bad request
+          description: Error occurred
 
   /api/products/{productId}:
     parameters:
       - name: productId
         in: path
-        description: ID of product to retrieve or modify
+        description: ID of the product to retrieve, update, or delete
         required: true
         schema:
           type: string
+          pattern: '^[0-9a-fA-F]{24}$'
+
     get:
       tags:
         - Products
-      summary: Get a product by ID
+      summary: Get a product by its ID
       responses:
         '200':
-          description: Successful operation
+          description: Product details
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Product'
         '400':
-          description: Bad request
+          description: Error occurred
+
     delete:
       tags:
         - Products
-      summary: Delete a product by ID
+      summary: Delete a product by its ID
       responses:
         '204':
           description: Product deleted successfully
         '400':
-          description: Bad request
+          description: Error occurred
+
     put:
       tags:
         - Products
-      summary: Update a product by ID
+      summary: Update a product by its ID
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -106,8 +142,19 @@ paths:
       responses:
         '200':
           description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "success"
+                  payload:
+                    type: string
+                    example: "Product updated successfully"
         '400':
-          description: Bad request
+          description: Error occurred
 
 components:
   schemas:
@@ -151,12 +198,13 @@ components:
             description: Thumbnail image URL
           description: List of product image URLs
           example:
-            - "image7.jpg"
-            - "image8.jpg"
-            - "image9.jpg"
+            - "https://example.com/image7.jpg"
+            - "https://example.com/image8.jpg"
+            - "https://example.com/image9.jpg"
         owner:
           type: string
           description: Email of the product owner (default is 'admin')
+          example: "admin@example.com"
       required:
         - title
         - description

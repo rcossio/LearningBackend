@@ -70,12 +70,17 @@ class ProductsController {
   };
 
   static async addProduct(req, res) {
-    const product = { 
-      ...req.body,
-      owner: req.auth.email === config.admin.email? 'admin': req.auth.email
-    };
-    const addedProduct = await ProductsService.addProduct(product);
-    res.status(201).json({ status: 'success', payload: addedProduct });
+    try{
+      const product = { 
+        ...req.body,
+        owner: req.auth.email === config.admin.email? 'admin': req.auth.email
+      };
+      const addedProduct = await ProductsService.addProduct(product);
+      res.status(201).json({ status: 'success', payload: addedProduct });
+    } catch (error) {
+      handleAndLogError(error);
+      res.status(400).json({ status: 'error', payload: error.message });
+    }
   };
 
   static async updateProduct(req, res) {
