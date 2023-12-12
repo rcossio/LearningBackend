@@ -1,4 +1,5 @@
 import {productDAO} from "../data/factory.js";
+import logError from "../utils/errorHandler.js";
 import CustomError from "./customError.js";
 
 class ProductsService {
@@ -8,7 +9,12 @@ class ProductsService {
     }
 
     static async getProductById(productId) {
-        return await productDAO.getProductById(productId);
+        try {
+            return await productDAO.getProductById(productId);
+        } catch (error) {
+            logError(error);
+            throw error;
+        }
     }
 
     static async deleteProduct(productId, ownerEmail = null) {

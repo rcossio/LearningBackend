@@ -6,50 +6,50 @@ import CustomError from '../../services/customError.js';
 const __dirname = path.resolve();
 
 class TicketsDAO {
-  static #tickets = [];
-  static #path = `${__dirname}/src/data/fs/tickets_fs.json`;
+  #tickets = [];
+  #path = `${__dirname}/src/data/fs/tickets_fs.json`;
 
   constructor(filePath) {
     if (filePath) {
-      TicketsDAO.#setPath(filePath);
+      this.#setPath(filePath);
     }
-    if (!fs.existsSync(TicketsDAO.#path)) {
-      TicketsDAO.#saveFile();
+    if (!fs.existsSync(this.#path)) {
+      this.#saveFile();
     }
   }
 
-  static #setPath(path) {
-    TicketsDAO.#path = path;
+  #setPath(path) {
+    this.#path = path;
   }
 
-  static async #loadTickets() {
+  async #loadTickets() {
     try {
-      const content = await fs.promises.readFile(TicketsDAO.#path, 'utf-8');
-      TicketsDAO.#tickets = JSON.parse(content);
+      const content = await fs.promises.readFile(this.#path, 'utf-8');
+      this.#tickets = JSON.parse(content);
     } catch (error) {
       throw error;
     }
   }
 
-  static async #saveFile() {
-    const content = JSON.stringify(TicketsDAO.#tickets);
+  async #saveFile() {
+    const content = JSON.stringify(this.#tickets);
     try {
-      await fs.promises.writeFile(TicketsDAO.#path, content);
+      await fs.promises.writeFile(this.#path, content);
     } catch (error) {
       throw error;
     }
   }
 
-  static async createTicket(ticketData) {
+  async createTicket(ticketData) {
     const ticket = {_id: uuidv4(), ...ticketData};
-    TicketsDAO.#tickets.push(ticket);
-    await TicketsDAO.#saveFile();
+    this.#tickets.push(ticket);
+    await this.#saveFile();
     return ticket;
   }
 
-  static async getTicketByCode(ticketCode) {
-    await TicketsDAO.#loadTickets();
-    const ticket = TicketsDAO.#tickets.find(ticket => ticket.code === ticketCode);
+  async getTicketByCode(ticketCode) {
+    await this.#loadTickets();
+    const ticket = this.#tickets.find(ticket => ticket.code === ticketCode);
     if (!ticket) {
       throw new CustomError(`Ticket not found for code: ${ticketCode}`, 'QUERY_ERROR');
     }

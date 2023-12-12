@@ -238,7 +238,8 @@ describe('ProductDAO filesystem', function () {
         const addedProduct = await productDAO.addProduct(product);
 
         const deletionResult = await productDAO.deleteProduct(addedProduct._id);
-        expect(deletionResult.message).to.equal('Product successfully deleted.');
+        expect(deletionResult).to.be.an('object');
+        expect(deletionResult.title).to.equal('Product to Delete');
     });
 
     it('should throw an error when deleting a non-existent product', async function () {

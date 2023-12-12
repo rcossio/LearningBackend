@@ -3,9 +3,9 @@ import CustomError from '../../../services/customError.js';
 
 class ProductDAO {
 
-  static async addProduct(product) {
+  static async addProduct(productData) {
     try {
-      const product = await ProductModel.create(product);
+      const product = await ProductModel.create(productData);
       return product;
     } catch (err) {
       throw new CustomError('Unable to add product.','UNKNOWN_ERROR');

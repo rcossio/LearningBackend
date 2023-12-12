@@ -4,6 +4,7 @@ import ProductsService from '../services/products.js';
 import UsersService from '../services/users.js';
 import TicketService from '../services/tickets.js'
 import logError from '../utils/errorHandler.js';
+import config from '../config/config.js';
 
 class ViewsController {
 
@@ -67,8 +68,13 @@ class ViewsController {
     res.render('chat', { ...customResponse, user: req.auth });
   }
 
-  static async profileView(req, res, customResponse = {}) {
-    const user = await UsersService.getUserByEmail(req.auth.email);
+  static async profileView(req, res, customResponse = {}) { //TOFIX: implement DTO, sensitive data is being sent
+    let user;
+    if (req.auth.email === config.admin.email) {
+      user = req.auth
+    } else {
+      user = await UsersService.getUserByEmail(req.auth.email);
+    }
     res.render('profile', { ...customResponse, user });
   }
 

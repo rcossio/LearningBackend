@@ -19,7 +19,7 @@ describe('ProductDAO MongoDB', function () {
       try {
         await ProductDAO.deleteProduct(productId);
       } catch (err) {
-        console.log(`Unable to delete product ${productId}.`);
+        console.log(`TEST MESSAGE: Unable to delete product ${productId}.`);
       }
     }
     createdProductIds = []; 

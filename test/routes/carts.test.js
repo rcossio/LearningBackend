@@ -69,7 +69,8 @@ describe('Cart Router', function() {
     
       expect(response.status).to.equal(200);
       expect(response.body.status).to.equal('success');
-      expect(response.body.payload).to.equal('Cart updated successfully');
+      expect(response.body.payload).to.be.an('object');
+      expect(response.body.payload.products[0].productId).to.equal('64b97c687084efd5376dab4c');
     });
     
     it('should delete a cart', async () => {

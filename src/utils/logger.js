@@ -22,13 +22,14 @@ const logFormat = printf(({ level, message, timestamp }) => {
 const logsFile = path.join(path.resolve(), 'logs', 'errors.log');
 const transports = {
   development: [new winston.transports.Console()],
+  testing: [new winston.transports.File({ filename: logsFile, level: 'error' })],
   production: [new winston.transports.File({ filename: logsFile, level: 'error' })],
   default: [new winston.transports.Console()]
 };
 
 const logger = winston.createLogger({
   levels: errorLevels,
-  level: config.server.mode === 'production' ? 'info' : config.server.mode === 'testing' ? 'info' : 'debug',
+  level: config.server.mode === 'production' ? 'info' : config.server.mode === 'testing' ? 'warn' : 'debug',
   format: combine(
     timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     logFormat

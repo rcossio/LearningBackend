@@ -6,11 +6,9 @@ const formatErrorMessage = (err) => `${err.message} (Code: ${err.errorCode}) \n 
 const logError = (err) => {
     if (err instanceof CustomError) {
         logger.error(formatErrorMessage(err));
-        throw err;
     } else {
         const unknownError = new CustomError(err.message, 'UNKNOWN_ERROR');
         logger.error(formatErrorMessage(unknownError));
-        throw unknownError;
     }
 }
 

@@ -6,62 +6,62 @@ import CustomError from '../../services/customError.js';
 const __dirname = path.resolve();
 
 class ChatDAO {
-  static #chats = [];
-  static #path = '';
+  #chats = [];
+  #path = '';
 
   constructor(path = `${__dirname}/src/data/fs/chats_fs.json`) {
-    ChatDAO.#setPath(path);
+    this.#setPath(path);
   }
 
-  static #setPath(path) {
-    ChatDAO.#path = path;
-    if (!fs.existsSync(ChatDAO.#path)) {
-      ChatDAO.#saveFile();
+  #setPath(path) {
+    this.#path = path;
+    if (!fs.existsSync(this.#path)) {
+      this.#saveFile();
     }
   }
 
-  static async #loadChats() {
+  async #loadChats() {
     try {
-      const content = await fs.promises.readFile(ChatDAO.#path, 'utf-8');
-      ChatDAO.#chats = JSON.parse(content);
+      const content = await fs.promises.readFile(this.#path, 'utf-8');
+      this.#chats = JSON.parse(content);
     } catch (error) {
       throw error;
     }
   }
 
-  static async #saveFile() {
-    const content = JSON.stringify(ChatDAO.#chats);
+  async #saveFile() {
+    const content = JSON.stringify(this.#chats);
     try {
-      await fs.promises.writeFile(ChatDAO.#path, content);
+      await fs.promises.writeFile(this.#path, content);
     } catch (error) {
       throw error;
     }
   }
 
-  static async createChat(userEmail) {
+  async createChat(userEmail) {
     const chat = {
       _id: uuidv4(),  // Generate a unique ID for the chat
       user: userEmail,
       messages: []
     };
-    ChatDAO.#chats.push(chat);
-    await ChatDAO.#saveFile();
+    this.#chats.push(chat);
+    await this.#saveFile();
     return chat;
   }
 
-  static async addMessagesToChat(userEmail, message) {
-    await ChatDAO.#loadChats();
-    const chat = ChatDAO.#chats.find(chat => chat.user.toLowerCase() === userEmail.toLowerCase());
+  async addMessagesToChat(userEmail, message) {
+    await this.#loadChats();
+    const chat = this.#chats.find(chat => chat.user.toLowerCase() === userEmail.toLowerCase());
     if (!chat) {
       throw new CustomError(`Chat not found for user: ${userEmail}`, 'QUERY_ERROR');
     }
     chat.messages.push(message);
-    await ChatDAO.#saveFile();
+    await this.#saveFile();
   }
 
-  static async getMessages(userEmail) {
-    await ChatDAO.#loadChats();
-    const chat = ChatDAO.#chats.find(chat => chat.user.toLowerCase() === userEmail.toLowerCase());
+  async getMessages(userEmail) {
+    await this.#loadChats();
+    const chat = this.#chats.find(chat => chat.user.toLowerCase() === userEmail.toLowerCase());
     if (!chat) {
       throw new CustomError(`Chat not found for user: ${userEmail}`, 'QUERY_ERROR');
     }

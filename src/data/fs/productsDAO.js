@@ -6,41 +6,41 @@ import CustomError from '../../services/customError.js';
 const __dirname = path.resolve();
 
 class ProductDAO {
-  static #products = [];
-  static #path = '';
+  #products = [];
+  #path = '';
 
   constructor(path = `${__dirname}/src/data/fs/products_fs.json`) {
-    ProductDAO.#setPath(path);
+    this.#setPath(path);
   }
 
-  static #setPath(path) {
-    ProductDAO.#path = path;
-    if (fs.existsSync(ProductDAO.#path)) {
-      ProductDAO.#loadProducts();
+  #setPath(path) {
+    this.#path = path;
+    if (fs.existsSync(this.#path)) {
+      this.#loadProducts();
     } else {
-      ProductDAO.#saveFile();
+      this.#saveFile();
     }
   }
 
-  static async #loadProducts() {
+  async #loadProducts() {
     try {
-      const content = await fs.promises.readFile(ProductDAO.#path, 'utf-8');
-      ProductDAO.#products = JSON.parse(content);
+      const content = await fs.promises.readFile(this.#path, 'utf-8');
+      this.#products = JSON.parse(content);
     } catch (error) {
       throw new CustomError(`Could not load products File. ${error.message} `,'FILESYSYEM_ERROR');
     }
   }
 
-  static async #saveFile() {
-    const content = JSON.stringify(ProductDAO.#products);
+  async #saveFile() {
+    const content = JSON.stringify(this.#products);
     try {
-      await fs.promises.writeFile(ProductDAO.#path, content);
+      await fs.promises.writeFile(this.#path, content);
     } catch (error) {
       throw new CustomError(`Could not save products File. ${error.message} `,'FILESYSYEM_ERROR');
     }
   }
 
-  static #isProductValid(product) { //TODO: ProductDAO validation could be in the service layer
+  #isProductValid(product) { //TODO: this validation could be in the service layer
 
     const allowedKeys = [ 'title', 'description', 'price', 'thumbnails', 'code', 'stock', 'category', 'status' ];
     const productKeys = Object.keys(product);
@@ -64,68 +64,68 @@ class ProductDAO {
     );
   }
 
-  static #isProductCodeDuplicate(code) {
-    return ProductDAO.#products.some((product) => product.code === code);
+  #isProductCodeDuplicate(code) {
+    return this.#products.some((product) => product.code === code);
   }
 
-  static #generateProductId() {
+  #generateProductId() {
     return uuidv4();
   }
 
-  static async addProduct(product) {
-    if (!ProductDAO.#isProductValid(product)) {
+  async addProduct(product) {
+    if (!this.#isProductValid(product)) {
       throw new CustomError('Invalid product', 'INVALID_DATA');
     }
-    await ProductDAO.#loadProducts();
-    if (ProductDAO.#isProductCodeDuplicate(product.code)) {
+    await this.#loadProducts();
+    if (this.#isProductCodeDuplicate(product.code)) {
       throw new CustomError('Product with the same code already exists', 'INVALID_DATA');
     }
-    const _id = ProductDAO.#generateProductId();
+    const _id = this.#generateProductId();
     const owner = 'admin';
     const newProduct = { _id, ...product, owner };
-    ProductDAO.#products.push(newProduct);
-    await ProductDAO.#saveFile();
+    this.#products.push(newProduct);
+    await this.#saveFile();
     return newProduct;
   }
 
-  static async getProducts(filter = {}, options = {}) { // filters and aptions are not implemented in FS
-    await ProductDAO.#loadProducts();
-    return ProductDAO.#products;
+  async getProducts(filter = {}, options = {}) { // filters and aptions are not implemented in FS
+    await this.#loadProducts();
+    return this.#products;
   }
 
-  static async getProductById(_id) {
-    await ProductDAO.#loadProducts();
-    const product = ProductDAO.#products.find((p) => p._id === _id);
+  async getProductById(_id) {
+    await this.#loadProducts();
+    const product = this.#products.find((p) => p._id === _id);
     if (!product) {
       throw new CustomError(`Product not found. Requested ID:${_id}`, 'QUERY_ERROR');
     }
     return product;
   }
 
-  static async updateProduct(_id, product) {
-    if (!ProductDAO.#isProductValid(product)) {
+  async updateProduct(_id, product) {
+    if (!this.#isProductValid(product)) {
       throw new CustomError('Invalid product', 'INVALID_DATA');
     }
-    await ProductDAO.#loadProducts();
-    const productIndex = ProductDAO.#products.findIndex((p) => p._id === _id);
+    await this.#loadProducts();
+    const productIndex = this.#products.findIndex((p) => p._id === _id);
     if (productIndex === -1) {
       throw new CustomError(`Product not found. Requested ID:${_id}`,'QUERY_ERROR');
     }
     const updatedProduct = { _id, ...product };
-    ProductDAO.#products[productIndex] = updatedProduct;
-    await ProductDAO.#saveFile();
+    this.#products[productIndex] = updatedProduct;
+    await this.#saveFile();
     return updatedProduct;
   }
 
-  static async deleteProduct(_id) {
-    await ProductDAO.#loadProducts();
-    const productIndex = ProductDAO.#products.findIndex((p) => p._id === _id);
+  async deleteProduct(_id) {
+    await this.#loadProducts();
+    const productIndex = this.#products.findIndex((p) => p._id === _id);
     if (productIndex === -1) {
       throw new CustomError(`Product not found. Requested ID:${_id}`, 'QUERY_ERROR');
     }
-    const product = ProductDAO.#products[productIndex];
-    ProductDAO.#products.splice(productIndex, 1);
-    await ProductDAO.#saveFile();
+    const product = this.#products[productIndex];
+    this.#products.splice(productIndex, 1);
+    await this.#saveFile();
     return product;
   }
 }

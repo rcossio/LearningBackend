@@ -69,9 +69,8 @@ class AuthController {
         if (!user) {
             return AuthController.restorePasswordView(req, res, { error: 'User not found' });
         }
-
-        // date as integer
-        const date = Date.now()
+        
+        const date = Date.now()         // date as integer
         const mailOptions = {
             from: 'rworld@coder.com', 
             to: email,

@@ -6,6 +6,10 @@ import CustomError from './customError.js';
 
 class UserService {
 
+    static async getUserById(id) {
+        return await userDAO.getUserById(id);
+    }
+
     static async getUserByEmail(email) {
         try {
             const user = await userDAO.getUserByEmail(email);
@@ -15,34 +19,24 @@ class UserService {
         }
     }
 
-    static async setUserPasswordByEmail(email, newPassword) {
-        const user = await userDAO.getUserByEmail(email);
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
-        return await userDAO.updateUserById(user._id, {password: hashedPassword});
-    }
-
-    static async createChat(userId, chatId) {
-        const user = await userDAO.getUserById(userId);
-        user.chatId = chatId;
-        return await userDAO.updateUserById(userId, user);
-    }
-
-    static async getUserById(id) {
-        return await userDAO.getUserById(id);
-    }
-
     static async registerUser(userDTO) {
-        const existingUser = await this.getUserByEmail(userDTO.email);
-
+        let existingUser;
+        try {
+            existingUser = await this.getUserByEmail(userDTO.email);
+        } catch (error) {
+            if (error.message !== 'User not found.') {
+                throw error; 
+            }
+        }
+    
         if (existingUser) {
             throw new CustomError('User already exists.', 'INVALID_DATA');
         }
-
+    
         if (userDTO.email.toLowerCase() === config.admin.email.toLowerCase()) {
             throw new CustomError('Admin already exists.', 'INVALID_DATA');
         }
-
+    
         const hashedPassword = await bcrypt.hash(userDTO.password, 10);
         const cart = await CartsService.createCart();
         const newUser = {
@@ -55,7 +49,7 @@ class UserService {
         }; 
         
         return await userDAO.addNewUser(newUser);
-    }
+    }    
 
     static async loginUser(email, password) {
         if (email.toLowerCase() === config.admin.email && password === config.admin.pass) {
@@ -82,7 +76,6 @@ class UserService {
         return user;
     }
 
-
     static async loginOrCreateUser(userDTO) {
         const user = await this.getUserByEmail(userDTO.email);
         if (user) {
@@ -91,6 +84,19 @@ class UserService {
         const cart = await CartsService.createCart();
         const newUser = { ...userDTO, cartId: cart._id };
         return await userDAO.addNewUser(newUser);
+    }
+
+    static async setUserPasswordByEmail(email, newPassword) {
+        const user = await userDAO.getUserByEmail(email);
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+        return await userDAO.updateUserById(user._id, {password: hashedPassword});
+    }
+
+    static async createChat(userId, chatId) {
+        const user = await userDAO.getUserById(userId);
+        user.chatId = chatId;
+        return await userDAO.updateUserById(userId, user);
     }
 
     static async userUpgradeToPremium(userId) {
