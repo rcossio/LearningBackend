@@ -71,9 +71,10 @@ class ViewsController {
   static async profileView(req, res, customResponse = {}) { //TOFIX: implement DTO, sensitive data is being sent
     let user;
     if (req.auth.email === config.admin.email) {
-      user = req.auth
+      user = UsersService.getUserData(req.auth)
     } else {
-      user = await UsersService.getUserByEmail(req.auth.email);
+      const requestedUser = await UsersService.getUserByEmail(req.auth.email);
+      user = UsersService.getUserData(requestedUser)
     }
     res.render('profile', { ...customResponse, user });
   }

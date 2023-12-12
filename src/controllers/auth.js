@@ -154,8 +154,10 @@ class AuthController {
     }
 
     static logout(req, res) {
+        if (req.auth.email !== config.admin.email) {
+            UsersService.updateLoginDate(req.auth.id);
+        }
         res.clearCookie('jwt');
-        UsersService.updateLoginDate(req.auth.id);
         return res.redirect('/');
     }
     
