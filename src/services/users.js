@@ -122,7 +122,8 @@ class UserService {
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
-          role: user.role
+          role: user.role,
+          age: user.age,
         };
     
         return userDTO;

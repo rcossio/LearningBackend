@@ -1,10 +1,17 @@
 <div class="container-fluid bg-light py-2 mb-4">
     <div class="container">
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-7">
                 <a href="/" class="text-decoration-none text-dark"> 
                   <h3>Rworld Store!</h3>  
                 </a>
+            </div>
+            <div class="col-md-1 d-flex align-items-center justify-content-center">
+                {{#if user}}
+                    {{#if (eq user.role "premium")}}
+                        <a href="/store" class="text-dark"><i class="fas fa-store fa-lg"></i></a>
+                    {{/if}}
+                {{/if}}
             </div>
             <div class="col-md-1 d-flex align-items-center justify-content-center">
                 {{#if user}}

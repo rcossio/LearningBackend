@@ -1,12 +1,19 @@
 import { Router } from "express";
 import ViewsController from "../controllers/views.js";
-import { redirectUnauthorizedOrAdmin, requireUserOrPremium, redirectUnauthenticated } from "../middlewares/authorization.js";
+import { requireRole, redirectUnauthorizedOrAdmin, requireUserOrPremium, redirectUnauthenticated } from "../middlewares/authorization.js";
 
 const router = Router();
 
 //public
 router.get('/', ViewsController.homeView);
 router.get('/not-authorized', ViewsController.notAuthorizedView);  
+
+//users
+router.get('/request-upgrade', requireRole({ allowedRoles: ['user'] }), ViewsController.userUpgradeFormView);
+
+//premium
+router.get('/store', requireRole({ allowedRoles: ['premium'] }), ViewsController.premiumStoreView);
+router.get('/add-product', requireRole({ allowedRoles: ['premium'] }), ViewsController.premiumAddProductView);
 
 //users and premium
 router.get('/cart', redirectUnauthorizedOrAdmin, ViewsController.cartView);

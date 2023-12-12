@@ -26,7 +26,15 @@
                         </li>
                     </ul>
 
-                    <a href="/auth/logout" id="logout-button" class="btn btn-danger btn-block">Logout</a>
+                    <div class="row mt-2 mb-3">
+                        <div class="col text-center">
+                            <a href="/auth/logout" id="logout-button" class="btn btn-danger btn-block">Logout</a>
+                            {{#if (eq user.role "user")}}
+                                <a href="/request-upgrade" id="logout-button" class="btn btn-success btn-block">Upgrade to Premium</a>
+                            {{/if}}
+                        </div>
+                    </div>
+                    
                 </div>
             </div>
         </div>

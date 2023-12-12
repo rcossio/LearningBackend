@@ -26,4 +26,4 @@ const redirectUnauthorizedOrAdmin = (req, res, next) => {
   next();
 };
 
-export { redirectUnauthorizedOrAdmin, redirectUnauthenticated, requireAuthenticated, requireUserOrPremium, requireAdmin, requirePremiumOrAdmin };
+export { requireRole, redirectUnauthorizedOrAdmin, redirectUnauthenticated, requireAuthenticated, requireUserOrPremium, requireAdmin, requirePremiumOrAdmin };

@@ -68,7 +68,7 @@ class ViewsController {
     res.render('chat', { ...customResponse, user: req.auth });
   }
 
-  static async profileView(req, res, customResponse = {}) { //TOFIX: implement DTO, sensitive data is being sent
+  static async profileView(req, res, customResponse = {}) {
     let user;
     if (req.auth.email === config.admin.email) {
       user = UsersService.getUserData(req.auth)
@@ -98,6 +98,49 @@ class ViewsController {
   static async unableToModifyCartFailedView(req, res) {
     await ViewsController.homeView(req, res, { error: 'Unable to modify cart. Please contact customer support.' });
   }
+
+  static userUpgradeFormView(req, res,customResponse = {}) {
+    return res.render('user-upgrade-form', { ...customResponse, user: req.auth });
+  }
+
+  static premiumAddProductView(req, res,customResponse = {}) {
+    return res.render('premium-add-product', { ...customResponse, user: req.auth });
+  }
+
+
+  static async premiumStoreView(req, res, customResponse = {}) {
+    const { limit = 3, page = 1, sort = 'asc', query = '' } = req.query;
+    const sortOrder = sort === 'desc' ? -1 : 1;
+
+    const filter = { status: true, owner: req.auth.email };
+    if (query) {
+        filter.$or = [
+            { title: new RegExp(query, 'i') },
+            { category: new RegExp(query, 'i') }
+        ];
+    }
+
+    const options = {
+        page: parseInt(page, 10),
+        limit: parseInt(limit, 10),
+        sort: { price: sortOrder, _id: 1 },
+        lean: true
+    };
+
+    try {
+      const result = await ProductsService.getProducts(filter, options);
+      res.status(200).render('store', { ...result, ...customResponse, sort, query, user: req.auth }); 
+    } catch {
+      //get date in readable format
+      const date = new Date().toLocaleString();
+      res.status(500).render('error.hbs', {
+        message: `
+        Unable to connect to database. The app is not working right now. We are sorry for the inconveniences!
+        Date: ${date}`
+      });
+    } 
+  }
+
 }
 
 export default ViewsController;
