@@ -3,7 +3,7 @@ import ChatService from '../services/chat.js';
 import ProductsService from '../services/products.js';
 import UsersService from '../services/users.js';
 import TicketService from '../services/tickets.js'
-import handleAndLogError from '../utils/errorHandler.js';
+import logError from '../utils/errorHandler.js';
 
 class ViewsController {
 
@@ -48,7 +48,7 @@ class ViewsController {
       const cart = await CartsService.getCartById(req.auth.cartId);
       res.status(200).render('cart', { ...cart, ...customResponse, user: req.auth });
     } catch(error) {
-      handleAndLogError(error);
+      logError(error);
       res.status(500).render('cart', { products: [], error: 'Unable to load your cart, please contact our customer service' });
     }
   }

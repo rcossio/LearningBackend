@@ -1,6 +1,6 @@
 import ProductsService from '../services/products.js';
 import { faker } from '@faker-js/faker';
-import handleAndLogError from '../utils/errorHandler.js';
+import logError from '../utils/errorHandler.js';
 import {config} from '../config/config.js';
 
 class ProductsController {
@@ -41,7 +41,7 @@ class ProductsController {
 
       res.status(200).json(response);
     } catch (error) {
-      handleAndLogError(error);
+      logError(error);
       res.status(400).json({ status: 'error', payload: error.message });
     }
   };
@@ -52,7 +52,7 @@ class ProductsController {
       const product = await ProductsService.getProductById(productId);
       res.status(200).json({ status: 'success', payload: product });
     } catch (error) {
-      handleAndLogError(error);
+      logError(error);
       res.status(400).json({ status: 'error', payload: error.message });
     }
   };
@@ -64,7 +64,7 @@ class ProductsController {
       await ProductsService.deleteProduct(productId, email);
       res.status(204).end();
     } catch (error) {
-      handleAndLogError(error);
+      logError(error);
       res.status(400).json({ status: 'error', payload: error.message });
     }
   };
@@ -78,7 +78,7 @@ class ProductsController {
       const addedProduct = await ProductsService.addProduct(product);
       res.status(201).json({ status: 'success', payload: addedProduct });
     } catch (error) {
-      handleAndLogError(error);
+      logError(error);
       res.status(400).json({ status: 'error', payload: error.message });
     }
   };
@@ -91,7 +91,7 @@ class ProductsController {
       await ProductsService.updateProduct(productId, product, email);
       res.status(200).json({ status: 'success', payload: 'Product updated successfully' });
     } catch (error) {
-      handleAndLogError(error);
+      logError(error);
       res.status(400).json({ status: 'error', payload: error.message });
     }
   };

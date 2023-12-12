@@ -3,8 +3,8 @@ import CustomError from '../../../services/customError.js';
 
 class UserDAO {
 
-  static async addNewUser(user) {
-    const user = await UserModel.create(user);
+  static async addNewUser(userData) {
+    const user = await UserModel.create(userData);
     return user;
   }
 

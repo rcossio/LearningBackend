@@ -1,3 +1,4 @@
+//authorization middleware
 const requireRole = ({ allowedRoles, redirectOnFailure = '/not-authorized' }) => {
   return (req, res, next) => {
     if (!req.auth || !allowedRoles.includes(req.auth.role)) {
@@ -7,7 +8,16 @@ const requireRole = ({ allowedRoles, redirectOnFailure = '/not-authorized' }) =>
   };
 };
 
-const redirectUnauthorizedOrAdmin = (req, res, next) => { //Similar to requireUserOrPremium but with different redirection behavior
+const requireAuthenticated = requireRole({ allowedRoles: ['user', 'premium', 'admin'] }); 
+const requireUserOrPremium = requireRole({ allowedRoles: ['user', 'premium'] });
+const requirePremiumOrAdmin = requireRole({ allowedRoles: ['premium', 'admin'] });
+const requireAdmin = requireRole({ allowedRoles: ['admin'] });
+
+
+//redirect middleware
+const redirectUnauthenticated = requireRole({ allowedRoles: ['user', 'premium', 'admin'], redirectOnFailure: '/auth/login' });
+
+const redirectUnauthorizedOrAdmin = (req, res, next) => {
   if (!req.auth) {
     return res.redirect('/auth/login');
   } else if (req.auth.role === 'admin') {
@@ -15,12 +25,5 @@ const redirectUnauthorizedOrAdmin = (req, res, next) => { //Similar to requireUs
   }
   next();
 };
-
-
-const requireAuthenticated = requireRole({ allowedRoles: ['user', 'premium', 'admin'] }); 
-const redirectUnauthenticated = requireRole({ allowedRoles: ['user', 'premium', 'admin'], redirectOnFailure: '/auth/login' }); // Similar to `requireAuthenticated` but redirects to login
-const requireUserOrPremium = requireRole({ allowedRoles: ['user', 'premium'] });
-const requirePremiumOrAdmin = requireRole({ allowedRoles: ['premium', 'admin'] });
-const requireAdmin = requireRole({ allowedRoles: ['admin'] });
 
 export { redirectUnauthorizedOrAdmin, redirectUnauthenticated, requireAuthenticated, requireUserOrPremium, requireAdmin, requirePremiumOrAdmin };

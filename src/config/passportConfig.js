@@ -5,7 +5,7 @@ import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as GitHubStrategy } from 'passport-github2';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import UsersService from '../services/users.js';
-import handleAndLogError from '../utils/errorHandler.js';
+import logError from '../utils/errorHandler.js';
 
 const jwtFromRequest = (req) => {
         let token = null;
@@ -48,7 +48,7 @@ passport.use('signupStrategy', new LocalStrategy(
             const user = await UsersService.registerUser(userData);
             return done(null, user);
         } catch (error) {
-            handleAndLogError(error)
+            logError(error)
             return done(null, false, { message: error.message });
         }
     }

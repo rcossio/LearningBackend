@@ -3,15 +3,15 @@ import logger from './logger.js'
 
 const formatErrorMessage = (err) => `${err.message} (Code: ${err.errorCode}) \n Stack: ${err.stack}`;
 
-const handleAndLogError = (err) => {
+const logError = (err) => {
     if (err instanceof CustomError) {
         logger.error(formatErrorMessage(err));
-        return err;
+        throw err;
     } else {
         const unknownError = new CustomError(err.message, 'UNKNOWN_ERROR');
         logger.error(formatErrorMessage(unknownError));
-        return unknownError;
+        throw unknownError;
     }
 }
 
-export default handleAndLogError;
+export default logError;

@@ -1,6 +1,6 @@
 import CartsService from '../services/carts.js';
 import TicketService from '../services/tickets.js';
-import handleAndLogError from '../utils/errorHandler.js';
+import logError from '../utils/errorHandler.js';
 
 class CartsController {
 
@@ -9,7 +9,7 @@ class CartsController {
             const cart = await CartsService.createCart();
             res.status(201).json({ status: 'success', payload: cart });
         } catch (error) {
-            handleAndLogError(error);
+            logError(error);
             res.status(400).json({ status: 'error', payload: error.message });
         }
     }
@@ -19,7 +19,7 @@ class CartsController {
             const cart = await CartsService.getCartById(req.params.cartId);
             res.status(200).json({ status: 'success', payload: cart });
         } catch (error) {
-            handleAndLogError(error);
+            logError(error);
             res.status(404).json({ status: 'error', payload: error.message });
         }
     }
@@ -29,7 +29,7 @@ class CartsController {
             const cart = await CartsService.modifyCart(req.params.cartId, req.body.products);
             res.status(200).json({ status: 'success', payload: cart });
         } catch (error) {
-            handleAndLogError(error);
+            logError(error);
             res.status(400).json({ status: 'error', payload: error.message });
         }
     }
@@ -39,7 +39,7 @@ class CartsController {
             await CartsService.removeCart(req.params.cartId);
             res.status(204).end();
         } catch (error) {
-            handleAndLogError(error);
+            logError(error);
             res.status(404).json({ status: 'error', payload: error.message });
         }
 
@@ -50,7 +50,7 @@ class CartsController {
             await CartsService.updateProductQuantity(req.params.cartId, req.params.productId, req.body.quantity);
             res.status(200).json({ status: 'success', payload: 'Product quantity updated successfully' });
         } catch (error) {
-            handleAndLogError(error);
+            logError(error);
             res.status(400).json({ status: 'error', payload: error.message });
         }
     }
@@ -60,7 +60,7 @@ class CartsController {
             await CartsService.deleteProductFromCart(req.auth.cartId, req.params.productId);
             res.redirect('/cart');
         } catch (error) {
-            handleAndLogError(error);
+            logError(error);
             res.redirect('/cart-modification-failed')
         }
       }
@@ -76,7 +76,7 @@ class CartsController {
             }
             res.redirect('/cart');
         } catch (error) {
-            handleAndLogError(error);
+            logError(error);
             res.redirect('/cart-modification-failed')
         }
     }
@@ -86,7 +86,7 @@ class CartsController {
             const ticketCode = await TicketService.createTicket(req.params.cartId, req.auth.email);
             res.redirect(`/purchase-successful/${ticketCode}`);
         } catch (error) {
-            handleAndLogError(error);
+            logError(error);
             res.redirect('/purchase-failed')
         }
     }
