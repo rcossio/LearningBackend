@@ -48,9 +48,7 @@ const config = {
   }
 }
 
-export {
-  config
-}; //TODO: change to export default config (and update import statements)
+export default config;
 
 
 

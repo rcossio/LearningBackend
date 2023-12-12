@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import {userDAO} from "../data/factory.js";
 import CartsService from './carts.js';
-import { config } from '../config/config.js';
+import config from '../config/config.js';
 import CustomError from './customError.js';
 
 class UserService {

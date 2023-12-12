@@ -1,7 +1,7 @@
 import UsersService from '../services/users.js';
 import passport from '../config/passportConfig.js';
 import jwt from 'jsonwebtoken';
-import {config} from '../config/config.js';
+import config from '../config/config.js';
 import emailTransporter from '../config/email.js';
 
 class AuthController {

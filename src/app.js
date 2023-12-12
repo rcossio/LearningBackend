@@ -4,7 +4,7 @@ import handlebars from 'express-handlebars';
 import cookieParser from 'cookie-parser';
 import { expressjwt as jwt } from "express-jwt";
 import passport from './config/passportConfig.js';
-import { config } from './config/config.js';
+import config from './config/config.js';
 import logger from './utils/logger.js';
 import logError from './utils/errorHandler.js';
 import configureSocketIO from './config/socketIO.js';
@@ -79,6 +79,7 @@ app.use((err, req, res, next) => {
 const httpServer = app.listen(config.server.port, () => {
     logger.info(`Selected environment: ${config.server.mode}`);
     logger.info(`Server is running at PORT ${config.server.port}`);
+
     // Socket.io configuration
     configureSocketIO(httpServer);
 });

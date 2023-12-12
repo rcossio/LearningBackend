@@ -1,4 +1,4 @@
-import { config } from '../config/config.js';
+import config from '../config/config.js';
 import CustomError from '../services/customError.js';
 import logger from '../utils/logger.js';
 

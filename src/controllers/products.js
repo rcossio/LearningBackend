@@ -1,7 +1,7 @@
 import ProductsService from '../services/products.js';
 import { faker } from '@faker-js/faker';
 import logError from '../utils/errorHandler.js';
-import {config} from '../config/config.js';
+import config from '../config/config.js';
 
 class ProductsController {
 

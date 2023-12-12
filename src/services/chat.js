@@ -1,6 +1,6 @@
 import {chatDAO} from "../data/factory.js";
 import { faker } from '@faker-js/faker';
-import {config} from "../config/config.js";
+import config from "../config/config.js";
 class ChatService {
 
   static async getChatHistory(username) {

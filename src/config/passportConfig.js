@@ -1,6 +1,6 @@
 import JwtStrategy from 'passport-jwt';
 import passport from 'passport';
-import { config } from './config.js';
+import config from './config.js';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as GitHubStrategy } from 'passport-github2';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
