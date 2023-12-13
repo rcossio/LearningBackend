@@ -69,7 +69,7 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Wildcard route for handling 404 Not Found
 app.get('*', (req, res) => {
-    res.status(404).render('error', { message: 'Page does not exist' });
+    res.status(404).render('error', { message: 'Page does not exist', user: req.auth });
 });
 
 // Error handling middleware

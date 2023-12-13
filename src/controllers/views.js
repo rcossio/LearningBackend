@@ -141,6 +141,13 @@ class ViewsController {
     } 
   }
 
+  static userUpgradeRequestSuccessfulView(req, res) { //TODO: add a referrer check so this is accesible by redirection
+    return res.render('profile', { message: 'We recieved your request successfully!' , user: req.auth });
+  }
+
+  static userUpgradeRequestFailedView(req, res) { //TODO: add a referrer check so this is accesible by redirection
+    return res.render('profile', { error: 'We were unable to process your request. Please contact support.' , user: req.auth });
+  }
 }
 
 export default ViewsController;

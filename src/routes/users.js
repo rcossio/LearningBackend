@@ -1,12 +1,15 @@
 import { Router } from "express";
 import UserController from '../controllers/user.js';
-import { requireAdmin, requireAuthenticated } from "../middlewares/authorization.js";
+import { requireUserOrPremium, requireAdmin, requireAuthenticated } from "../middlewares/authorization.js";
 
 const router = Router();
 const objIdFormat = "[0-9a-fA-F]{24}";
 
 // user, premium and admin
 router.get("/current", requireAuthenticated, UserController.currentUser);
+
+// users, premium
+router.post(`/:userId(${objIdFormat})/documents`,requireUserOrPremium, UserController.uploadDocuments);
 
 // admin
 router.post(`/premium/:userId(${objIdFormat})`, requireAdmin, UserController.userUpgradeToPremium); 

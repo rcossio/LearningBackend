@@ -10,6 +10,8 @@ router.get('/not-authorized', ViewsController.notAuthorizedView);
 
 //users
 router.get('/request-upgrade', requireRole({ allowedRoles: ['user'] }), ViewsController.userUpgradeFormView);
+router.get('/request-upgrade-successful', requireRole({ allowedRoles: ['user'] }), ViewsController.userUpgradeRequestSuccessfulView);
+router.get('/request-upgrade-failed', requireRole({ allowedRoles: ['user'] }), ViewsController.userUpgradeRequestFailedView);
 
 //premium
 router.get('/store', requireRole({ allowedRoles: ['premium'] }), ViewsController.premiumStoreView);

@@ -13,39 +13,39 @@
                 <div class="card-body">
                     <h2 class="text-center mb-4">Add a product</h2>
 
-                    <form action="/auth/register" method="post">
+                    <form id="add-product-form">
                         <div class="form-group">
-                            <label for="firstName">Title:</label>
-                            <input type="text" class="form-control" id="firstName" name="firstName" required>
+                            <label for="title">Title:</label>
+                            <input type="text" class="form-control" id="title" name="title" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="lastName">Description:</label>
-                            <input type="text" class="form-control" id="lastName" name="lastName" required>
+                            <label for="description">Description:</label>
+                            <input type="text" class="form-control" id="description" name="description" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="email">Code:</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
+                            <label for="code">Code:</label>
+                            <input type="text" class="form-control" id="code" name="code" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="age">Category:</label>
-                            <input type="number" class="form-control" id="age" name="age" required>
+                            <label for="category">Category:</label>
+                            <input type="text" class="form-control" id="category" name="category" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="age">Price:</label>
-                            <input type="number" class="form-control" id="age" name="age" required>
+                            <label for="price">Price:</label>
+                            <input type="number" class="form-control" id="price" name="price" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="age">Stock:</label>
-                            <input type="number" class="form-control" id="age" name="age" required>
+                            <label for="stock">Stock:</label>
+                            <input type="number" class="form-control" id="stock" name="stock" required>
                         </div>
 
                         <div class="text-center">
-                            <button type="submit" class="btn btn-primary btn-lg mt-3 px-4">Request Upgrade</button>
+                            <button type="button" class="btn btn-primary btn-lg mt-3 px-4" id="add-product-button">Add product</button>
                         </div>
                     </form>
                 </div>
@@ -53,3 +53,26 @@
         </div>
     </div>
 </div>
+
+<script>
+  document.getElementById('add-product-button').addEventListener('click', function() {
+    const form = document.getElementById('add-product-form');
+    const formData = new FormData(form);
+
+    fetch('/api/products', {
+      method: 'POST',
+      body: JSON.stringify(Object.fromEntries(formData)),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => {
+      if (response.ok) {
+        window.location.href = '/store'; // Redirect to /store
+      } else {
+        console.error('Failed to add product');
+      }
+    })
+    .catch(error => console.error('Error:', error));
+  });
+</script>
