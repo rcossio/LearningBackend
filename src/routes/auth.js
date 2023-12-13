@@ -24,8 +24,8 @@ router.get("/google/callback", AuthController.googleAuthCallback);
 
 router.get("/restore-password", AuthController.restorePasswordView);
 router.post("/restore-password", AuthController.sendEmailToRestorePassword);
-router.get("/restore-password-confirmation/:email/:date", AuthController.createNewPasswordView);
-router.post("/create-password/:email/:date", AuthController.restorePassword);
+router.get("/restore-password-confirmation/:token", AuthController.createNewPasswordView);
+router.post("/create-password/:token", AuthController.restorePassword);
 
 // user, premium or ardmin
 router.get("/logout", requireAuthenticated, AuthController.logout);

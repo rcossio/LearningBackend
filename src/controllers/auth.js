@@ -59,23 +59,35 @@ class AuthController {
     }
 
     static createNewPasswordView(req, res, customResponse = {}) {
-        return res.render('create-password', { ...customResponse, email: req.params.email, date: req.params.date });
+        const { token } = req.params;
+        try{
+            const decoded = jwt.verify(token, config.auth.jwtSecret);
+            return res.render('create-password', { ...customResponse, token });
+        } catch (error) {
+            return AuthController.restorePasswordView(req, res, { error: 'Link invalid or expired. Please try again.' });
+        }
     }
 
     static async sendEmailToRestorePassword(req, res) {
         const { email } = req.body;
-        const user = await UsersService.getUserByEmail(email);
-
-        if (!user) {
+        let user;
+        try {
+            user = await UsersService.getUserByEmail(email);
+        } catch (error) {
             return AuthController.restorePasswordView(req, res, { error: 'User not found' });
         }
-        
-        const date = Date.now()         // date as integer
+
+        const jwtPayload = { email: user.email };
+        const options = { expiresIn: '1h' };
+        const passwordResetToken = jwt.sign(jwtPayload, config.auth.jwtSecret, options);
+
+        const passwordResetLink = `http://localhost:${config.server.port}/auth/restore-password-confirmation/${passwordResetToken}`;
+
         const mailOptions = {
-            from: 'rworld@coder.com', 
+            from: 'rworld@coder.com',
             to: email,
             subject: 'Restore password',
-            text: `Restore your password by going to this link: http://localhost:${config.server.port}/auth/restore-password-confirmation/${email}/${date}`   // TOFIX: Very insecure, encrypt the email and date, or create a code to save in the DB
+            text: `Restore your password by going to this link: ${passwordResetLink}`
         };
 
         try {
@@ -88,22 +100,28 @@ class AuthController {
     }
 
     static async restorePassword(req, res) {
-        const { email, date } = req.params;
-        const { newPassword, confirmPassword } = req.body;
-        const user = await UsersService.getUserByEmail(email);
+        let email;
+        let user;
 
-        if (!user) {
+        const { token } = req.params;
+        const { newPassword, confirmPassword } = req.body;
+
+
+        try {
+            const decoded = jwt.verify(token, config.auth.jwtSecret);
+            email = decoded.email;
+        } catch (error) {
+            return AuthController.restorePasswordView(req, res, { error: 'Invalid or expired link. Please try again.' });
+        }
+
+        try {
+            user = await UsersService.getUserByEmail(email);
+        } catch (error) {
             return AuthController.restorePasswordView(req, res, { error: 'User not found' });
         }
-
-        const currentDate = Date.now();
-        const expirationTime = 60000; // 1 min
-        if (currentDate - date > expirationTime) {
-            return AuthController.restorePasswordView(req, res, { error: 'Link expired. Please try again.' });
-        }
-
+    
         if (newPassword !== confirmPassword) {
-            return AuthController.restorePasswordView(req, res, { error: 'Passwords do not match!' });
+            return AuthController.createNewPasswordView(req, res, { error: 'Passwords do not match' });
         }
 
         await UsersService.setUserPasswordByEmail(email, newPassword);
