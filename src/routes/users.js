@@ -13,7 +13,7 @@ router.post('/upload-profile-img', requireAuthenticated, UserController.uploadPr
 router.post(`/:userId(${objIdFormat})/documents`,requireUserOrPremium, UserController.uploadDocuments);
 
 // admin
-router.post(`/premium/:userId(${objIdFormat})`, requireAdmin, UserController.userUpgradeToPremium); 
+router.post(`/premium/:userId(${objIdFormat})`, requireAdmin, UserController.changeUserRole); 
 router.delete(`/:userId(${objIdFormat})`, requireAdmin, UserController.deleteUser); 
 router.delete('/', requireAdmin, UserController.deleteInactiveUsers);
 

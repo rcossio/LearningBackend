@@ -7,11 +7,11 @@ import emailTransporter from '../config/email.js';
 const __dirname = path.resolve();
 
 class UserController {
-  static async userUpgradeToPremium(req, res) {
+  static async changeUserRole(req, res) {
     const { userId } = req.params;
 
     try {
-      const user = await UserService.userUpgradeToPremium(userId);
+      const user = await UserService.changeUserRole(userId);
       res.status(200).json({status: 'success', payload: user});
     } catch (error) {
       logError(error);

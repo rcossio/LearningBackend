@@ -105,9 +105,14 @@ class UserService {
         return await userDAO.updateUserById(userId, user);
     }
 
-    static async userUpgradeToPremium(userId) {
+    static async changeUserRole(userId) {
         const user = await userDAO.getUserById(userId);
-        return await userDAO.updateUserById(userId, {role: 'premium'});
+
+        if (user.role === 'premium') {
+            return await userDAO.updateUserById(userId, {role: 'user'});
+        } else if (user.role === 'user') {
+            return await userDAO.updateUserById(userId, {role: 'premium'});
+        }
     }
 
     static async updateLoginDate(userId) {
