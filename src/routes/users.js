@@ -14,7 +14,7 @@ router.post(`/:userId(${objIdFormat})/documents`,requireUserOrPremium, UserContr
 // admin
 router.post(`/premium/:userId(${objIdFormat})`, requireAdmin, UserController.userUpgradeToPremium); 
 router.delete(`/:userId(${objIdFormat})`, requireAdmin, UserController.deleteUser); 
-//router.delete(`/)`, requireAdmin, UserController.deleteInactiveUsers);); 
+router.delete('/', requireAdmin, UserController.deleteInactiveUsers);
 
 
 export {router};

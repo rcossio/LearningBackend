@@ -134,7 +134,21 @@ class UserService {
         };
     
         return userDTO;
-      }
+    }
+
+    static async deleteInactiveUsers() {
+        const users = await userDAO.getUsers();
+        const usersDTO = users.map(user => this.getUserData(user));
+        const today = new Date();
+        const inactiveUsers = usersDTO.filter(user => {
+            const lastConnection = new Date(user.last_connection);
+            const diffTime = Math.abs(today - lastConnection);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+            return diffDays > 1;
+        });
+        inactiveUsers.forEach(user => this.deleteUser(user._id));
+        return inactiveUsers;
+    }
 }
 
 export default UserService;
