@@ -14,7 +14,8 @@ class AuthController {
             email: user.email,
             firstName: user.firstName,
             lastName: user.lastName,
-            role: user.role
+            role: user.role,
+            profileImg: user.profileImg
         };
         const options = { expiresIn: '1h' };
         const token = jwt.sign(jwt_payload, config.auth.jwtSecret, options);

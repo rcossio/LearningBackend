@@ -52,6 +52,11 @@ const userSchema = new mongoose.Schema({
     }],
     default: []
   },
+  profileImg: {
+    type: String,
+    required: true,
+    default: 'default.png'
+  },
   last_connection: {
     type: Date,
     required: false

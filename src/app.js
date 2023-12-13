@@ -27,6 +27,9 @@ const __dirname = path.resolve();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/profiles', express.static(path.join(__dirname, 'uploads/profiles')));
+app.use('/products', express.static(path.join(__dirname, 'uploads/products')));
+
 
 // Passport initialization
 app.use(passport.initialize());

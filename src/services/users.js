@@ -130,10 +130,16 @@ class UserService {
           lastName: user.lastName,
           role: user.role,
           age: user.age,
-          last_connection: user.last_connection
+          last_connection: user.last_connection,
+          profileImg: user.profileImg
         };
     
         return userDTO;
+    }
+
+    static async updateUserById(userId, updates) {
+        const user = await userDAO.updateUserById(userId, updates);
+        return this.getUserData(user);
     }
 
     static async deleteInactiveUsers() {

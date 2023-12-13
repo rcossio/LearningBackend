@@ -52,3 +52,18 @@
   color: green;
   text-shadow: 1px 1px 2px green;
 }
+
+.profile-image-link {
+  display: inline-block;
+  border-radius: 50%;
+  overflow: hidden;
+  width: 40px; 
+  height: 40px;
+}
+
+.profile-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 50%;
+}

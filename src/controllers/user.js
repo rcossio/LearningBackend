@@ -36,6 +36,35 @@ class UserController {
     return res.json({ status: 'success', payload: userData });
   }
 
+  static uploadProfileImage(req, res) {
+    const storage = multer.diskStorage({
+      destination: function(req, file, cb) {
+        cb(null, path.join(__dirname, '/uploads/profiles'));
+      },
+      filename: function(req, file, cb) {
+        const fileExtension = path.extname(file.originalname);
+        const newFileName = `${req.auth.id}${fileExtension}`;
+        req.newFileName = newFileName;
+        cb(null, newFileName);
+      }
+    });
+  
+    const upload = multer({ storage: storage }).single('image');
+  
+    upload(req, res, async function(err) {
+      if (err) {
+        return res.redirect('/profile-update-failed');
+      }
+  
+      try {
+        // Update user's profile image in the database using the filename from req.newFileName
+        await UserService.updateUserById(req.auth.id, { profileImg: req.newFileName });
+        res.redirect('/profile');
+      } catch (error) {
+        res.redirect('/profile-update-failed');
+      }
+    });
+  }  
 
   static uploadDocuments(req, res, next) {
     // Configure multer

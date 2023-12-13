@@ -12,7 +12,19 @@
             <div class="card">
                 <div class="card-body">
 
-                    <h2 class="text-center mb-4">Welcome, {{user.firstName}} {{user.lastName}}!</h2>
+                    <h2 class="text-center mb-2">Welcome, {{user.firstName}} {{user.lastName}}!</h2>
+
+                    <div class="text-center mb-2">
+                        <div class="profile-image-container">
+                        <img src="/profiles/{{user.profileImg}}" alt="{{user.firstName}}'s profile" class="profile-image-lg">
+                        <form action="/api/users/upload-profile-img" method="post" enctype="multipart/form-data" id="profile-image-form">
+                            <input type="file" name="image" id="profile-image-input" style="display: none;">
+                            <a href="javascript:void(0)" class="edit-icon" onclick="document.getElementById('profile-image-input').click()">
+                            <i class="fas fa-pen"></i>
+                            </a>
+                        </form>
+                        </div>
+                    </div>
 
                     <ul class="list-group list-group-flush mb-4">
                         <li class="list-group-item">
@@ -30,7 +42,7 @@
                         <div class="col text-center">
                             <a href="/auth/logout" id="logout-button" class="btn btn-danger btn-block">Logout</a>
                             {{#if (eq user.role "user")}}
-                                <a href="/request-upgrade" id="logout-button" class="btn btn-success btn-block">Upgrade to Premium</a>
+                                <a href="/request-upgrade" id="upgrade-button" class="btn btn-success btn-block">Upgrade to Premium</a>
                             {{/if}}
                         </div>
                     </div>
@@ -43,3 +55,37 @@
         <i class="fas fa-comments text-white" style="font-size: 24px;"></i>
     </a>
 </div>
+
+<style>
+.profile-image-container {
+    position: relative;
+    display: inline-block;
+}
+
+.profile-image-lg {
+    border-radius: 50%;
+    width: 150px; 
+    height: 150px;
+}
+
+.edit-icon {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background-color: #007bff;
+    border-radius: 50%;
+    padding: 5px;
+    width: 33px; 
+    height: 33px;
+}
+
+.edit-icon i {
+    color: white;
+}
+</style>
+
+<script>
+  document.getElementById('profile-image-input').addEventListener('change', function() {
+    document.getElementById('profile-image-form').submit();
+  });
+</script>

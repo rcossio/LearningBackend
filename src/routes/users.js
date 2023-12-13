@@ -7,6 +7,7 @@ const objIdFormat = "[0-9a-fA-F]{24}";
 
 // user, premium and admin
 router.get("/current", requireAuthenticated, UserController.currentUser);
+router.post('/upload-profile-img', requireAuthenticated, UserController.uploadProfileImage);
 
 // users, premium
 router.post(`/:userId(${objIdFormat})/documents`,requireUserOrPremium, UserController.uploadDocuments);
