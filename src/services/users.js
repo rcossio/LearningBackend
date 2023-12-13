@@ -6,6 +6,12 @@ import CustomError from './customError.js';
 
 class UserService {
 
+    static async getUsers() {
+        const users = await userDAO.getUsers();
+        const usersDTO = users.map(user => this.getUserData(user));
+        return usersDTO;
+    }
+
     static async getUserById(id) {
         return await userDAO.getUserById(id);
     }
@@ -116,7 +122,7 @@ class UserService {
 
     static getUserData(user) {
         const userDTO = {
-          _id: user.id,
+          _id: user._id,
           cartId: user.cartId,
           chatId: user.chatId,
           email: user.email,
@@ -124,6 +130,7 @@ class UserService {
           lastName: user.lastName,
           role: user.role,
           age: user.age,
+          last_connection: user.last_connection
         };
     
         return userDTO;

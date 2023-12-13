@@ -27,5 +27,8 @@ router.get('/cart-modification-failed', requireUserOrPremium, ViewsController.un
 //users, premium and admin
 router.get('/profile', redirectUnauthenticated, ViewsController.profileView);
 
+//admin
+router.get('/manage-users', requireRole({ allowedRoles: ['admin'] }), ViewsController.manageUsersView);
+
 
 export { router };

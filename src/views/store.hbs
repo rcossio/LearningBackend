@@ -40,7 +40,6 @@
                   </div>
                   <div class="col-auto">
                     <button type="button" class="btn btn-danger mb-1 me-3 update-button" data-id="{{this._id}}">Update</button>
-                    <i class="fas fa-check text-success checkmark position-absolute" style="display:none; top: 37%; right: 5px; transform: translateY(-50%);"></i>
                     <div class="my-1">
                       <button type="button" class="btn btn-link p-0 border-0 bg-transparent delete-button" data-id="{{this._id}}">
                         <i class="fas fa-trash-alt text-dark"></i>
@@ -86,12 +85,13 @@
           'Content-Type': 'application/json'
         }
       })
-      .then(response => response.json())
-      .then(data => {
-        const checkmark = event.target.nextElementSibling;
-        checkmark.style.display = 'inline';
-        checkmark.classList.add('checkmark_fadeout');
-        setTimeout(() => { checkmark.style.display = 'none'; }, 2000);
+      .then(response => {
+        if (response.ok) {
+          alert('Product updated successfully');
+          location.reload(); 
+        } else {
+          alert('Failed to update product');
+        }
       })
       .catch(error => console.error('Error:', error));
     });
@@ -106,10 +106,10 @@
       })
       .then(response => {
         if (response.ok) {
-          // Remove the product card from the UI
-          document.getElementById(`product-card-${productId}`).remove();
+          alert('Product deleted successfully');
+          location.reload(); 
         } else {
-          console.error('Deletion failed');
+          alert('Failed to delete product');
         }
       })
       .catch(error => console.error('Error:', error));

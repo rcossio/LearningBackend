@@ -148,6 +148,12 @@ class ViewsController {
   static userUpgradeRequestFailedView(req, res) { //TODO: add a referrer check so this is accesible by redirection
     return res.render('profile', { error: 'We were unable to process your request. Please contact support.' , user: req.auth });
   }
+
+  static async manageUsersView(req, res, customResponse = {}) {
+    const userList = await UsersService.getUsers();
+
+    return res.render('manage-users', { ...customResponse, user: req.auth, userList });
+  }
 }
 
 export default ViewsController;

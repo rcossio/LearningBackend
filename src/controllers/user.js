@@ -84,6 +84,16 @@ class UserController {
     });
   }
 
+  static async deleteInactiveUsers(req, res) {
+    try {
+      const users = await UserService.deleteInactiveUsers();
+      res.status(200).json({status: 'success', payload: users});
+    } catch (error) {
+      logError(error);
+      res.status(500).json({ status: 'error', payload: error.message });
+    }
+  }
+
 }
 
 export default UserController;

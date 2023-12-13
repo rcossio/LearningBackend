@@ -8,6 +8,11 @@ class UserDAO {
     return user;
   }
 
+  static async getUsers() {
+    const users = await UserModel.find().lean();
+    return users;
+  }
+  
   static async getUserById(id) {
     const user = await UserModel.findById(id).lean();
     if (!user) {
