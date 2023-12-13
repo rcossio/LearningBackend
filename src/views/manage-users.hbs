@@ -67,7 +67,7 @@ document.querySelectorAll('.updowngrade-button').forEach(button => {
   button.addEventListener('click', function() {
     const userId = this.dataset.id;
 
-    fetch(`/api/users/premium/${userId}`, {
+    fetch(`/api/users/role/change/${userId}`, {
       method: 'POST'
     })
     .then(response => {

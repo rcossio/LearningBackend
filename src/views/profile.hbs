@@ -17,7 +17,7 @@
                     <div class="text-center mb-2">
                         <div class="profile-image-container">
                         <img src="/profiles/{{user.profileImg}}" alt="{{user.firstName}}'s profile" class="profile-image-lg">
-                        <form action="/api/users/upload-profile-img" method="post" enctype="multipart/form-data" id="profile-image-form">
+                        <form action="/api/users/profile-img/upload" method="post" enctype="multipart/form-data" id="profile-image-form">
                             <input type="file" name="image" id="profile-image-input" style="display: none;">
                             <a href="javascript:void(0)" class="edit-icon" onclick="document.getElementById('profile-image-input').click()">
                             <i class="fas fa-pen"></i>
@@ -42,7 +42,7 @@
                         <div class="col text-center">
                             <a href="/auth/logout" id="logout-button" class="btn btn-danger btn-block">Logout</a>
                             {{#if (eq user.role "user")}}
-                                <a href="/request-upgrade" id="upgrade-button" class="btn btn-success btn-block">Upgrade to Premium</a>
+                                <a href="/upgrade/request" id="upgrade-button" class="btn btn-success btn-block">Upgrade to Premium</a>
                             {{/if}}
                         </div>
                     </div>
