@@ -2,6 +2,7 @@ import logError from "../utils/errorHandler.js";
 import UserService from "../services/users.js";
 import multer from 'multer';
 import path from 'path';
+import emailTransporter from '../config/email.js';
 
 const __dirname = path.resolve();
 
@@ -85,13 +86,33 @@ class UserController {
   }
 
   static async deleteInactiveUsers(req, res) {
+    let inactiveUsers = [];
     try {
-      const inactiveUsers = await UserService.deleteInactiveUsers();
-      res.status(200).json({status: 'success', payload: inactiveUsers});
+      inactiveUsers = await UserService.deleteInactiveUsers();
     } catch (error) {
       logError(error);
       res.status(500).json({ status: 'error', payload: error.message });
     }
+
+    inactiveUsers.forEach(async user => {
+      
+      const mailOptions = {
+        from: 'rworld@coder.com',
+        to: user.email,
+        subject: 'Deleted account',
+        text: `Hi. \n\nYour account has been deleted due to inactivity. \n\nRegards, \n\nRWorld Team`
+      };
+
+      try {
+        await emailTransporter.sendMail(mailOptions);
+      } catch (error) {
+        logError(error);
+      }
+
+    });
+
+    res.status(200).json({status: 'success', payload: inactiveUsers});
+
   }
 
 }

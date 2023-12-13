@@ -2,6 +2,7 @@ import ProductsService from '../services/products.js';
 import { faker } from '@faker-js/faker';
 import logError from '../utils/errorHandler.js';
 import config from '../config/config.js';
+import emailTransporter from '../config/email.js';
 
 class ProductsController {
 
@@ -58,15 +59,33 @@ class ProductsController {
   };
 
   static async deleteProduct(req, res) {
+    let deletedProduct;
     const { productId } = req.params;
     const email = req.auth.role === 'admin' ? null : req.auth.email;
     try {
-      await ProductsService.deleteProduct(productId, email);
-      res.status(204).end();
+      deletedProduct = await ProductsService.deleteProduct(productId, email);
     } catch (error) {
       logError(error);
       res.status(400).json({ status: 'error', payload: error.message });
     }
+    
+    if (!(deletedProduct.owner === 'admin')) {
+      const mailOptions = {
+        from: 'rworld@coder.com',
+        to: deletedProduct.owner,
+        subject: 'Deleted product',
+        text: `Hi. \n\nYour product ${deletedProduct.title} with code ${deletedProduct.code} has been deleted from our ecommerce. \n\nRegards, \n\nRWorld Team`
+      };
+
+      try {
+        await emailTransporter.sendMail(mailOptions);
+      } catch (error) {
+        logError(error);
+      }
+    }
+
+    res.status(204).end();
+
   };
 
   static async addProduct(req, res) {
