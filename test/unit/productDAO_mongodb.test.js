@@ -2,6 +2,7 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import ProductDAO from '../../src/data/mongo/dao/productsDAO.js';
 import connectDB from '../../src/config/dbConnection.js';
+import ProductsService from '../../src/services/products.js';
 
 const { expect } = chai;
 chai.use(chaiAsPromised);
@@ -14,14 +15,13 @@ describe('ProductDAO MongoDB', function () {
   });
 
   afterEach(async function() {
-    // Delete all products created during the tests
     for (const productId of createdProductIds) {
       try {
         await ProductDAO.deleteProduct(productId);
       } catch (err) {
-        console.log(`TEST MESSAGE: Unable to delete product ${productId}.`);
+        console.log(`       TEST MESSAGE: Unable to delete product ${productId}.`);
       }
-    }
+    };
     createdProductIds = []; 
   });
 
@@ -31,11 +31,12 @@ describe('ProductDAO MongoDB', function () {
         title: 'Test Product',
         description: 'Test Description',
         price: 10.0,
-        thumbnails: ['path/to/thumbnail1', 'path/to/thumbnail2'],
+        thumbnails: ['thumbnail1', 'thumbnail2'],
         code: 'XYZ369',
         stock: 10,
         category: 'TestCategory',
         status: true,
+        owner: 'admin'
       };
       const addedProduct = await ProductDAO.addProduct(product);
       createdProductIds.push(addedProduct._id);
@@ -43,13 +44,56 @@ describe('ProductDAO MongoDB', function () {
       expect(addedProduct.title).to.equal('Test Product');
     });
 
+    it('should add a valid product with mocker', async function () {
+      const products = ProductsService.mockProducts(1);
+      const addedProduct = await ProductDAO.addProduct(products[0]);
+      createdProductIds.push(addedProduct._id);
+      expect(addedProduct).to.have.property('_id');
+    });
+
+    it('should add a valid product without optional properties', async function () {
+      const product = {
+        title: 'Test Product',
+        description: 'Test Description',
+        price: 10.0,
+        code: 'XYZ369',
+        stock: 10,
+        category: 'TestCategory',
+      };
+      const addedProduct = await ProductDAO.addProduct(product);
+      createdProductIds.push(addedProduct._id);
+      expect(addedProduct).to.have.property('_id');
+      expect(addedProduct.title).to.equal('Test Product');
+      expect(addedProduct.thumbnails).to.be.an('array');
+      expect(addedProduct.thumbnails.length).to.equal(0);
+      expect(addedProduct.status).to.equal(true);
+      expect(addedProduct.owner).to.equal('admin');
+    });
+
+    it('should add a product with price ans stock parseable to Number', async function () {
+      const product = {
+          title: 'Test Product2',
+          description: 'Test Description',
+          price: '10.0',
+          thumbnails: ['thumbnail1', 'thumbnail2'],
+          code: 'TestCode',
+          stock: '10',
+          category: 'TestCategory',
+          status: true
+      };
+      const addedProduct = await ProductDAO.addProduct(product);
+      createdProductIds.push(addedProduct._id);
+      expect(addedProduct.price).to.equal(10.0);
+      expect(addedProduct.stock).to.equal(10);
+    });
+
     it('should throw an error for incomplete product details', function () {
-        const incompleteProduct = { title: 'Incomplete Product' };
-        return expect(ProductDAO.addProduct(incompleteProduct)).to.be.rejected;
+        const product = { title: 'Incomplete Product' };
+        return expect(ProductDAO.addProduct(product)).to.be.rejected;
       });
     
-    it('should throw an error for invalid price type', function () {
-      const productWithInvalidPrice = {
+    it('should throw an error for invalid price type (non-parseable to Number)', function () {
+      const product = {
           title: 'Test Product2',
           description: 'Test Description',
           price: 'clearly-not-a-number',
@@ -59,11 +103,25 @@ describe('ProductDAO MongoDB', function () {
           category: 'TestCategory',
           status: true
       };
-      return expect(ProductDAO.addProduct(productWithInvalidPrice)).to.be.rejected;
+      return expect(ProductDAO.addProduct(product)).to.be.rejected;
+    });
+
+    it('should throw an error for invalid stock type (non-parseable to Number)', function () {
+      const product = {
+          title: 'Test Product2',
+          description: 'Test Description',
+          price: 10.0,
+          thumbnails: ['thumbnail1', 'thumbnail2'],
+          code: 'TestCode',
+          stock: 'clearly-not-a-number',
+          category: 'TestCategory',
+          status: true
+      };
+      return expect(ProductDAO.addProduct(product)).to.be.rejected;
     });
 
     it('should throw an error for negative stock', function () {
-        const productWithNegativeStock = {
+        const product = {
             title: 'Test Product3',
             description: 'Test Description',
             price: 10.0,
@@ -73,7 +131,7 @@ describe('ProductDAO MongoDB', function () {
             category: 'TestCategory',
             status: true
         };
-        return expect(ProductDAO.addProduct(productWithNegativeStock)).to.be.rejected;
+        return expect(ProductDAO.addProduct(product)).to.be.rejected;
     });
     
     it('should throw an error for duplicate product code', async function () {
@@ -107,18 +165,49 @@ describe('ProductDAO MongoDB', function () {
 
   });
 
-  describe('getProducts', function () {
-    it('should retrieve products with the given filter', async function () {
-      const filter = { category: 'TestCategory' };
-      const options = { limit: 10, page: 1 };
+  describe('getPaginatedProducts', function () {
+    let createdProductIds = [];
+    
+    before(async function() {
+      const products = ProductsService.mockProducts(10);
+      for (const product of products) {
+        const addedProduct = await ProductDAO.addProduct(product);
+        createdProductIds.push(addedProduct._id);
+      }
+    });
+  
+    after(async function() {
+      for (const productId of createdProductIds) {
+        try {
+          await ProductDAO.deleteProduct(productId);
+        } catch (err) {
+          console.log(`       TEST MESSAGE: Unable to delete product ${productId}.`);
+        }
+      }
+    });
+
+    it('should retrieve all products', async function () {
+      const filter = {};
+      const options = { limit: 99, page: 1 };
       const products = await ProductDAO.getPaginatedProducts(filter, options);
       expect(products).to.be.an('object');
       expect(products.docs).to.be.an('array');
+      expect(products.docs.length).to.equal(10);
     });
+
+    it('should retrieve products according to page and limit', async function () {
+      const filter = {};
+      const options = { limit: 7, page: 2 };
+      const products = await ProductDAO.getPaginatedProducts(filter, options);
+      expect(products).to.be.an('object');
+      expect(products.docs).to.be.an('array');
+      expect(products.docs.length).to.equal(3);
+    });
+
 
     it('should return no products with non-existent category', async function () {
       const filter = { category: 'NonExistentCategory' };
-      const options = { limit: 10, page: 1 };
+      const options = { limit: 5, page: 1 };
       const result = await ProductDAO.getPaginatedProducts(filter, options)
       expect(result.docs.length).to.equal(0);
     });
@@ -188,7 +277,7 @@ describe('ProductDAO MongoDB', function () {
           title: 'Updated Product',
           description: 'Test Description',
           price: 10.0,
-          thumbnails: ['path/to/thumbnail1', 'path/to/thumbnail2'],
+          thumbnails: ['thumbnail1', 'thumbnail2'],
           code: 'XYZ369',
           stock: 10,
           category: 'TestCategory',

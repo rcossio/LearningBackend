@@ -7,7 +7,7 @@ import { requireAdmin} from "../middlewares/authorization.js";
 const router = Router();
 
 // API for admin
-router.get('/mockingproducts', requireAdmin, ProductsController.mockingProducts);
+router.get('/mockingproducts/:numberOfProducts', requireAdmin, ProductsController.mockingProducts);
 router.get('/loggertest', requireAdmin, DevController.testLogger);
 
 

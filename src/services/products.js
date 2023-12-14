@@ -1,6 +1,7 @@
 import {productDAO} from "../data/factory.js";
 import logError from "../utils/errorHandler.js";
 import CustomError from "./customError.js";
+import { faker } from '@faker-js/faker';
 
 class ProductsService {
 
@@ -50,6 +51,32 @@ class ProductsService {
     static async enableProduct(productId) {
         const product = await productDAO.updateProduct(productId, {status: true}); 
         return product;
+    }
+
+    static mockProducts(numberOfProducts){
+        const products = [];
+    
+        for (let i = 0; i < numberOfProducts; i++) {
+          const product = {
+            _id: faker.database.mongodbObjectId(),
+            title: faker.commerce.productName(),     
+            description: faker.commerce.productDescription(),
+            price: parseFloat(faker.commerce.price()), 
+            code: faker.string.alphanumeric(6).toUpperCase(),        
+            stock: faker.number.int({ min: 1, max: 50 }), 
+            category: faker.commerce.department(),    
+            status: faker.datatype.boolean(),           
+            thumbnails: [
+              faker.image.url(),   
+              faker.image.url(),           
+              faker.image.url()
+            ],
+            owner: 'admin'
+          };
+      
+          products.push(product);
+        }    
+        return products;    
     }
 
 }

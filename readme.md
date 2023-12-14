@@ -1,62 +1,62 @@
-## This is the a project from Coderhouse [Backend Programming course ](http://https://www.coderhouse.es/online/programacion-backend "link")
+## Coderhouse Backend Programming Course Project
+This project is part of the [Backend Programming course](https://www.coderhouse.es/online/programacion-backend) offered by Coderhouse.
 
-### Instructions
+### Getting Started
 
-1. Clone the repository (to learn how check [this link](https://docs.github.com/en/desktop/contributing-and-collaborating-using-github-desktop/adding-and-cloning-repositories/cloning-and-forking-repositories-from-github-desktop))
+1. **Clone the Repository**: Learn how to clone repositories from [GitHub documentation](https://docs.github.com/en/desktop/contributing-and-collaborating-using-github-desktop/adding-and-cloning-repositories/cloning-and-forking-repositories-from-github-desktop).
 
-2. Be sure to have NodeJS (>=18.x) and NPM installed. Test this with the commands `node -v` or `npm -v` in a terminal.
+2. **Prerequisites**: Ensure NodeJS (>=18.x) and NPM are installed on your machine. Check by running `node -v` and `npm -v` in your terminal.
 
-3. Install the dependencies with `npm install`.
+3. **Install Dependencies**: Run `npm install` in your terminal to install required dependencies.
 
-4. For testing, start the server with `npm run start` and go to [http://localhost:8080/](http://localhost:8080/)
+4. **Environment Setup**: Configure the .env file following the `sample.env` file's structure. Choose the appropriate environment (development, testing, or production).
+
+5. **Start the Server**: Launch the server using `npm run start` and navigate to [http://localhost:8080/](http://localhost:8080/) in your browser.
 
 ## Dependencies
 
-The ones marked are the ones currently used
+Below are the primary dependencies used in this project:
 
-- [x]  **express** : web framework.
-- [x]  **express-routemap** : express middleware to print all registered routes in a tree structure.
-- [x]  **express-handlebars** : handlebars view engine for express.
-- [x]  **socket.io** : enables real-time bidirectional event-based communication.
-- [x]  **mongoose** : MongoDB object modeling tool.
-- [x]  **mongoose-paginate-v2** : mongoose plugin to paginate mongoose queries.
-- [x]  **dotenv** : loads environment variables from a .env file.
-- [x]  **inspirational-quotes** : get inspirational quotes.
-- [x]  **connect-mongo** : MongoDB session store for Connect and Express.
-- [x]  **bcrypt** : library to help you hash passwords.
-- [x]  **passport** : authentication middleware for Node.js.
-- [x]  **passport-local** : passport strategy for authenticating with a username and password.
-- [x]  **passport-github2** : passport strategy for authenticating with GitHub using the OAuth 2.0 API.
-- [x]  **passport-google-oauth20** : passport strategy for authenticating with Google using the OAuth 2.0 API.
-- [x]  **passport-jwt** : passport strategy for authenticating with a JSON Web Token.
-- [x]  **express-jwt** : middleware that validates JsonWebTokens and sets req.auth.
-- [x]  **jsonwebtoken** : implementation of JSON Web Tokens.
-- [x]  **cookie-parser** : cookie parsing middleware.
-- [x]  **uuid** : simple, fast generation of RFC4122 UUIDS.
-- [x]  **nodemailer** : module for Node.js applications to allow easy as cake email sending.
-- [x]  **winston** : logger for just about everything.
-- [x]  **colors** : get colors in your node.js console.
-- [x]  **swagger-jsdoc** : allows you to integrate swagger using JSDoc comments in your code.
-- [x]  **swagger-ui-express** : serves auto-generated swagger-ui generated API docs from express.
+- **express**: Web framework for Node.js.
+- **express-routemap**: Middleware for printing all registered routes in a tree structure.
+- **express-handlebars**: Handlebars view engine for Express.
+- **socket.io**: For real-time bidirectional event-based communication.
+- **mongoose**: MongoDB object modeling tool.
+- **mongoose-paginate-v2**: Mongoose plugin for query pagination.
+- **dotenv**: Manages environment variables from .env files.
+- **inspirational-quotes**: Provides random inspirational quotes.
+- **connect-mongo**: MongoDB session store for Connect and Express.
+- **bcrypt**: Password hashing library.
+- **passport**: Comprehensive set of strategies support authentication for Node.js.
+- **jsonwebtoken**: Implements JSON Web Tokens.
+- **cookie-parser**: Parses cookies attached to the client request object.
+- **uuid**: For RFC4122 UUID generation.
+- **nodemailer**: Easy email sending in Node.js applications.
+- **winston**: A versatile logging library.
+- **colors**: Adds color support to Node.js console logs.
+- **swagger-jsdoc** & **swagger-ui-express**: Integrates Swagger for API documentation.
 
-## Dev Dependencies
+## Development Dependencies
 
-The ones marked are the ones currently used
+These are the development dependencies:
 
-- [x]  **nodemon** : tool that helps develop node.js based applications by automatically restarting the node application when file changes in the directory are detected.
-- [x]  **faker-js** : generate massive amounts of fake data in the browser and node.js.
-- [x]  **mocha**: for testing
-- [x]  **chai**: for easier syntex while testing
-- [x]  **chai-as-promised**: for easier syntax while testing with promises
-- [x]  **supertest**: for testing requests in the app
+- **nodemon**: Monitors changes in the application and automatically restarts the server.
+- **faker-js**: Generates fake data for testing and development.
+- **mocha** & **chai** (with **chai-as-promised**): Provides a robust testing framework.
+- **supertest**: Allows for HTTP assertions in testing.
 
+## Known Issues
 
-## Known issues
+- JWT in Thunderclient: JWTs are not read from cookies. Use the front-end login and manually copy the JWT cookie to Postman for API testing.
 
-- When working with thunderclient te JWT is not read from the cookie. Login in the front end and use Postman instead (copy the jwt cookie manually).
+- Chat Deletion: Deleting a chat disrupts the Socket.IO functionality, as a new empty chat is not assigned to the user.
 
-- Chat: When a chat is deleted, the user is not asign a new empty chat, it just crashes the socketIO functionality.
+- Cart Functionality: Similar issue as with chat deletion, causing frontend errors.
 
-- Cart: The same as with chat but at least there is a sign of the error in the frontend
+- Hardcoded Admin User: A non-DB admin user set via environment variables lacks complete user properties, potentially leading to bugs.
 
-- There is an admin email requested from Coderhouse that is not in the DB, some times the app crashes while using it
+- Filesystem Storage: The project predominantly uses MongoDB. An outdated filesystem implementation is present but incompatible with the current app version. It's retained for evaluation.
+
+- Product Deletion in Premium User Accounts: Deleting a premium user also deletes their products, but these products remain in other users' carts, leading to potential errors.
+
+- Downgrading Premium Users: Products from downgraded premium users are marked 'unavailable' but remain in other users' carts.
