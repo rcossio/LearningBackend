@@ -1,10 +1,11 @@
-{{#if error}}
-<div class="alert alert-danger mx-5">{{error}}</div>
-{{/if}}
-
-{{#if message}}
-<div class="alert alert-info mx-5">{{message}}</div>
-{{/if}}
+<div id="message-container">
+  {{#if error}}
+  <div class="alert alert-danger">{{error}}</div>
+  {{/if}}
+  {{#if message}}
+  <div class="alert alert-info">{{message}}</div>
+  {{/if}}
+</div>
 
 <div class="container">
   <div class="row">
@@ -67,11 +68,14 @@
 </div>
 
 
-<!-- Script for update and delete functionality -->
 <script>
   document.querySelectorAll('.update-button').forEach(button => {
     button.addEventListener('click', event => {
-      const productId = event.target.dataset.id;
+      const buttonElement = event.target;
+      buttonElement.disabled = true; 
+      buttonElement.textContent = 'Updating...'; 
+
+      const productId = buttonElement.dataset.id;
       const form = document.querySelector(`form[action='/api/products/${productId}']`);
       const formData = new FormData(form);
       
@@ -85,34 +89,57 @@
           'Content-Type': 'application/json'
         }
       })
-      .then(response => {
-        if (response.ok) {
-          alert('Product updated successfully');
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
           location.reload(); 
         } else {
-          alert('Failed to update product');
+          document.getElementById('message-container').innerHTML = `<div class="alert alert-danger">${data.payload}</div>`;
+          buttonElement.disabled = false;
+          buttonElement.textContent = 'Update';
+          setTimeout(function(){document.getElementById('message-container').innerHTML = '';}, 1500);
         }
       })
-      .catch(error => console.error('Error:', error));
+      .catch(error => {
+        console.error('Error:', error)
+        buttonElement.disabled = false;
+        buttonElement.textContent = 'Update';
+      });
     });
   });
 
   document.querySelectorAll('.delete-button').forEach(button => {
     button.addEventListener('click', event => {
-      const productId = event.currentTarget.dataset.id;
+      const buttonElement = event.currentTarget;
+      buttonElement.disabled = true; 
+      buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin text-dark"></i>'; 
+
+      const productId = buttonElement.dataset.id;
 
       fetch(`/api/products/${productId}`, {
         method: 'DELETE'
       })
       .then(response => {
         if (response.ok) {
-          alert('Product deleted successfully');
+          buttonElement.disabled = false;
+          buttonElement.innerHTML = '<i class="fas fa-trash-alt text-dark"></i>'; 
+          setTimeout(function(){document.getElementById('message-container').innerHTML = '';}, 1500);
           location.reload(); 
         } else {
-          alert('Failed to delete product');
+          return response.json();
         }
       })
-      .catch(error => console.error('Error:', error));
+      .then(data => {
+        document.getElementById('message-container').innerHTML = `<div class="alert alert-danger">${data.payload}</div>`;
+        buttonElement.disabled = false;
+        buttonElement.innerHTML = '<i class="fas fa-trash-alt text-dark"></i>';
+        setTimeout(function(){document.getElementById('message-container').innerHTML = '';}, 1500);
+      })
+      .catch(error => {
+        buttonElement.disabled = false;
+        buttonElement.innerHTML = '<i class="fas fa-trash-alt text-dark"></i>';
+        console.error('Error:', error)
+      });
     });
   });
 </script>

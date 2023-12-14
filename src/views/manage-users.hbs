@@ -1,10 +1,11 @@
-{{#if error}}
-<div class="alert alert-danger mx-5">{{error}}</div>
-{{/if}}
-
-{{#if message}}
-<div class="alert alert-info mx-5">{{message}}</div>
-{{/if}}
+<div id="message-container">
+  {{#if error}}
+  <div class="alert alert-danger">{{error}}</div>
+  {{/if}}
+  {{#if message}}
+  <div class="alert alert-info">{{message}}</div>
+  {{/if}}
+</div>
 
 <div class="container">
   <div class="row">
@@ -70,12 +71,13 @@ document.querySelectorAll('.updowngrade-button').forEach(button => {
     fetch(`/api/users/role/change/${userId}`, {
       method: 'POST'
     })
-    .then(response => {
-      if (response.ok) {
-        alert('Role changed successfully');
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
         location.reload(); 
       } else {
-        alert('Failed to change role');
+        document.getElementById('message-container').innerHTML = `<div class="alert alert-danger">${data.payload}</div>`;
+        setTimeout(function(){document.getElementById('message-container').innerHTML = '';}, 1500);
       }
     })
     .catch(error => console.error('Error:', error));
@@ -89,12 +91,13 @@ document.querySelectorAll('.delete-button').forEach(button => {
     fetch(`/api/users/${userId}`, {
       method: 'DELETE'
     })
-    .then(response => {
-      if (response.ok) {
-        alert('User deleted successfully');
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
         location.reload(); 
       } else {
-        alert('Failed to delete user');
+        document.getElementById('message-container').innerHTML = `<div class="alert alert-danger">${data.payload}</div>`;
+        setTimeout(function(){document.getElementById('message-container').innerHTML = '';}, 1500);
       }
     })
     .catch(error => console.error('Error:', error));
@@ -106,12 +109,13 @@ document.getElementById('cleanup-users-button').addEventListener('click', functi
     fetch('/api/users', {
       method: 'DELETE'
     })
-    .then(response => {
-      if (response.ok) {
-        alert('Users cleaned up successfully');
-        location.reload(); // Reload the page to reflect changes
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        location.reload(); 
       } else {
-        alert('Failed to clean up users');
+        document.getElementById('message-container').innerHTML = `<div class="alert alert-danger">${data.payload}</div>`;
+        setTimeout(function(){document.getElementById('message-container').innerHTML = '';}, 1500);
       }
     })
     .catch(error => console.error('Error:', error));
