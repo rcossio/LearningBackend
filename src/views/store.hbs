@@ -81,10 +81,7 @@
       
       fetch(`/api/products/${productId}`, {
         method: 'PUT',
-        body: JSON.stringify({
-          stock: formData.get('stock'),
-          price: formData.get('price')
-        }),
+        body: JSON.stringify(Object.fromEntries(formData)),
         headers: {
           'Content-Type': 'application/json'
         }

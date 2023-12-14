@@ -73,7 +73,7 @@
         window.location.href = '/store';
       } else {
         document.getElementById('message-container').innerHTML = `<div class="alert alert-danger">${data.payload}</div>`;
-        setTimeout(function(){document.getElementById('message-container').innerHTML = '';}, 1500);
+        setTimeout(function(){document.getElementById('message-container').innerHTML = '';}, 2500);
       }
     })
     .catch(error => console.error('Error:', error));

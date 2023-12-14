@@ -1,76 +1,89 @@
-{{#if error}}
-<div class="alert alert-danger">{{error}}</div>
-{{/if}}
-
-{{#if message}}
-<div class="alert alert-info">{{message}}</div>
-{{/if}}
-
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6 mt-5">
-            <div class="card">
-                <div class="card-body">
-                    <h2 class="text-center mb-4">Upgrade to Premium</h2>
-
-                    <form action="/api/users/{{user.id}}/documents" method="post" enctype="multipart/form-data">
-                        <!-- Identification -->
-                        <div class="form-group mb-4 mx-3">
-                            <label for="identification">Identification (PDF, JPG):</label>
-                            <div class="d-flex align-items-center">
-                                <input type="file" class="form-control" id="identification" name="identification" required>
-                                <span id="check-identification" class="checkmark ml-2" style="display:none;">&#10003;</span>
-                            </div>
-                        </div>
-
-                        <!-- Proof of Address -->
-                        <div class="form-group mb-4 mx-3">
-                            <label for="proofOfAddress">Proof of address (PDF, JPG):</label>
-                            <div class="d-flex align-items-center">
-                                <input type="file" class="form-control" id="proofOfAddress" name="proofOfAddress" required>
-                                <span id="check-identification" class="checkmark ml-2" style="display:none;">&#10003;</span>
-                            </div>
-                        </div>
-
-                        <!-- Bank Statement -->
-                        <div class="form-group mb-4 mx-3">
-                            <label for="bankStatement">Bank account statement (PDF, JPG):</label>
-                            <div class="d-flex align-items-center">
-                                <input type="file" class="form-control" id="bankStatement" name="bankStatement" required>
-                                <span id="check-identification" class="checkmark ml-2" style="display:none;">&#10003;</span>
-                            </div>
-                        </div>
-
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-primary mt-3 px-4">Request Upgrade</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+<div id="message-container">
+  {{#if error}}
+  <div class="alert alert-danger">{{error}}</div>
+  {{/if}}
+  {{#if message}}
+  <div class="alert alert-info">{{message}}</div>
+  {{/if}}
 </div>
 
-<!-- TOFIX: This script enables checkmarks one files are uploaded but it is faulty -->
-<script> 
-    document.addEventListener('DOMContentLoaded', function() {
-        // Function to update the checkmark visibility
-        function updateCheckmark(inputId, checkmarkId) {
-            const inputElement = document.getElementById(inputId);
-            const checkmarkElement = document.getElementById(checkmarkId);
-            inputElement.addEventListener('change', function() {
-                if (inputElement.files.length > 0) {
-                    checkmarkElement.style.display = 'inline';
-                } else {
-                    checkmarkElement.style.display = 'none';
-                }
-            });
-        }
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-6 mt-5">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="text-center mb-4">Upgrade to Premium</h2>
 
-        // Update checkmarks for each file input
-        updateCheckmark('identification', 'check-identification');
-        updateCheckmark('proofOfAddress', 'check-proofOfAddress');
-        updateCheckmark('bankStatement', 'check-bankStatement');
+          <form id="upgrade-form" data-userid="{{user.id}}">
+            <!-- Identification -->
+            <div class="form-group mb-4 mx-3">
+              <label for="identification">Identification (PDF, JPG):</label>
+              <div class="d-flex align-items-center">
+                <input type="file" class="form-control" id="identification" name="identification" required>
+                <span id="check-identification" class="checkmark ml-2" style="display:none;">&#10003;</span>
+              </div>
+            </div>
+
+            <!-- Proof of Address -->
+            <div class="form-group mb-4 mx-3">
+              <label for="proofOfAddress">Proof of address (PDF, JPG):</label>
+              <div class="d-flex align-items-center">
+                <input type="file" class="form-control" id="proofOfAddress" name="proofOfAddress" required>
+                <span id="check-proofOfAddress" class="checkmark ml-2" style="display:none;">&#10003;</span>
+              </div>
+            </div>
+
+            <!-- Bank Statement -->
+            <div class="form-group mb-4 mx-3">
+              <label for="bankStatement">Bank account statement (PDF, JPG):</label>
+              <div class="d-flex align-items-center">
+                <input type="file" class="form-control" id="bankStatement" name="bankStatement" required>
+                <span id="check-bankStatement" class="checkmark ml-2" style="display:none;">&#10003;</span>
+              </div>
+            </div>
+
+            <div class="text-center">
+              <button type="button" class="btn btn-primary mt-3 px-4" id="request-upgrade-button">Request Upgrade</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function updateCheckmark(inputId, checkmarkId) {
+    const inputElement = document.getElementById(inputId);
+    const checkmarkElement = document.getElementById(checkmarkId);
+    inputElement.addEventListener('change', function() {
+      checkmarkElement.style.display = inputElement.files.length > 0 ? 'inline' : 'none';
     });
-</script>
+  }
 
+  updateCheckmark('identification', 'check-identification');
+  updateCheckmark('proofOfAddress', 'check-proofOfAddress');
+  updateCheckmark('bankStatement', 'check-bankStatement');
+
+  document.getElementById('request-upgrade-button').addEventListener('click', function() {
+    const form = document.getElementById('upgrade-form');
+    const userId = form.getAttribute('data-userid');
+    const formData = new FormData(form);
+
+    fetch(`/api/users/${userId}/documents`, {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      const messageContainer = document.getElementById('message-container');
+      if (data.status === 'success') {
+        messageContainer.innerHTML = `<div class="alert alert-primary">We received your request successfully!</div>`;
+      } else {
+        messageContainer.innerHTML = `<div class="alert alert-danger">${data.payload}</div>`;
+      }
+      setTimeout(() => messageContainer.innerHTML = '', 2500);
+    })
+    .catch(error => console.error('Error:', error));
+  });
+</script>
