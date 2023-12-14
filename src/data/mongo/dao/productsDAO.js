@@ -8,11 +8,25 @@ class ProductDAO {
       const product = await ProductModel.create(productData);
       return product;
     } catch (err) {
+      if (err.code === 11000) {
+        // Checks the duplicated field causing the error
+        if (Object.keys(err.keyPattern)[0] === 'code'){
+          throw new CustomError(`Duplicate entry for code: ${productData['code']}.`, 'INVALID_DATA');
+        }
+      }
       throw new CustomError('Unable to add product.','UNKNOWN_ERROR');
     }
   }
 
-  static async getProducts(filter = {}, options = {}) {
+  static async getProducts(filter) {
+    const result = await ProductModel.find(filter).lean();
+    if (!result) {
+      throw new CustomError('No products found.','UNKNOWN_ERROR');
+    }
+    return result;
+  }
+
+  static async getPaginatedProducts(filter = {}, options = {}) {
     const result = await ProductModel.paginate(filter, options);
     if (!result) {
       throw new CustomError('No products found.','UNKNOWN_ERROR');

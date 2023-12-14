@@ -106,7 +106,7 @@ describe('Cart Router', function() {
       const response = await request.post(`/api/carts/${user.cartId}/purchase`).set('Cookie', [jwtUserCookie]);
   
       expect(response.status).to.equal(302);
-      expect(response.headers.location).to.include('/purchase-successful');
+      expect(response.headers.location).to.include('/purchase/success');
     });
   
   });

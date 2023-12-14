@@ -12,7 +12,7 @@ class ViewsController {
     const { limit = 3, page = 1, sort = 'asc', query = '' } = req.query;
     const sortOrder = sort === 'desc' ? -1 : 1;
 
-    const filter = { status: true };
+    const filter = { status: true, stock: { $gt: 0 } };
     if (query) {
         filter.$or = [
             { title: new RegExp(query, 'i') },
@@ -71,10 +71,10 @@ class ViewsController {
   static async profileView(req, res, customResponse = {}) {
     let user;
     if (req.auth.email === config.admin.email) {
-      user = UsersService.getUserData(req.auth)
+      user = UsersService.getUserPublicData(req.auth) // this is not necessary
     } else {
       const requestedUser = await UsersService.getUserByEmail(req.auth.email);
-      user = UsersService.getUserData(requestedUser)
+      user = UsersService.getUserPublicData(requestedUser)
     }
     res.render('profile', { ...customResponse, user });
   }
@@ -100,11 +100,11 @@ class ViewsController {
   }
 
   static userUpgradeFormView(req, res,customResponse = {}) {
-    return res.render('user-upgrade-form', { ...customResponse, user: req.auth });
+    return res.render('upgrade-user-form', { ...customResponse, user: req.auth });
   }
 
   static premiumAddProductView(req, res,customResponse = {}) {
-    return res.render('premium-add-product', { ...customResponse, user: req.auth });
+    return res.render('add-product', { ...customResponse, user: req.auth });
   }
 
 
@@ -141,18 +141,11 @@ class ViewsController {
     } 
   }
 
-  static userUpgradeRequestSuccessfulView(req, res) { //TODO: add a referrer check so this is accesible by redirection
-    return res.render('profile', { message: 'We recieved your request successfully!' , user: req.auth });
-  }
-
-  static userUpgradeRequestFailedView(req, res) { //TODO: add a referrer check so this is accesible by redirection
-    return res.render('profile', { error: 'We were unable to process your request. Please contact support.' , user: req.auth });
-  }
-
   static async manageUsersView(req, res, customResponse = {}) {
     const userList = await UsersService.getUsers();
+    const userListPublicData = userList.map(user => UsersService.getUserPublicData(user));
 
-    return res.render('manage-users', { ...customResponse, user: req.auth, userList });
+    return res.render('manage-users', { ...customResponse, user: req.auth, userList: userListPublicData });
   }
 }
 

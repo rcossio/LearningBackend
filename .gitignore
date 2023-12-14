@@ -1,3 +1,6 @@
 node_modules/
 .env*
 logs/*
+uploads/profiles/*
+uploads/documents/*
+!uploads/documents/default.png

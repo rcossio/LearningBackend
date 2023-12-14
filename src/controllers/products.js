@@ -98,7 +98,11 @@ class ProductsController {
       res.status(201).json({ status: 'success', payload: addedProduct });
     } catch (error) {
       logError(error);
-      res.status(400).json({ status: 'error', payload: error.message });
+      if (error.code === 6) { // Code for invalid data
+        res.status(400).json({  status: 'error', payload: 'Oops! It seems there\'s already a product with the same product code. Please choose a unique product code for your new product.'})
+      } else {
+        res.status(400).json({ status: 'error', payload: error.message });
+      }
     }
   };
 
@@ -107,8 +111,8 @@ class ProductsController {
     const product = req.body;
     const email = req.auth.role === 'admin' ? null : req.auth.email;
     try {
-      await ProductsService.updateProduct(productId, product, email);
-      res.status(200).json({ status: 'success', payload: 'Product updated successfully' });
+      const updatedProduct = await ProductsService.updateProduct(productId, product, email);
+      res.status(200).json({ status: 'success', payload: updatedProduct });
     } catch (error) {
       logError(error);
       res.status(400).json({ status: 'error', payload: error.message });

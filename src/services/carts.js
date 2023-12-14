@@ -2,7 +2,7 @@ import {cartDAO} from "../data/factory.js";
 import CustomError from "./customError.js";
 import ProductsService from "./products.js";
 
-class CartService {
+class CartsService {
   static async getCartById(cartId) {
     return await cartDAO.getCartById(cartId);
   }
@@ -27,7 +27,7 @@ class CartService {
         quantity = quantity < 1 ? 1 : quantity;
     }
     
-    return await this.updateProductQuantity(cartId, productId, quantity);
+    return await CartsService.updateProductQuantity(cartId, productId, quantity);
   }
 
   static async deleteProductFromCart(cartId, productId) {
@@ -56,7 +56,7 @@ class CartService {
   }
 
   static emptyCart(cartId) {
-    return this.modifyCart(cartId, []);
+    return CartsService.modifyCart(cartId, []);
   }
 
   static async updateProductQuantity(cartId, productId, quantity) {
@@ -87,4 +87,4 @@ class CartService {
 
 }
 
-export default CartService;
+export default CartsService;

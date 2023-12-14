@@ -20,7 +20,7 @@ passport.use(new JwtStrategy.Strategy({
     secretOrKey : config.auth.jwtSecret
 }, async (jwt_payload, done) => {
     try {
-        const user = await UsersService.getUserById(jwt_payload.id);
+        const user = await UsersService.getUserById(jwt_payload._id);
         if (user) {
             return done(null, user);
         }
@@ -38,13 +38,7 @@ passport.use('signupStrategy', new LocalStrategy(
     },
     async (req, email, password, done) => {
         try {
-            const userData = {
-                firstName: req.body.firstName,
-                lastName: req.body.lastName,
-                age: req.body.age,
-                email,
-                password
-            };
+            const userData = { ...req.body, email, password };
             const user = await UsersService.registerUser(userData);
             return done(null, user);
         } catch (error) {

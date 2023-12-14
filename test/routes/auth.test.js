@@ -62,17 +62,17 @@ describe('Auth Router', function() {
 
       const response = await request.post('/auth/register').send(newUser);
       expect(response.status).to.equal(302);
-      expect(response.headers.location).to.equal('/auth/registered-successfully');
+      expect(response.headers.location).to.equal('/auth/register/success');
     });
 
     it('should return the register confirmation view', async () => {
-      const response = await request.get('/auth/registered-successfully');
+      const response = await request.get('/auth/register/success');
       expect(response.status).to.equal(200);
       expect(response.text).to.include('User registered successfully'); 
     });
 
     it('should return the register failure view', async () => {
-      const response = await request.get('/auth/registered-failed');
+      const response = await request.get('/auth/register/failed');
       expect(response.status).to.equal(200);
       expect(response.text).to.include('Unable to register user'); 
     });
@@ -99,7 +99,7 @@ describe('Auth Router', function() {
     });
 
     it('should return the failed login view', async () => {
-      const response = await request.get('/auth/login-failed');
+      const response = await request.get('/auth/login/failed');
       expect(response.status).to.equal(200);
       expect(response.text).to.include('Unable to log in'); 
     });

@@ -8,7 +8,7 @@ const router = Router();
 
 // API for admin
 router.get('/mockingproducts', requireAdmin, ProductsController.mockingProducts);
-router.get('/loggerTest', requireAdmin, DevController.testLogger);
+router.get('/loggertest', requireAdmin, DevController.testLogger);
 
 
 export { router };

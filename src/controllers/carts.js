@@ -84,10 +84,10 @@ class CartsController {
     static async purchaseCart(req, res) {
         try {
             const ticketCode = await TicketService.createTicket(req.params.cartId, req.auth.email);
-            res.redirect(`/purchase-successful/${ticketCode}`);
+            res.redirect(`/purchase/success/${ticketCode}`);
         } catch (error) {
             logError(error);
-            res.redirect('/purchase-failed')
+            res.redirect('/purchase/failed')
         }
     }
 

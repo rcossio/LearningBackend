@@ -3,27 +3,14 @@ import passport from '../config/passportConfig.js';
 import jwt from 'jsonwebtoken';
 import config from '../config/config.js';
 import emailTransporter from '../config/email.js';
+import logError from '../utils/errorHandler.js';
+import generateJwtToken from '../utils/jwt.js';
 
 class AuthController {
 
-    static createJwtAndSetCookie(user, res) {
-        const jwt_payload = {
-            id: user._id,
-            cartId: user.cartId,
-            chatId: user.chatId,
-            email: user.email,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            role: user.role,
-            profileImg: user.profileImg
-        };
-        const options = { expiresIn: '1h' };
-        const token = jwt.sign(jwt_payload, config.auth.jwtSecret, options);
-        
-        res.cookie('jwt', token, {
-            httpOnly: true,
-            maxAge: 3600000
-        });
+    static async createJwtAndSetCookie(userId, res) {
+        const token = await generateJwtToken(userId);
+        res.cookie('jwt', token, { httpOnly: true, maxAge: 3600000});
     }
 
     static registerView(req, res,customResponse = {}) {
@@ -32,19 +19,18 @@ class AuthController {
 
     static registerUser(req, res, next) {
         passport.authenticate('signupStrategy', (error, user, info) => {
-            if (error || !user) {
-                return res.redirect('/auth/registered-failed');
-            }
-            res.redirect('/auth/registered-successfully'); 
+            if (error) {
+                logError(error);
+                return res.status(400).json({ status: 'error', payload: error.message}) 
+            } else if (!(user)) {
+                return res.status(400).json({ status: 'error', payload: 'Unable to register user.'}) 
+            } 
+            return res.status(200).json({ status: 'success', payload: user}) 
         })(req, res, next);
     }
 
     static registrationSuccessView(req, res) {
         return AuthController.loginView(req, res, { message: 'User registered successfully. Please log in' });
-    }
-
-    static registrationFailedView(req, res) {
-        return AuthController.registerView(req, res, { error: 'Unable to register user.' });
     }
 
     static loginView(req, res, customResponse = {}) {
@@ -82,7 +68,7 @@ class AuthController {
         const options = { expiresIn: '1h' };
         const passwordResetToken = jwt.sign(jwtPayload, config.auth.jwtSecret, options);
 
-        const passwordResetLink = `http://localhost:${config.server.port}/auth/restore-password-confirmation/${passwordResetToken}`;
+        const passwordResetLink = `http://localhost:${config.server.port}/auth/password/restore/confirm/${passwordResetToken}`;
 
         const mailOptions = {
             from: 'rworld@coder.com',
@@ -130,14 +116,14 @@ class AuthController {
     }
 
     static loginUser(req, res, next) {
-        passport.authenticate('loginStrategy', (err, user, info) => {
+        passport.authenticate('loginStrategy', async (err, user, info) => {
             if (err || !user) {
-                return res.redirect('/auth/login-failed');
+                return res.redirect('/auth/login/failed');
             }
-            AuthController.createJwtAndSetCookie(user, res);
             if (!(user._id === 0)) {
                 UsersService.updateLoginDate(user._id);
             }
+            await AuthController.createJwtAndSetCookie(user._id, res);
             res.redirect('/'); 
         })(req, res, next);
     }
@@ -147,11 +133,11 @@ class AuthController {
     }
 
     static githubAuthCallback(req, res, next) {
-        passport.authenticate('githubStrategy', (err, user, info) => {
+        passport.authenticate('githubStrategy', async (err, user, info) => {
             if (err || !user) {
-                return res.redirect('/auth/login-failed');
+                return res.redirect('/auth/login/failed');
             }
-            AuthController.createJwtAndSetCookie(user, res);
+            await AuthController.createJwtAndSetCookie(user._id, res);
             UsersService.updateLoginDate(user._id);
             res.redirect('/'); 
         })(req, res, next);
@@ -162,11 +148,11 @@ class AuthController {
     }
 
     static googleAuthCallback(req, res, next) {
-        passport.authenticate('googleStrategy', (err, user, info) => {
+        passport.authenticate('googleStrategy', async (err, user, info) => {
             if (err || !user) {
-                return res.redirect('/auth/login-failed');
+                return res.redirect('/auth/login/failed');
             }
-            AuthController.createJwtAndSetCookie(user, res);
+            await AuthController.createJwtAndSetCookie(user._id, res);
             UsersService.updateLoginDate(user._id);
             res.redirect('/'); 
         })(req, res, next);
@@ -174,7 +160,7 @@ class AuthController {
 
     static logout(req, res) {
         if (req.auth.email !== config.admin.email) {
-            UsersService.updateLoginDate(req.auth.id);
+            UsersService.updateLoginDate(req.auth._id);
         }
         res.clearCookie('jwt');
         return res.redirect('/');

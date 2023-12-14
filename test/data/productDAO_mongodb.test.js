@@ -111,7 +111,7 @@ describe('ProductDAO MongoDB', function () {
     it('should retrieve products with the given filter', async function () {
       const filter = { category: 'TestCategory' };
       const options = { limit: 10, page: 1 };
-      const products = await ProductDAO.getProducts(filter, options);
+      const products = await ProductDAO.getPaginatedProducts(filter, options);
       expect(products).to.be.an('object');
       expect(products.docs).to.be.an('array');
     });
@@ -119,7 +119,7 @@ describe('ProductDAO MongoDB', function () {
     it('should return no products with non-existent category', async function () {
       const filter = { category: 'NonExistentCategory' };
       const options = { limit: 10, page: 1 };
-      const result = await ProductDAO.getProducts(filter, options)
+      const result = await ProductDAO.getPaginatedProducts(filter, options)
       expect(result.docs.length).to.equal(0);
     });
   });

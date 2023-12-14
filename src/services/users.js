@@ -1,15 +1,18 @@
 import bcrypt from 'bcrypt';
 import {userDAO} from "../data/factory.js";
+
 import CartsService from './carts.js';
+import ProductService from "../services/products.js";
+import ChatService from "../services/chat.js";
+
 import config from '../config/config.js';
 import CustomError from './customError.js';
 
-class UserService {
+class UsersService {
 
     static async getUsers() {
         const users = await userDAO.getUsers();
-        const usersDTO = users.map(user => this.getUserData(user));
-        return usersDTO;
+        return users;
     }
 
     static async getUserById(id) {
@@ -25,10 +28,10 @@ class UserService {
         }
     }
 
-    static async registerUser(userDTO) {
+    static async registerUser(userData) {
         let existingUser;
         try {
-            existingUser = await this.getUserByEmail(userDTO.email);
+            existingUser = await UsersService.getUserByEmail(userData.email);
         } catch (error) {
             if (error.message !== 'User not found.') {
                 throw error; 
@@ -39,22 +42,22 @@ class UserService {
             throw new CustomError('User already exists.', 'INVALID_DATA');
         }
     
-        if (userDTO.email.toLowerCase() === config.admin.email.toLowerCase()) {
+        if (userData.email.toLowerCase() === config.admin.email.toLowerCase()) {
             throw new CustomError('Admin already exists.', 'INVALID_DATA');
         }
     
-        const hashedPassword = await bcrypt.hash(userDTO.password, 10);
+        const hashedPassword = await bcrypt.hash(userData.password, 10);
         const cart = await CartsService.createCart();
-        const newUser = {
-            firstName: userDTO.firstName,
-            lastName: userDTO.lastName,
-            email: userDTO.email,
-            age: userDTO.age,
+        const newUserDTO = { //adds information and filters invalid fields
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            email: userData.email,
+            age: userData.age,
             password: hashedPassword,
             cartId: cart._id
         }; 
         
-        return await userDAO.addNewUser(newUser);
+        return await userDAO.addNewUser(newUserDTO);
     }    
 
     static async loginUser(email, password) {
@@ -69,7 +72,7 @@ class UserService {
             return adminUser;
         }
 
-        const user = await this.getUserByEmail(email);
+        const user = await UsersService.getUserByEmail(email);
         if (!user.password) {
             throw new CustomError('Wrong authentication method.', 'AUTH_ERROR');
         }
@@ -82,14 +85,26 @@ class UserService {
         return user;
     }
 
-    static async loginOrCreateUser(userDTO) {
-        const user = await this.getUserByEmail(userDTO.email);
-        if (user) {
+    static async loginOrCreateUser(userData) {
+        try {
+            const user = await UsersService.getUserByEmail(userData.email);
             return user;
+        } catch (error) {
+            if (error.code === 6) { //invalid data error
+                const cart = await CartsService.createCart();
+                const newUserDTO = { //adds information and filters invalid fields
+                    firstName: userData.firstName,
+                    lastName: userData.lastName,
+                    email: userData.email,
+                    age: userData.age,
+                    password: hashedPassword,
+                    cartId: cart._id
+                }; 
+                return await userDAO.addNewUser(newUserDTO);
+            } else {
+                logError(error);
+            }
         }
-        const cart = await CartsService.createCart();
-        const newUser = { ...userDTO, cartId: cart._id };
-        return await userDAO.addNewUser(newUser);
     }
 
     static async setUserPasswordByEmail(email, newPassword) {
@@ -109,9 +124,24 @@ class UserService {
         const user = await userDAO.getUserById(userId);
 
         if (user.role === 'premium') {
-            return await userDAO.updateUserById(userId, {role: 'user'});
+            const user = await userDAO.updateUserById(userId, {role: 'user'});
+            const products = await ProductService.getProducts({owner:user.email});
+
+            products.docs.forEach(async product => {
+              await ProductService.disableProduct(product._id);
+            });
+
+            return user
+
         } else if (user.role === 'user') {
-            return await userDAO.updateUserById(userId, {role: 'premium'});
+            const user = await userDAO.updateUserById(userId, {role: 'premium'});
+            const products = await ProductService.getProducts({owner:user.email});
+
+            products.docs.forEach(async product => {
+              await ProductService.enableProduct(product._id);
+            });
+
+            return user
         }
     }
 
@@ -122,11 +152,20 @@ class UserService {
     }
 
     static async deleteUser(userId) {
-        return await userDAO.deleteUser(userId);
+        const user = await userDAO.deleteUser(userId);
+        const products = await ProductService.getProducts({owner:user.email});
+
+        products.docs.forEach(async product => {
+          await ProductService.deleteProduct(product._id);
+        });
+  
+        await CartsService.removeCart(user.cartId);
+        await ChatService.deleteChat(user.chatId);
+        return user;
     }
 
-    static getUserData(user) {
-        const userDTO = {
+    static getUserPublicData(user) {
+        const userDTO = { //everything but the password and documents
           _id: user._id,
           cartId: user.cartId,
           chatId: user.chatId,
@@ -144,22 +183,21 @@ class UserService {
 
     static async updateUserById(userId, updates) {
         const user = await userDAO.updateUserById(userId, updates);
-        return this.getUserData(user);
+        return user;
     }
 
     static async deleteInactiveUsers() {
         const users = await userDAO.getUsers();
-        const usersDTO = users.map(user => this.getUserData(user));
         const today = new Date();
-        const inactiveUsers = usersDTO.filter(user => {
+        const inactiveUsers = users.filter(user => {
             const lastConnection = new Date(user.last_connection);
             const diffTime = Math.abs(today - lastConnection);
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-            return diffDays > 1;
+            return diffDays > 1; //more than 1 day
         });
-        inactiveUsers.forEach(user => this.deleteUser(user._id));
+        inactiveUsers.forEach(user => UsersService.deleteUser(user._id));
         return inactiveUsers;
     }
 }
 
-export default UserService;
+export default UsersService;

@@ -24,6 +24,12 @@ class ChatDAO {
     }
     return chat.messages;
   }
+
+  static async deleteChat(id) {
+    const chat = await ChatModel.findByIdAndDelete(id);
+    return chat;
+  }
+
 }
 
 export default ChatDAO;

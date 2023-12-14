@@ -19,6 +19,10 @@ class ChatService {
   static async createNewChat(userEmail) {
     return await chatDAO.createChat(userEmail);
   }
+
+  static async deleteChat(id) {
+    return await chatDAO.deleteChat(id);
+  }
 }
 
 export default ChatService;

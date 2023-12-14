@@ -5,7 +5,7 @@ import CustomError from "./customError.js";
 class ProductsService {
 
     static async getProducts(filter, options) {
-        return await productDAO.getProducts(filter, options);
+        return await productDAO.getPaginatedProducts(filter, options);
     }
 
     static async getProductById(productId) {
@@ -38,8 +38,20 @@ class ProductsService {
                 throw new CustomError('You are not allowed to edit this product','INVALID_DATA');
             }
         }
-        return await productDAO.updateProduct(productId, product); 
+        const updatedProduct = await productDAO.updateProduct(productId, product); 
+        return updatedProduct;
     }
+
+    static async disableProduct(productId) {
+        const product = await productDAO.updateProduct(productId, {status: false}); 
+        return product;
+    }
+
+    static async enableProduct(productId) {
+        const product = await productDAO.updateProduct(productId, {status: true}); 
+        return product;
+    }
+
 }
 
 export default ProductsService;
