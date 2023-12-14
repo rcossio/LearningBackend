@@ -2,5 +2,10 @@ node_modules/
 .env*
 logs/*
 uploads/profiles/*
-uploads/documents/*
 !uploads/profiles/default.png
+
+uploads/documents/*
+!uploads/documents/.gitkeep
+
+logs/*
+!logs/.gitkeep
