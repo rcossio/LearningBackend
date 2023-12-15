@@ -2,81 +2,125 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import supertest from 'supertest';
 import { app } from '../../src/app.js'; 
-import dotenv from 'dotenv';
-import path from 'path';
+import config from '../../src/config/config.js';
+import UsersService from '../../src/services/users.js';
+import generateJwtToken from '../../src/utils/jwt.js';
+import connectDB from '../../src/config/dbConnection.js';
+import ProductsService from '../../src/services/products.js';
 
-dotenv.config({
-    path: path.join(path.resolve(), '.env.testing')
-  });
 
 const { expect } = chai;
 chai.use(chaiAsPromised);
 const request = supertest(app);
 
-async function getJwtCookie(email, password) {
-  const loginResponse = await request.post('/auth/login').send({ email, password });
-  const jwtCookie = loginResponse.headers['set-cookie']
-      .find(cookie => cookie.startsWith('jwt='))
-      .split(';')[0]; // Extracts the JWT token from the cookie
-
-  return jwtCookie;
-}
-
-describe('Product Router', function() {
-  let jwtPremiumUserCookie;
-  let jwtAdminCookie;
+describe('Product Router', async function() {
+  let createdProductIds = [];
+  let premiumJwtToken;
+  let adminJwtToken;
 
   before(async function() {
-    this.timeout(5000); // Set a timeout of 10 seconds for all tests in this describe block
     await new Promise(resolve => setTimeout(resolve, 1000));  //wait 1 second for the server to start
 
-    jwtPremiumUserCookie = await getJwtCookie(process.env.PREMIUM_USER_EMAIL, process.env.PREMIUM_USER_PASS);
-    jwtAdminCookie = await getJwtCookie(process.env.ADMIN_EMAIL, process.env.ADMIN_PASS);
+    // Create Premium User and Admin
+    const premiumData = {
+      email: config.test.premiumUser.email,
+      password: config.test.premiumUser.pass,
+      firstName: 'Test',
+      lastName: 'Test',
+    };
+    const premiumUser = await UsersService.registerUser(premiumData)
+    await UsersService.updateUserById(premiumUser._id, { role: 'premium' });
+    premiumJwtToken = await generateJwtToken(premiumUser._id);
+
+    const adminData = {
+      email: config.test.adminUser.email,
+      password: config.test.adminUser.pass,
+      firstName: 'Test',
+      lastName: 'Test',
+    };
+    const adminUser = await UsersService.registerUser(adminData)
+    await UsersService.updateUserById(adminUser._id, { role: 'admin' });
+    adminJwtToken = await generateJwtToken(adminUser._id);
 
   });
 
-  describe('GET /api/products', () => {
-    it('should return a list of products', async () => {
-      const response = await request.get('/api/products');
+  afterEach(async function() {
+    for (const productId of createdProductIds) {
+      try {
+        await ProductsService.deleteProduct(productId);
+      } catch (err) {
+        console.log(`       TEST MESSAGE: Unable to delete product ${productId}.`);
+      }
+    };
+    createdProductIds = []; 
+  });
+
+  after(async function() {
+    const premiumUser = await UsersService.getUserByEmail(config.test.premiumUser.email);
+    await UsersService.deleteUser(premiumUser._id);
+    
+    const adminUser = await UsersService.getUserByEmail(config.test.adminUser.email);
+    await UsersService.deleteUser(adminUser._id);
+  });
+
+
+
+  describe('GET /api/products', async () => {
+    it('should return a list of products according to limit', async () => {
+      const initialProducts = ProductsService.mockProducts(10);
+      for (const product of initialProducts) {
+        const addedProduct = await ProductsService.addProduct(product);
+        createdProductIds.push(addedProduct._id);
+      }
+
+      const response = await request.get('/api/products?limit=7');
       expect(response.status).to.equal(200);
       const products = response.body.payload;
-      if (products.length > 0) {
-        expect(products[0]).to.have.property('_id');
-      }
-    });
-
-    it('should return a list of two products', async () => {
-        const response = await request.get('/api/products/?limit=2');
-        expect(response.status).to.equal(200);
-        const products = response.body.payload;
-        expect(products.length).to.equal(2);
+      expect(products).to.be.an('array');
+      expect(products.length).to.equal(7);
+      expect(products[0]).to.have.property('_id');
     });
     
-    it('should return the product called ZZ', async () => {
-      const response = await request.get('/api/products/?query=ZZ');
+    it('should return the product using query', async () => {
+      const initialProducts = ProductsService.mockProducts(10);
+      initialProducts[0].title = 'CustomPattern';
+      initialProducts[1].description = 'CustomPattern';
+      initialProducts[2].category = 'CustomPattern';
+      for (const product of initialProducts) {
+        const addedProduct = await ProductsService.addProduct(product);
+        createdProductIds.push(addedProduct._id);
+      }
+
+      const response = await request.get('/api/products/?query=CustomPattern');
       expect(response.status).to.equal(200);
       const products = response.body.payload;
-      expect(products.length).to.equal(1);
-      expect(products[0]).to.have.property('title', 'Product ZZ');
+      expect(products).to.be.an('array');
+      expect(products.length).to.equal(3);
     });
   });
 
-  describe('GET /api/products/:productId', () => {
+
+
+  describe('GET /api/products/:productId', async () => {
     it('should return a product from a valid id', async () => {
+      const initialProduct = ProductsService.mockProducts(1)[0];
+      const addedProduct = await ProductsService.addProduct(initialProduct);
+      createdProductIds.push(addedProduct._id);
+
       const response = await request.get('/api/products');
       const products = response.body.payload;
-      if (products.length > 0) {
-        const productId = products[0]._id;
-        const secondResponse = await request.get(`/api/products/${productId}`);
-        expect(secondResponse.status).to.equal(200);
-        expect(secondResponse.body.payload).to.have.property('_id');
-        expect(secondResponse.body.payload._id).to.equal(productId);
-      }
+
+      const secondResponse = await request.get(`/api/products/${products[0]._id}`);
+      expect(secondResponse.status).to.equal(200);
+      expect(secondResponse.body.payload).to.have.property('_id');
+      expect(secondResponse.body.payload._id).to.equal(products[0]._id);
     });
+    
     it('should return error 400 with invalid ID of the right format', async () => {
       const response = await request.get('/api/products/6525572f3cc5f8ae1f6aaeba'); //invalid id 
       expect(response.status).to.equal(400);
     });
+
     it('should return error 404 with invalid ID format', async () => {
         const response = await request.get('/api/products/invalid-id-format'); //invalid id 
         expect(response.status).to.equal(404);
@@ -84,126 +128,119 @@ describe('Product Router', function() {
   });
 
 
-  describe('Product Management by Premium User', () => {
+
+  describe('Product Management by Premium User', async () => {
     let user;
-    let productId;
   
     before(async () => {
-      const baseResponse = await request.get('/api/users/current').set('Cookie', [jwtPremiumUserCookie]);
+      const baseResponse = await request.get('/api/users/current').set('Cookie', [`jwt=${premiumJwtToken}`]);
       user = baseResponse.body.payload;
     });
   
     it('should allow a premium user to add a new product', async () => {
-      const newProduct = {
-        title: "New Product",
-        description: "A description for the new product",
-        code: "XYZ123",
-        price: 19.99,
-        status: true,
-        stock: 100,
-        category: "New Category",
-        thumbnails: ["thumbnail1.jpg", "thumbnail2.jpg"],
-      };
+      const newProduct = ProductsService.mockProducts(1)[0];
   
       const response = await request.post('/api/products')
-                                    .set('Cookie', [jwtPremiumUserCookie])
+                                    .set('Cookie', [`jwt=${premiumJwtToken}`])
                                     .send(newProduct);
   
       expect(response.status).to.equal(201);
       expect(response.body.status).to.equal('success'); 
       expect(response.body.payload).to.have.property('_id');
-      productId = response.body.payload._id;
+      createdProductIds.push(response.body.payload._id);
+
     });
   
     it('should retrieve the newly added product', async () => {
-      const response = await request.get(`/api/products/${productId}`);
-      expect(response.body.payload).to.have.property('title', 'New Product');
+      const initialProduct = ProductsService.mockProducts(1)[0];
+      initialProduct.owner = user.email;
+      const addedProduct = await ProductsService.addProduct(initialProduct);
+      createdProductIds.push(addedProduct._id);
+
+      const response = await request.get(`/api/products/${addedProduct._id}`);
+      expect(response.body.payload.title).to.equal(initialProduct.title);
       expect(response.body.payload.owner).to.equal(user.email);
     });
   
     it('should allow a premium user to update the product', async () => {
+      const initialProduct = ProductsService.mockProducts(1)[0];
+      initialProduct.owner = user.email;
+      const addedProduct = await ProductsService.addProduct(initialProduct);
+      createdProductIds.push(addedProduct._id);
+
       const updatedProduct = { title: "New Title", stock: 123 };
   
-      const response = await request.put(`/api/products/${productId}`)
-                                    .set('Cookie', [jwtPremiumUserCookie])
+      const response = await request.put(`/api/products/${addedProduct._id}`)
+                                    .set('Cookie', [`jwt=${premiumJwtToken}`])
                                     .send(updatedProduct);
   
       expect(response.status).to.equal(200);
       expect(response.body.status).to.equal('success');
-    });
-  
-    it('should reflect the updated product details', async () => {
-      const response = await request.get(`/api/products/${productId}`);
-      expect(response.body.payload).to.have.property('title', 'New Title');
+      expect(response.body.payload.title).to.equal('New Title');
       expect(response.body.payload.stock).to.equal(123);
     });
   
     it('should allow a premium user to delete the product', async () => {
-      const response = await request.delete(`/api/products/${productId}`)
-                                    .set('Cookie', [jwtPremiumUserCookie]);
+      const initialProduct = ProductsService.mockProducts(1)[0];
+      initialProduct.owner = user.email;
+      const addedProduct = await ProductsService.addProduct(initialProduct);
+
+      const response = await request.delete(`/api/products/${addedProduct._id}`)
+                                    .set('Cookie', [`jwt=${premiumJwtToken}`]);
   
       expect(response.status).to.equal(204);
     });
   });  
 
 
-  describe('Admin Product Management', () => {
-    let jwtCookie;
-    let productId;
+
+  describe('Admin Product Management', async () => {
+    let user;
 
     before(async () => {
-      // Authenticate as an admin user
-      jwtCookie = process.env.ADMIN_USER_COOKIE;
+      const baseResponse = await request.get('/api/users/current').set('Cookie', [`jwt=${adminJwtToken}`]);
+      user = baseResponse.body.payload;
     });
 
     it('should allow an admin user to add a new product', async () => {
-      const newProduct = {
-        title: "New Product",
-        description: "A description for the new product",
-        code: "123XYZ",
-        price: 19.99,
-        status: true,
-        stock: 100,
-        category: "New Category",
-        thumbnails: ["thumbnail1.jpg", "thumbnail2.jpg"],
-      };
+      const newProduct = ProductsService.mockProducts(1)[0];
 
       const response = await request.post('/api/products')
-                                    .set('Cookie', [jwtAdminCookie])
+                                    .set('Cookie', [`jwt=${adminJwtToken}`])
                                     .send(newProduct);
 
       expect(response.status).to.equal(201);
       expect(response.body.status).to.equal('success'); 
       expect(response.body.payload).to.have.property('_id');
-      productId = response.body.payload._id;
-    });
-
-    it('should retrieve the newly added product', async () => {
-      const response = await request.get(`/api/products/${productId}`);
-      expect(response.body.payload).to.have.property('title', 'New Product');
+      expect(response.body.payload.title).to.equal(newProduct.title);
       expect(response.body.payload.owner).to.equal('admin');
+      createdProductIds.push(response.body.payload._id);
     });
 
     it('should allow an admin user to update the product', async () => {
+      const initialProduct = ProductsService.mockProducts(1)[0];
+      const addedProduct = await ProductsService.addProduct(initialProduct);
+      createdProductIds.push(addedProduct._id);
+
       const updatedProduct = { title: "New Title", stock: 123 };
-
-      const response = await request.put(`/api/products/${productId}`)
-                                    .set('Cookie', [jwtAdminCookie])
+  
+      const response = await request.put(`/api/products/${addedProduct._id}`)
+                                    .set('Cookie', [`jwt=${adminJwtToken}`])
                                     .send(updatedProduct);
-
+  
       expect(response.status).to.equal(200);
       expect(response.body.status).to.equal('success');
-    });
-
-    it('should reflect the updated product details', async () => {
-      const response = await request.get(`/api/products/${productId}`);
-      expect(response.body.payload).to.have.property('title', 'New Title');
+      expect(response.body.payload.title).to.equal('New Title');
       expect(response.body.payload.stock).to.equal(123);
     });
 
     it('should allow an admin user to delete the product', async () => {
-      const response = await request.delete(`/api/products/${productId}`)
-                                    .set('Cookie', [jwtAdminCookie]);
+      const initialProduct = ProductsService.mockProducts(1)[0];
+      initialProduct.owner = user.email;
+      const addedProduct = await ProductsService.addProduct(initialProduct);
+
+      const response = await request.delete(`/api/products/${addedProduct._id}`)
+                                    .set('Cookie', [`jwt=${adminJwtToken}`]);
 
       expect(response.status).to.equal(204);
     });

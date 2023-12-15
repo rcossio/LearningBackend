@@ -13,6 +13,7 @@ class ProductsController {
     if (query) {
       filter.$or = [
         { title: new RegExp(query, 'i') },
+        { description: new RegExp(query, 'i') },
         { category: new RegExp(query, 'i') }
       ];
     }
@@ -91,7 +92,7 @@ class ProductsController {
     try{
       const product = { 
         ...req.body,
-        owner: req.auth.email === config.admin.email? 'admin': req.auth.email
+        owner: req.auth.role === 'admin'? 'admin': req.auth.email
       };
       const addedProduct = await ProductsService.addProduct(product);
       res.status(201).json({ status: 'success', payload: addedProduct });

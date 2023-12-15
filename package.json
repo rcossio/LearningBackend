@@ -10,7 +10,7 @@
   "scripts": {
     "start": "node src/app.js",
     "startDev": "npx nodemon src/app.js",
-    "test": "NODE_ENV=testing mocha 'test/**/*.test.js' --exit"
+    "test": "NODE_ENV=testing mocha 'test/**/*.test.js' --exit --timeout 5000"
   },
   "repository": {
     "type": "git",

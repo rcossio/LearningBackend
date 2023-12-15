@@ -7,7 +7,7 @@ import ProductsService from '../../src/services/products.js';
 const { expect } = chai;
 chai.use(chaiAsPromised);
 
-describe('ProductDAO MongoDB', function () {
+describe('ProductDAO MongoDB', async function () {
   let createdProductIds = [];
 
   before(async function() {
@@ -25,30 +25,14 @@ describe('ProductDAO MongoDB', function () {
     createdProductIds = []; 
   });
 
-  describe('addProduct', function () {
+  describe('addProduct', async function () {
+
     it('should add a valid product', async function () {
-      const product = {
-        title: 'Test Product',
-        description: 'Test Description',
-        price: 10.0,
-        thumbnails: ['thumbnail1', 'thumbnail2'],
-        code: 'XYZ369',
-        stock: 10,
-        category: 'TestCategory',
-        status: true,
-        owner: 'admin'
-      };
+      const product = ProductsService.mockProducts(1)[0];
       const addedProduct = await ProductDAO.addProduct(product);
       createdProductIds.push(addedProduct._id);
       expect(addedProduct).to.have.property('_id');
-      expect(addedProduct.title).to.equal('Test Product');
-    });
-
-    it('should add a valid product with mocker', async function () {
-      const products = ProductsService.mockProducts(1);
-      const addedProduct = await ProductDAO.addProduct(products[0]);
-      createdProductIds.push(addedProduct._id);
-      expect(addedProduct).to.have.property('_id');
+      expect(addedProduct.title).to.equal(product.title);
     });
 
     it('should add a valid product without optional properties', async function () {
@@ -71,131 +55,77 @@ describe('ProductDAO MongoDB', function () {
     });
 
     it('should add a product with price ans stock parseable to Number', async function () {
-      const product = {
-          title: 'Test Product2',
-          description: 'Test Description',
-          price: '10.0',
-          thumbnails: ['thumbnail1', 'thumbnail2'],
-          code: 'TestCode',
-          stock: '10',
-          category: 'TestCategory',
-          status: true
-      };
+      const product = ProductsService.mockProducts(1)[0];
+      product.price = '10.0';
+      product.stock = '10';
+
       const addedProduct = await ProductDAO.addProduct(product);
       createdProductIds.push(addedProduct._id);
       expect(addedProduct.price).to.equal(10.0);
       expect(addedProduct.stock).to.equal(10);
     });
 
-    it('should throw an error for incomplete product details', function () {
+    it('should throw an error for incomplete product details', async function () {
         const product = { title: 'Incomplete Product' };
         return expect(ProductDAO.addProduct(product)).to.be.rejected;
       });
     
-    it('should throw an error for invalid price type (non-parseable to Number)', function () {
-      const product = {
-          title: 'Test Product2',
-          description: 'Test Description',
-          price: 'clearly-not-a-number',
-          thumbnails: ['thumbnail1', 'thumbnail2'],
-          code: 'TestCode',
-          stock: 10,
-          category: 'TestCategory',
-          status: true
-      };
+    it('should throw an error for invalid price type (non-parseable to Number)', async function () {
+      const product = ProductsService.mockProducts(1)[0];
+      product.price = 'clearly-not-a-number';
       return expect(ProductDAO.addProduct(product)).to.be.rejected;
     });
 
-    it('should throw an error for invalid stock type (non-parseable to Number)', function () {
-      const product = {
-          title: 'Test Product2',
-          description: 'Test Description',
-          price: 10.0,
-          thumbnails: ['thumbnail1', 'thumbnail2'],
-          code: 'TestCode',
-          stock: 'clearly-not-a-number',
-          category: 'TestCategory',
-          status: true
-      };
+    it('should throw an error for invalid stock type (non-parseable to Number)', async function () {
+      const product = ProductsService.mockProducts(1)[0];
+      product.stock = 'clearly-not-a-number';
       return expect(ProductDAO.addProduct(product)).to.be.rejected;
     });
 
-    it('should throw an error for negative stock', function () {
-        const product = {
-            title: 'Test Product3',
-            description: 'Test Description',
-            price: 10.0,
-            thumbnails: ['thumbnail1', 'thumbnail2'],
-            code: 'TestCode',
-            stock: -5,
-            category: 'TestCategory',
-            status: true
-        };
+    it('should throw an error for negative stock', async function () {
+      const product = ProductsService.mockProducts(1)[0];
+      product.stock = -1;
         return expect(ProductDAO.addProduct(product)).to.be.rejected;
     });
     
     it('should throw an error for duplicate product code', async function () {
-        // First, add a product with a unique code
-        const uniqueProduct = {
-          title: 'Unique Product',
-          description: 'Unique Description',
-          price: 30.0,
-          thumbnails: ['thumbnail1', 'thumbnail2'],
-          code: 'UniqueCode123',
-          stock: 15,
-          category: 'UniqueCategory',
-          status: true
-        };
-        const addedProduct = await ProductDAO.addProduct(uniqueProduct);
-        createdProductIds.push(addedProduct._id);
+      const products = ProductsService.mockProducts(1);
+      const firstProduct = products[0];
+      const secondProduct = products[0];
+      secondProduct.code = firstProduct.code;
+
+      const addedProduct = await ProductDAO.addProduct(firstProduct);
+      createdProductIds.push(addedProduct._id);
       
-        // Then, try to add another product with the same code
-        const duplicateProduct = {
-          title: 'Another Product',
-          description: 'Another Description',
-          price: 35.0,
-          thumbnails: ['thumbnail3', 'thumbnail4'],
-          code: 'UniqueCode123', // Same code as the uniqueProduct
-          stock: 20,
-          category: 'AnotherCategory',
-          status: true
-        };
-        await expect(ProductDAO.addProduct(duplicateProduct)).to.be.rejected;
+      await expect(ProductDAO.addProduct(secondProduct)).to.be.rejected;
     });      
 
   });
 
-  describe('getPaginatedProducts', function () {
-    let createdProductIds = [];
-    
-    before(async function() {
-      const products = ProductsService.mockProducts(10);
-      for (const product of products) {
+
+
+  describe('getPaginatedProducts', async function () {
+
+    it('should retrieve all products', async function () {
+      const initialProducts = ProductsService.mockProducts(10);
+      for (const product of initialProducts) {
         const addedProduct = await ProductDAO.addProduct(product);
         createdProductIds.push(addedProduct._id);
       }
-    });
-  
-    after(async function() {
-      for (const productId of createdProductIds) {
-        try {
-          await ProductDAO.deleteProduct(productId);
-        } catch (err) {
-          console.log(`       TEST MESSAGE: Unable to delete product ${productId}.`);
-        }
-      }
-    });
-
-    it('should retrieve all products', async function () {
       const filter = {};
       const options = { limit: 99, page: 1 };
-      const products = await ProductDAO.getPaginatedProducts(filter, options);
+      const products = await ProductDAO.getPaginatedProducts({}, options);
       expect(products).to.be.an('object');
       expect(products.docs).to.be.an('array');
       expect(products.docs.length).to.equal(10);
     });
 
     it('should retrieve products according to page and limit', async function () {
+      const initialProducts = ProductsService.mockProducts(10);
+      for (const product of initialProducts) {
+        const addedProduct = await ProductDAO.addProduct(product);
+        createdProductIds.push(addedProduct._id);
+      }
       const filter = {};
       const options = { limit: 7, page: 2 };
       const products = await ProductDAO.getPaginatedProducts(filter, options);
@@ -206,31 +136,28 @@ describe('ProductDAO MongoDB', function () {
 
 
     it('should return no products with non-existent category', async function () {
+      const initialProducts = ProductsService.mockProducts(10);
+      for (const product of initialProducts) {
+        const addedProduct = await ProductDAO.addProduct(product);
+        createdProductIds.push(addedProduct._id);
+      }
       const filter = { category: 'NonExistentCategory' };
-      const options = { limit: 5, page: 1 };
-      const result = await ProductDAO.getPaginatedProducts(filter, options)
+      const result = await ProductDAO.getPaginatedProducts(filter)
       expect(result.docs.length).to.equal(0);
     });
   });
 
-  describe('getProductById', function () {
+
+
+  describe('getProductById', async function () {
+
     it('should retrieve a product by ID', async function () {
-      // Add a product first
-      const newProduct = {
-          title: 'New Product',
-          description: 'New Description',
-          price: 20.0,
-          thumbnails: ['thumbnail1', 'thumbnail2'],
-          code: 'NewCode',
-          stock: 10,
-          category: 'NewCategory',
-          status: true
-      };
-      const addedProduct = await ProductDAO.addProduct(newProduct);
+      const products = ProductsService.mockProducts(1);
+      const addedProduct = await ProductDAO.addProduct(products[0]);
       createdProductIds.push(addedProduct._id);
 
       const retrievedProduct = await ProductDAO.getProductById(addedProduct._id);
-      //expect(retrievedProduct).to.be.an('object');
+      expect(retrievedProduct).to.be.an('object');
       expect(retrievedProduct._id).to.deep.equal(addedProduct._id);
     });
 
@@ -239,78 +166,47 @@ describe('ProductDAO MongoDB', function () {
     });
   });
 
-  describe('updateProduct', function () {
+
+
+  describe('updateProduct', async function () {
     it('should update an existing product', async function () {
-      // Add a product, then update it
-      const originalProduct = {
-          title: 'Original Product',
-          description: 'Original Description',
-          price: 20.0,
-          thumbnails: ['thumbnail1', 'thumbnail2'],
-          code: 'OriginalCode',
-          stock: 10,
-          category: 'OriginalCategory',
-          status: true
-      };
-      const addedProduct = await ProductDAO.addProduct(originalProduct);
-      createdProductIds.push(addedProduct._id);
+      const products = ProductsService.mockProducts(2);
+      const productData = products[0];
+      const updatedProductData = products[1];
 
-      const updatedProductDetails = {
-          title: 'Updated Product',
-          description: 'Updated Description',
-          price: 25.0,
-          thumbnails: ['thumbnail3', 'thumbnail4'],
-          code: 'UpdatedCode',
-          stock: 15,
-          category: 'UpdatedCategory',
-          status: false
-      };
-      const updatedProduct = await ProductDAO.updateProduct(addedProduct._id, updatedProductDetails);
+      const product = await ProductDAO.addProduct(productData);
+      createdProductIds.push(product._id);
 
-      expect(updatedProduct.title).to.equal('Updated Product');
-      expect(updatedProduct.price).to.equal(25.0);
+      const updatedProduct = await ProductDAO.updateProduct(product._id, updatedProductData);
+
+      expect(updatedProduct.title).to.equal(updatedProductData.title);
+      expect(updatedProduct.price).to.equal(updatedProductData.price);
     });
 
     it('should throw an error when updating a non-existent product', async function () {
-      const nonExistentProductId = 'non-existent-id';
-      const updatedProductDetails = {
-          title: 'Updated Product',
-          description: 'Test Description',
-          price: 10.0,
-          thumbnails: ['thumbnail1', 'thumbnail2'],
-          code: 'XYZ369',
-          stock: 10,
-          category: 'TestCategory',
-          status: true,
-      };
-      await expect(ProductDAO.updateProduct(nonExistentProductId, updatedProductDetails)).to.be.rejected;
+      const product = ProductsService.mockProducts(1)[0];
+      const nonExistentId = 'non-existent-id';
+      await expect(ProductDAO.updateProduct(nonExistentId, product)).to.be.rejected;
     });
   });
 
-  describe('deleteProduct', function () {
+
+
+
+  describe('deleteProduct', async function () {
     it('should delete an existing product', async function () {
-      const product = {
-          title: 'Product to Delete',
-          description: 'Description',
-          price: 15.0,
-          thumbnails: ['thumbnail1', 'thumbnail2'],
-          code: 'DeleteCode',
-          stock: 5,
-          category: 'DeleteCategory',
-          status: true
-      };
+      const product = ProductsService.mockProducts(1)[0];
       const addedProduct = await ProductDAO.addProduct(product);
       createdProductIds.push(addedProduct._id);
 
       const deletionResult = await ProductDAO.deleteProduct(addedProduct._id);
       expect(deletionResult).to.be.an('object');
-      expect(deletionResult.title).to.equal('Product to Delete');
+      expect(deletionResult.title).to.equal(product.title);
     });
 
     it('should throw an error when deleting a non-existent product', async function () {
-      const nonExistentProductId = 'non-existent-id';
-      await expect(ProductDAO.deleteProduct(nonExistentProductId))
-          .to.be.rejected;
+      const nonExistentId = 'non-existent-id';
+      await expect(ProductDAO.deleteProduct(nonExistentId)).to.be.rejected;
     });
   });
 });

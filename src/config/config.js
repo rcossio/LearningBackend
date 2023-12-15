@@ -42,9 +42,25 @@ const config = {
       callbackUrl: process.env.AUTH_GOOGLE_CALLBACK_URL
     }
   },
+
   mail: {
     user: process.env.GMAIL_USER.toLowerCase(), //prevents bad usage of .env file
     pass: process.env.GMAIL_APP_PASSWORD
+  },
+
+  test: {
+    regularUser: {
+      email: process.env.REGULAR_USER_EMAIL,
+      pass: process.env.REGULAR_USER_PASS
+    },
+    premiumUser: {
+      email: process.env.PREMIUM_USER_EMAIL,
+      pass: process.env.PREMIUM_USER_PASS
+    },
+    adminUser: {
+      email: process.env.ADMIN_USER_EMAIL,
+      pass: process.env.ADMIN_USER_PASS
+    }
   }
 }
 

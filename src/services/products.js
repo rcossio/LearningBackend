@@ -58,7 +58,7 @@ class ProductsService {
     
         for (let i = 0; i < numberOfProducts; i++) {
           const product = {
-            _id: faker.database.mongodbObjectId(),
+            //_id: faker.database.mongodbObjectId(), // For testing (main purpose) this is not needed
             title: faker.commerce.productName(),     
             description: faker.commerce.productDescription(),
             price: parseFloat(faker.commerce.price()), 
@@ -70,8 +70,8 @@ class ProductsService {
               faker.image.url(),   
               faker.image.url(),           
               faker.image.url()
-            ],
-            owner: 'admin'
+            ]//,
+            //owner: 'admin' // For testing (main purpose) this is not needed
           };
       
           products.push(product);
