@@ -18,6 +18,11 @@ const userSchema = new mongoose.Schema({
   age: {
     type: Number,
     required: false,
+    min: [16, 'You must be at least 16 years old'],
+    validate: {
+      validator: Number.isInteger,
+      message: 'Age must be an integer'
+    }
   },
   password: {
     type: String,

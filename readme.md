@@ -61,6 +61,8 @@ These are the development dependencies:
 
 - Downgrading Premium Users: Products from downgraded premium users are marked 'unavailable' but remain in other users' carts.
 
+- Some validation of the data is performed in the front-end as a quick fix to avoid missusage, but this should not be parmanent
+
 - Premium users can update stock and price with negative values, and stock with fractional values
 
 ## Desired features
@@ -68,8 +70,6 @@ These are the development dependencies:
 - Consider blocking emails in testing and development environment
 
 - A button for users to close their accounts
-
-- Set a minimum age for login
 
 - A button for users to change their personal data (first name, last name)
 

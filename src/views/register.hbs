@@ -26,7 +26,8 @@
 
                         <div class="form-group">
                             <label for="age">Age:</label>
-                            <input type="number" class="form-control" id="age" name="age" required>
+                            <input type="number" class="form-control" id="age" name="age" min="16" required>
+                            <small id="ageWarning" class="text-danger" style="display: none;">You must be at least 16 years old</small>
                         </div>
 
                         <div class="form-group">
@@ -49,9 +50,26 @@
 
 
 <script>
+  let validAge = true;
+
+  const ageInput = document.getElementById('age');
+  ageInput.addEventListener('input', () => {
+    if (ageInput.value < 16) {
+      document.getElementById('ageWarning').style.display = 'block';
+      validAge = false;
+    } else {
+      document.getElementById('ageWarning').style.display = 'none';
+      validAge = true;
+    }
+  });
+
   document.getElementById('register-button').addEventListener('click', function() {
     const form = document.getElementById('register-form');
     const formData = new FormData(form);
+
+    if (!validAge) {
+      return;
+    }
 
     fetch(`/auth/register/`, {
       method: 'POST',
