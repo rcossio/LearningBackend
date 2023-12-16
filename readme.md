@@ -49,7 +49,7 @@ These are the development dependencies:
 
 - JWT in Thunderclient: JWTs are not read from cookies. Use the front-end login and manually copy the JWT cookie to Postman for API testing.
 
-- Chat Deletion: Deleting a chat disrupts the Socket.IO functionality, as a new empty chat is not assigned to the user.
+- Chat Deletion: Deleting a chat (which should not happen naturally but a developer can force it) disrupts the Socket.IO functionality, as a new empty chat is not assigned to the user.
 
 - Cart Functionality: Similar issue as with chat deletion, causing frontend errors.
 
@@ -60,3 +60,32 @@ These are the development dependencies:
 - Product Deletion in Premium User Accounts: Deleting a premium user also deletes their products, but these products remain in other users' carts, leading to potential errors.
 
 - Downgrading Premium Users: Products from downgraded premium users are marked 'unavailable' but remain in other users' carts.
+
+- Premium users store only displays 3 products (there is no pagination)
+
+- Premium users can publish a product with negative price
+
+- Premium users can update stock and price with negative values, and stock with fractional values
+
+- Arrows in premium users store should have a min and max value
+
+- Admins can delete admins, bad idea
+
+- Gmail and github login is faulty
+
+## Desired features
+
+- A button for users to close their accounts
+
+- Set a minimum age for login
+
+- A button for users to change their personal data (first name, last name)
+
+- If the profile image is unaccessible there with be a broken link in the /profile endpoint (it should better have a white circle)
+
+- A button for premium users to return to downgrade
+
+- A button to disable the products (status: false)
+
+- A sign for admins that a user has requested upgrade
+

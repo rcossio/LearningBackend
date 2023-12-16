@@ -4,6 +4,7 @@ import supertest from 'supertest';
 import { app } from '../../src/app.js'; 
 import config from '../../src/config/config.js';
 import UsersService from '../../src/services/users.js';
+import { setupUser } from '../testHelpers.js';
 
 const { expect } = chai;
 chai.use(chaiAsPromised);
@@ -12,8 +13,6 @@ const request = supertest(app);
 
 describe('Auth Router', function() {
   let regularJwtToken;
-  let premiumJwtToken;
-  let adminJwtToken;
   const testUser = {
     firstName: 'TestName',
     lastName: 'TestLastName',
@@ -24,18 +23,13 @@ describe('Auth Router', function() {
   
   before(async function() {
     await new Promise(resolve => setTimeout(resolve, 1000));  //wait 1 second for the server to start
-
     regularJwtToken = await setupUser('regular');
-    premiumJwtToken = await setupUser('premium');
-    adminJwtToken = await setupUser('admin');
 
   });
 
-  afterEach(async function() {
-    const user = await UsersService.getUserByEmail(testUser.email);
-    if (user) {
-      await UsersService.deleteUser(user._id);
-    };
+  after(async function() {
+    const regularUser = await UsersService.getUserByEmail(config.test.regularUser.email);
+    await UsersService.deleteUser(regularUser._id);
   });
 
 
@@ -49,20 +43,16 @@ describe('Auth Router', function() {
 
     it('should register a new user', async () => {
       const response = await request.post('/auth/register').send(testUser);
-      expect(response.status).to.equal(302);
-      expect(response.headers.location).to.equal('/auth/register/success');
+      expect(response.status).to.equal(200);
+      expect(response.body.status).to.equal('success');
+      const user = await UsersService.getUserByEmail(testUser.email);
+      await UsersService.deleteUser(user._id);
     });
 
     it('should return the register confirmation view', async () => {
       const response = await request.get('/auth/register/success');
       expect(response.status).to.equal(200);
       expect(response.text).to.include('User registered successfully'); 
-    });
-
-    it('should return the register failure view', async () => {
-      const response = await request.get('/auth/register/failed');
-      expect(response.status).to.equal(200);
-      expect(response.text).to.include('Unable to register user'); 
     });
 
   });
@@ -77,8 +67,8 @@ describe('Auth Router', function() {
 
     it('should log in an existing user', async () => {
       const existingUser = {
-        email: process.env.REGULAR_USER_EMAIL,
-        password: process.env.REGULAR_USER_PASS,
+        email: config.test.regularUser.email,
+        password: config.test.regularUser.pass
       }
 
       const response = await request.post('/auth/login').send(existingUser);

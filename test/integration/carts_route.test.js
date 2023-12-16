@@ -2,79 +2,96 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import supertest from 'supertest';
 import { app } from '../../src/app.js';
-import dotenv from 'dotenv';
-import path from 'path';
-
-dotenv.config({
-    path: path.join(path.resolve(), '.env.testing')
-});
+import config from '../../src/config/config.js';
+import UsersService from '../../src/services/users.js';
+import CartsService from '../../src/services/carts.js';
+import ProductsService from '../../src/services/products.js';
+import { setupUser } from '../testHelpers.js';
 
 const { expect } = chai;
 chai.use(chaiAsPromised);
 const request = supertest(app);
 
-async function getJwtCookie(email, password) {
-  const loginResponse = await request.post('/auth/login').send({ email, password });
-  const jwtCookie = loginResponse.headers['set-cookie']
-      .find(cookie => cookie.startsWith('jwt='))
-      .split(';')[0]; // Extracts the JWT token from the cookie
-
-  return jwtCookie;
-}
-
 describe('Cart Router', function() {
-  let jwtAdminCookie;
-  let jwtUserCookie;
-  let cartId;
-  let productId = "64b97c687084efd5376dab4c"; // Valid product ID with stock
+  let regularJwtToken;
+  let adminJwtToken;
 
   before(async function() {
-    this.timeout(5000); // Set a timeout of 5 seconds for all tests in this describe block
-    await new Promise(resolve => setTimeout(resolve, 1000));  //wait 1 second for the server to start
+    await new Promise(resolve => setTimeout(resolve, 1500));  //wait 1.5 seconds for the server to start
 
-    jwtAdminCookie = await getJwtCookie(process.env.ADMIN_EMAIL, process.env.ADMIN_PASS);
-    jwtUserCookie = await getJwtCookie(process.env.REGULAR_USER_EMAIL, process.env.REGULAR_USER_PASS);
+    regularJwtToken = await setupUser('regular');
+    adminJwtToken = await setupUser('admin');
   });
+
+  after(async function() {
+    const regularUser = await UsersService.getUserByEmail(config.test.regularUser.email);
+    await UsersService.deleteUser(regularUser._id);
+    
+    const adminUser = await UsersService.getUserByEmail(config.test.adminUser.email);
+    await UsersService.deleteUser(adminUser._id);
+  });
+
+
 
   describe('Admin Cart Management', () => {
     it('should create a new cart', async () => {
-      const response = await request.post('/api/carts').set('Cookie', [jwtAdminCookie]);
+      const response = await request.post('/api/carts').set('Cookie', [`jwt=${adminJwtToken}`]);
       expect(response.status).to.equal(201);
-      cartId = response.body.payload._id; 
     });
 
     it('should get a cart by ID', async () => {
-      const response = await request.get(`/api/carts/${cartId}`).set('Cookie', [jwtAdminCookie]);
+      const cart = await CartsService.createCart();
+      const response = await request.get(`/api/carts/${cart._id}`).set('Cookie', [`jwt=${adminJwtToken}`]);
       expect(response.status).to.equal(200);
-      expect(response.body.payload._id).to.equal(cartId);
+      expect(response.body.payload._id).to.equal(cart._id.toString());
+      await CartsService.removeCart(cart._id);
     });
 
     it('should update product quantity in the cart', async () => {
-      const response = await request.put(`/api/carts/${cartId}/product/${productId}`).set('Cookie', [jwtAdminCookie]).send({ quantity: 5 }); // Setting new quantity
+      const cart = await CartsService.createCart();
+      const product = ProductsService.mockProducts(1)[0];
+      const addedProduct = await ProductsService.addProduct(product);
+
+      const response = await request.put(`/api/carts/${cart._id}/product/${addedProduct._id}`)
+                        .set('Cookie', [`jwt=${adminJwtToken}`])
+                        .send({ quantity: 5 }); // Setting new quantity
     
       expect(response.status).to.equal(200);
       expect(response.body.status).to.equal('success');
       expect(response.body.payload).to.equal('Product quantity updated successfully');
+      await CartsService.removeCart(cart._id);
+      await ProductsService.deleteProduct(addedProduct._id);      
     });
     
 
     it('should update a cart', async () => {
+      const cart = await CartsService.createCart();
+      const product = ProductsService.mockProducts(1)[0];
+      const addedProduct = await ProductsService.addProduct(product);
+
       const updateData = {
-        products: [
-          { productId, quantity: 2 }
-        ]
+        products: [{ 
+          productId: addedProduct._id, 
+          quantity: 2 
+        }]
       };
-    
-      const response = await request.put(`/api/carts/${cartId}`).set('Cookie', [jwtAdminCookie]).send(updateData);
+      const response = await request.put(`/api/carts/${cart._id}`)
+                        .set('Cookie', [`jwt=${adminJwtToken}`])
+                        .send(updateData);
     
       expect(response.status).to.equal(200);
       expect(response.body.status).to.equal('success');
       expect(response.body.payload).to.be.an('object');
-      expect(response.body.payload.products[0].productId).to.equal('64b97c687084efd5376dab4c');
+      expect(response.body.payload.products[0].productId).to.equal(addedProduct._id.toString());
+      await CartsService.removeCart(cart._id);
+      await ProductsService.deleteProduct(addedProduct._id);      
+
     });
     
     it('should delete a cart', async () => {
-      const response = await request.delete(`/api/carts/${cartId}`).set('Cookie', [jwtAdminCookie]);
+      const cart = await CartsService.createCart();
+      const response = await request.delete(`/api/carts/${cart._id}`)
+                        .set('Cookie', [`jwt=${adminJwtToken}`]);
     
       expect(response.status).to.equal(204);
     });        
@@ -85,28 +102,47 @@ describe('Cart Router', function() {
     let user;
 
     before(async () => {
-      const baseResponse = await request.get('/api/users/current').set('Cookie', [jwtUserCookie]);
+      const baseResponse = await request.get('/api/users/current').set('Cookie', [`jwt=${regularJwtToken}`]);
       user = baseResponse.body.payload; 
     });
 
     it('should add a product to the cart', async () => {
-      const response = await request.post(`/api/carts/${user.cartId}/product/${productId}/increase`).set('Cookie', [jwtUserCookie]);
+      const product = ProductsService.mockProducts(1)[0];
+      const addedProduct = await ProductsService.addProduct(product);
+
+      const response = await request.post(`/api/carts/${user.cartId}/product/${addedProduct._id}/increase`)
+                        .set('Cookie', [`jwt=${regularJwtToken}`]);
       expect(response.status).to.equal(302);
-      expect(response.headers.location).to.equal('/cart'); //this redirection means successful adding
+      expect(response.headers.location).to.equal('/cart');
+      await CartsService.emptyCart(user.cartId);
+      await ProductsService.deleteProduct(addedProduct._id);
     });
 
     it('should delete a product from the cart', async () => {
-      const response = await request.post(`/api/carts/${user.cartId}/product/${productId}`).set('Cookie', [jwtUserCookie]);
+      const product = ProductsService.mockProducts(1)[0];
+      const addedProduct = await ProductsService.addProduct(product);
+      await CartsService.addProductToCart(user.cartId, addedProduct._id, 1, user.email);
+
+      const response = await request.post(`/api/carts/${user.cartId}/product/${addedProduct._id}`)
+                        .set('Cookie', [`jwt=${regularJwtToken}`]);
       expect(response.status).to.equal(302);
-      expect(response.headers.location).to.equal('/cart'); //this redirection means successful adding
+      expect(response.headers.location).to.equal('/cart');
+      await CartsService.emptyCart(user.cartId);
+      await ProductsService.deleteProduct(addedProduct._id);
     });
 
     it('should successfully purchase items in the cart and redirect', async () => {
-      await request.post(`/api/carts/${user.cartId}/product/${productId}/increase`).set('Cookie', [jwtUserCookie]); //we make sure there is a product
-      const response = await request.post(`/api/carts/${user.cartId}/purchase`).set('Cookie', [jwtUserCookie]);
+      const product = ProductsService.mockProducts(1)[0];
+      const addedProduct = await ProductsService.addProduct(product);
+      await CartsService.addProductToCart(user.cartId, addedProduct._id, 1, user.email);
+
+      const response = await request.post(`/api/carts/${user.cartId}/purchase`)
+                        .set('Cookie', [`jwt=${regularJwtToken}`]);
   
       expect(response.status).to.equal(302);
-      expect(response.headers.location).to.include('/purchase/success');
+      expect(response.headers.location).to.include('/purchase/success'); //TOFIX: this creates a ticket left unerased
+      await CartsService.emptyCart(user.cartId);
+      await ProductsService.deleteProduct(addedProduct._id);
     });
   
   });

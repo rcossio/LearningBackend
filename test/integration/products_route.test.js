@@ -113,7 +113,8 @@ describe('Product Router', async function() {
     let user;
   
     before(async () => {
-      const baseResponse = await request.get('/api/users/current').set('Cookie', [`jwt=${premiumJwtToken}`]);
+      const baseResponse = await request.get('/api/users/current')
+                            .set('Cookie', [`jwt=${premiumJwtToken}`]);
       user = baseResponse.body.payload;
     });
   
@@ -178,7 +179,8 @@ describe('Product Router', async function() {
     let user;
 
     before(async () => {
-      const baseResponse = await request.get('/api/users/current').set('Cookie', [`jwt=${adminJwtToken}`]);
+      const baseResponse = await request.get('/api/users/current')
+                            .set('Cookie', [`jwt=${adminJwtToken}`]);
       user = baseResponse.body.payload;
     });
 

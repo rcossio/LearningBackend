@@ -7,7 +7,7 @@ const objIdFormat = "[0-9a-fA-F]{24}";
 
 //API for user or premium
 router.post(`/:cartId(${objIdFormat})/product/:productId(${objIdFormat})/:option`, redirectUnauthorizedOrAdmin , CartsController.addProductToCart);
-router.post(`/:cartId(${objIdFormat})/product/:productId(${objIdFormat})`, requireUserOrPremium, CartsController.deleteProductFromCart);
+router.post(`/:cartId(${objIdFormat})/product/:productId(${objIdFormat})`, requireUserOrPremium, CartsController.deleteProductFromCart); //TODO: this should be a DELETE, not a POST
 router.post(`/:cartId(${objIdFormat})/purchase`, requireUserOrPremium , CartsController.purchaseCart);
 
 //API for admin
