@@ -4,10 +4,8 @@ import supertest from 'supertest';
 import { app } from '../../src/app.js'; 
 import config from '../../src/config/config.js';
 import UsersService from '../../src/services/users.js';
-import generateJwtToken from '../../src/utils/jwt.js';
-import connectDB from '../../src/config/dbConnection.js';
+import { setupUser } from '../testHelpers.js';
 import ProductsService from '../../src/services/products.js';
-
 
 const { expect } = chai;
 chai.use(chaiAsPromised);
@@ -21,26 +19,8 @@ describe('Product Router', async function() {
   before(async function() {
     await new Promise(resolve => setTimeout(resolve, 1000));  //wait 1 second for the server to start
 
-    // Create Premium User and Admin
-    const premiumData = {
-      email: config.test.premiumUser.email,
-      password: config.test.premiumUser.pass,
-      firstName: 'Test',
-      lastName: 'Test',
-    };
-    const premiumUser = await UsersService.registerUser(premiumData)
-    await UsersService.updateUserById(premiumUser._id, { role: 'premium' });
-    premiumJwtToken = await generateJwtToken(premiumUser._id);
-
-    const adminData = {
-      email: config.test.adminUser.email,
-      password: config.test.adminUser.pass,
-      firstName: 'Test',
-      lastName: 'Test',
-    };
-    const adminUser = await UsersService.registerUser(adminData)
-    await UsersService.updateUserById(adminUser._id, { role: 'admin' });
-    adminJwtToken = await generateJwtToken(adminUser._id);
+    premiumJwtToken = await setupUser('premium');
+    adminJwtToken = await setupUser('admin');
 
   });
 
@@ -245,6 +225,4 @@ describe('Product Router', async function() {
       expect(response.status).to.equal(204);
     });
   });
-
-
 });

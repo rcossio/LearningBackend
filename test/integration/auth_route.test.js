@@ -2,48 +2,44 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import supertest from 'supertest';
 import { app } from '../../src/app.js'; 
-import dotenv from 'dotenv';
-import path from 'path';
-import UserDAO from '../../src/data/mongo/dao/usersDAO.js';
-
-dotenv.config({
-    path: path.join(path.resolve(), '.env.testing')
-});
+import config from '../../src/config/config.js';
+import UsersService from '../../src/services/users.js';
 
 const { expect } = chai;
 chai.use(chaiAsPromised);
 const request = supertest(app);
 
-async function getJwtCookie(email, password) {
-  const loginResponse = await request.post('/auth/login').send({ email, password });
-  const jwtCookie = loginResponse.headers['set-cookie']
-      .find(cookie => cookie.startsWith('jwt='))
-      .split(';')[0]; // Extracts the JWT token from the cookie
-  return jwtCookie;
-}
 
 describe('Auth Router', function() {
-  let jwtPremiumUserCookie;
-  let jwtUserCookie;
-  let jwtAdminCookie;
+  let regularJwtToken;
+  let premiumJwtToken;
+  let adminJwtToken;
+  const testUser = {
+    firstName: 'TestName',
+    lastName: 'TestLastName',
+    email: 'user@test.com',
+    age: 25,
+    password: '123456',
+  }
   
   before(async function() {
-    this.timeout(5000); // Set a timeout of 10 seconds for all tests in this describe block
     await new Promise(resolve => setTimeout(resolve, 1000));  //wait 1 second for the server to start
 
-    jwtPremiumUserCookie = await getJwtCookie(process.env.PREMIUM_USER_EMAIL, process.env.PREMIUM_USER_PASS);
-    jwtUserCookie = await getJwtCookie(process.env.REGULAR_USER_EMAIL, process.env.REGULAR_USER_PASS);
-    jwtAdminCookie = await getJwtCookie(process.env.ADMIN_EMAIL, process.env.ADMIN_PASS);
+    regularJwtToken = await setupUser('regular');
+    premiumJwtToken = await setupUser('premium');
+    adminJwtToken = await setupUser('admin');
+
   });
 
-  describe('Register Routes', () => {
+  afterEach(async function() {
+    const user = await UsersService.getUserByEmail(testUser.email);
+    if (user) {
+      await UsersService.deleteUser(user._id);
+    };
+  });
 
-    after(async () => {
-      const user = await UserDAO.getUserByEmail('user@test.com');
-      if (user) {
-        await UserDAO.deleteUser(user._id);
-      };
-    });
+
+  describe('Register Routes', () => {
 
     it('should return the register view', async () => {
       const response = await request.get('/auth/register');
@@ -52,15 +48,7 @@ describe('Auth Router', function() {
     });
 
     it('should register a new user', async () => {
-      const newUser = {
-        firstName: 'TestName',
-        lastName: 'TestLastName',
-        email: 'user@test.com',
-        age: 25,
-        password: '123456',
-      }
-
-      const response = await request.post('/auth/register').send(newUser);
+      const response = await request.post('/auth/register').send(testUser);
       expect(response.status).to.equal(302);
       expect(response.headers.location).to.equal('/auth/register/success');
     });
