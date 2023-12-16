@@ -76,6 +76,13 @@
   display: inline-block;
 }
 
+.profile-image-canva{
+  border-radius: 50%;
+  width: 150px; 
+  height: 150px;
+  background-color: #e2e2e2;
+}
+
 .profile-image-lg {
   border-radius: 50%;
   width: 150px; 

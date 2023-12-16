@@ -16,7 +16,9 @@
 
                     <div class="text-center mb-2">
                         <div class="profile-image-container">
-                        <img src="/profiles/{{user.profileImg}}" alt="{{user.firstName}}'s profile" class="profile-image-lg">
+                            <div class="profile-image-canva">
+                                <img src="/profiles/{{user.profileImg}}" alt="{{user.firstName}}'s profile" class="profile-image-lg">
+                            </div>
                         <form action="/api/users/profile-img/upload" method="post" enctype="multipart/form-data" id="profile-image-form">
                             <input type="file" name="image" id="profile-image-input" style="display: none;">
                             <a href="javascript:void(0)" class="edit-icon" onclick="document.getElementById('profile-image-input').click()">

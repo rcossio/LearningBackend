@@ -47,10 +47,11 @@
                 <div class="row">
                   {{#if (eq this.role "user")}}
                     <button type="button" class="btn btn-success btn-sm my-2 updowngrade-button" data-id="{{this._id}}">Upgrade</button>
+                    <button type="button" class="btn btn-danger btn-sm delete-button" data-id="{{this._id}}">Delete</button>
                   {{else if (eq this.role "premium")}}
                     <button type="button" class="btn btn-warning btn-sm my-2 updowngrade-button" data-id="{{this._id}}">Downgrade</button>
+                    <button type="button" class="btn btn-danger btn-sm delete-button" data-id="{{this._id}}">Delete</button>
                   {{/if}}
-                  <button type="button" class="btn btn-danger btn-sm delete-button" data-id="{{this._id}}">Delete</button>
                 </div>
               </div>  
             </div>

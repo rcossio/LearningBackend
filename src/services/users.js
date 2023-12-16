@@ -88,6 +88,7 @@ class UsersService {
     static async loginOrCreateUser(userData) {
         try {
             const user = await UsersService.getUserByEmail(userData.email);
+
             return user;
         } catch (error) {
             if (error.code === 6) { //invalid data error
@@ -97,7 +98,6 @@ class UsersService {
                     lastName: userData.lastName,
                     email: userData.email,
                     age: userData.age,
-                    password: hashedPassword,
                     cartId: cart._id
                 }; 
                 return await userDAO.addNewUser(newUserDTO);

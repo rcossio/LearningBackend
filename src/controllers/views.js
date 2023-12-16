@@ -123,7 +123,7 @@ class ViewsController {
     const options = {
         page: parseInt(page, 10),
         limit: parseInt(limit, 10),
-        sort: { price: sortOrder, _id: 1 },
+        sort: { role: sortOrder, _id: 1 },
         lean: true
     };
 

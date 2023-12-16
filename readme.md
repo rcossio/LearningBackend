@@ -61,27 +61,17 @@ These are the development dependencies:
 
 - Downgrading Premium Users: Products from downgraded premium users are marked 'unavailable' but remain in other users' carts.
 
-- Premium users store only displays 3 products (there is no pagination)
-
-- Premium users can publish a product with negative price
-
 - Premium users can update stock and price with negative values, and stock with fractional values
 
-- Arrows in premium users store should have a min and max value
-
-- Admins can delete admins, bad idea
-
-- Gmail and github login is faulty
-
 ## Desired features
+
+- Consider blocking emails in testing and development environment
 
 - A button for users to close their accounts
 
 - Set a minimum age for login
 
 - A button for users to change their personal data (first name, last name)
-
-- If the profile image is unaccessible there with be a broken link in the /profile endpoint (it should better have a white circle)
 
 - A button for premium users to return to downgrade
 

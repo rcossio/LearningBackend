@@ -37,12 +37,14 @@
 
                         <div class="form-group">
                             <label for="price">Price:</label>
-                            <input type="number" class="form-control" id="price" name="price" required>
+                            <input type="number" class="form-control" id="price" name="price" min="0.1" max="10000" required>
+                            <small id="priceWarning" class="text-danger" style="display: none;">Minimum price is $0.1</small>
                         </div>
 
                         <div class="form-group">
                             <label for="stock">Stock:</label>
-                            <input type="number" class="form-control" id="stock" name="stock" required>
+                            <input type="number" class="form-control" id="stock" name="stock" min="0" max="1000" required>
+                            <small id="stockWarning" class="text-danger" style="display: none;">Stock should be an integer greater or equal to 0</small>
                         </div>
 
                         <div class="text-center">
@@ -56,9 +58,38 @@
 </div>
 
 <script>
+  let validPrice = true;
+  let validStock = true;
+
+  const priceInput = document.getElementById('price');
+  priceInput.addEventListener('input', () => {
+    if (priceInput.value < 0.1) {
+      document.getElementById('priceWarning').style.display = 'block';
+      validPrice = false;
+    } else {
+      document.getElementById('priceWarning').style.display = 'none';
+      validPrice = true;
+    }
+  });
+
+  const stockInput = document.getElementById('stock');
+  stockInput.addEventListener('input', () => {
+    if (stockInput.value < 0 || !Number.isInteger(Number(stockInput.value))) {
+      document.getElementById('stockWarning').style.display = 'block';
+      validStock = false;
+    } else {
+      document.getElementById('stockWarning').style.display = 'none';
+      validStock = true;
+    }
+  });
+
   document.getElementById('add-product-button').addEventListener('click', function() {
     const form = document.getElementById('add-product-form');
     const formData = new FormData(form);
+
+    if (!validPrice || !validStock) {
+      return;
+    }
 
     fetch('/api/products', {
       method: 'POST',

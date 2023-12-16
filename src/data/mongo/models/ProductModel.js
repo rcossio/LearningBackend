@@ -13,7 +13,8 @@ const productSchema = new mongoose.Schema({
   },
   price: { 
     type: Number, 
-    required: true 
+    required: true,
+    min: [0.1, 'Price must be at least 0.1']  
   },
   code: { 
     type: String, 
@@ -23,7 +24,11 @@ const productSchema = new mongoose.Schema({
   stock: { 
     type: Number, 
     required: true,
-    min: [0, 'Stock cannot be negative'] 
+    min: [0, 'Stock cannot be negative'],
+    validate: {
+      validator: Number.isInteger,
+      message: 'Stock must be an integer'
+    }
   },
   category: { 
     type: String, 
